@@ -1,0 +1,66 @@
+import java.util.Date
+
+var upperlimitTempBat = 30.0
+var lowerlimitTempBat = 5.0
+
+var upperlimitTempElec = 30.0
+var lowerlimitTempElec = 0.0
+
+var lastNotificationBat = 0L
+var lastNotificationElec = 0L
+
+var timeBetweenNotifications = 30 * 60 * 1000L   //30 minutes
+
+rule "Notifica temperatura fora rang seguretat bateries"
+when
+    Item BateriesTemperatura received update
+then
+    var temp=(BateriesTemperatura.state as Number).floatValue
+    logDebug("temperatura_fv_perill.rules","Temperatura Bateries changed: "+temp)
+    //if the temperature is out of the limits to be dangerous, should notify
+    if(temp>upperlimitTempBat || temp<lowerlimitTempBat){
+        logWarn("temperatura_fv_perill.rules", "Temperatura de bateries perillosa: "+
+        BateriesTemperatura.state) 
+        var nowmill=(new Date()).time
+        logDebug("temperatura_fv_perill.rules", "Current time is "+nowmill) 
+        //if the last notification was longer ago than timeBetweenNotifications, notify again
+        if(nowmill - lastNotificationBat > timeBetweenNotifications){
+            logInfo("temperatura_fv_perill.rules", "Enviant notificació de temperatura perillosa") 
+            sendBroadcastNotification("Temperatura de bateries perillosa: "+BateriesTemperatura.state)
+            lastNotificationBat = nowmill
+        }else{
+            //if the last notification was no longer ago than timeBetweenNotifications, don't notify
+            logDebug("temperatura_fv_perill.rules", "NO Enviant notificació de temperatura perillosa, ja que fa "+(nowmill - lastNotificationBat)+"ms") 
+        }
+    }else{
+        logDebug("temperatura_fv_perill.rules","Temperatura Bateries no perillosa: "+temp+"<"+upperlimitTempBat+
+            " & "+temp+">"+lowerlimitTempBat)
+    }
+end
+
+rule "Notifica temperatura fora rang seguretat electronica"
+when
+    Item ElectronicaTemperatura received update
+then
+    var temp=(ElectronicaTemperatura.state as Number).floatValue
+    logDebug("temperatura_fv_perill.rules","Temperatura electronica changed: "+temp)
+    //if the temperature is out of the limits to be dangerous, should notify
+    if(temp>upperlimitTempElec || temp<lowerlimitTempElec){
+        logWarn("temperatura_fv_perill.rules", "Temperatura de electronica perillosa: "+
+        ElectronicaTemperatura.state) 
+        var nowmill=(new Date()).time
+        logDebug("temperatura_fv_perill.rules", "Current time is "+nowmill) 
+         //if the last notification was longer ago than timeBetweenNotifications, notify again
+        if(nowmill - lastNotificationElec > timeBetweenNotifications){
+            logInfo("temperatura_fv_perill.rules", "Enviant notificació de temperatura perillosa") 
+            sendBroadcastNotification("Temperatura electronica perillosa: "+ElectronicaTemperatura.state)
+            lastNotificationElec = nowmill
+        }else{
+            //if the last notification was no longer ago than timeBetweenNotifications, don't notify
+            logDebug("temperatura_fv_perill.rules", "NO Enviant notificació de temperatura perillosa, ja que fa "+(nowmill - lastNotificationElec)+"ms") 
+        }
+    }else{
+        logDebug("temperatura_fv_perill.rules","Temperatura electronica no perillosa: "+temp+"<"+upperlimitTempElec+
+            " & "+temp+">"+lowerlimitTempElec)
+    }
+end

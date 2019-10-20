@@ -1,0 +1,195 @@
+import java.util.Date
+
+var equalTreshold = 0.25  //dont take into account differences of more than 0.25ºC
+                            //if need a strict number, use 0
+
+var Float tempElecObjectiuMax  = 21.0
+var Float tempElecObjectiuMin  = 8.0
+var Float tempElecHisteresi = 1.5
+
+var maximumTotalFanTimeFromBat = 5 * 60 * 1000L //5 minutes
+var Long currentTotalFanTimeFromBat = 0  //current time using bat, it resets when there is unused power
+var Long lastOnTimeFanBat = 0  //time with batteries fan on last update
+
+rule "Encesa auto ventilador electronica temperatura"
+when
+    Item ElectronicaTemperatura received update
+    //Item ElectronicaTemperatura received command
+then
+    var ventiladorNomesTemp = VentiladorElectNomesTemp
+    var temp=(ElectronicaTemperatura.state as Number).floatValue
+    var tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
+    var tempObj = temp
+    //by default, the objective is the current temp (so the fan won't open unless 
+    //we set another objective)
+
+    if(temp > tempElecObjectiuMax){
+        //if we are above the upper objective, then the upper objective is our objective.
+        tempObj = tempElecObjectiuMax
+        logDebug("temperatura_fv_elect.rules", "The temp ("+temp+") > upper objective ("+tempElecObjectiuMax+") => objective = upper objective")
+    }else if(temp < tempElecObjectiuMin){
+        //if we are above the upper objective, then the upper objective is our objective.
+        tempObj = tempElecObjectiuMin
+        logDebug("temperatura_fv_elect.rules", "The temp ("+temp+") < lower objective ("+tempElecObjectiuMin+") => objective =  lower objective")
+    }else{
+        tempObj = temp
+        logDebug("temperatura_fv_elect.rules", "lower objective ("+tempElecObjectiuMin+") < temp ("+temp+
+            ")< upper objective ("+tempElecObjectiuMax+") => objective = temp") 
+    }
+
+    logDebug("temperatura_fv_elect.rules", "Encesa auto vent. elect. temp: "+
+        temp+" vs tempExt: "+tempExt+" vs tempObj: "+tempObj) 
+
+    var diffExt = temp - tempExt
+    var diffObj = temp - tempObj
+    if(diffExt * diffObj > 0 && diffExt>equalTreshold && diffObj>equalTreshold){
+        logDebug("temperatura_fv_elect.rules", "Should switch on the fan, as the diff is in the same direction")
+        ventiladorNomesTemp.sendCommand(ON)
+    }else{
+        logDebug("temperatura_fv_elect.rules", "Should switch off the fan, as the diff is in the opposite direction or 0")
+        ventiladorNomesTemp.sendCommand(OFF)
+    }
+
+end
+
+rule "Encesa auto ventilador electronica histeresi"
+when
+    Item VentiladorElectNomesTemp received command
+then
+    var ventiladorControlPotencia = VentiladorElectControlPotencia
+    var temp = (ElectronicaTemperatura.state as Number).floatValue
+    var tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
+    var tempObj = temp
+    if(temp > tempElecObjectiuMax){
+        //if we are above the upper objective, then the upper objective is our objective.
+        tempObj = tempElecObjectiuMax
+        logDebug("temperatura_fv_elect.rules", "The temp ("+temp+") > upper objective ("+tempElecObjectiuMax+") => objective = upper objective")
+    }else if(temp < tempElecObjectiuMin){
+        //if we are above the upper objective, then the upper objective is our objective.
+        tempObj = tempElecObjectiuMin
+        logDebug("temperatura_fv_elect.rules", "The temp ("+temp+") < lower objective ("+tempElecObjectiuMin+") => objective =  lower objective")
+    }else{
+        tempObj = temp
+        logDebug("temperatura_fv_elect.rules", "lower objective ("+tempElecObjectiuMin+") < temp ("+temp+
+            ")< upper objective ("+tempElecObjectiuMax+") => objective = temp") 
+    }
+
+    var tempHist = tempElecHisteresi
+
+    var fanOn = VentiladorElectronicaTest.state==ON
+    var commandOn = VentiladorElectNomesTemp.state==ON
+    logDebug("temperatura_fv_elect.rules", "ventiladorNomesTemp received command, checking "+
+        "histeresi: hist:"+tempHist+", fanOn: "+fanOn+", commandOn: "+commandOn ) 
+
+    //if the fan is currently on
+    //  and the command is to switch on, forward the on command, to check for power consumption
+    //if the fan is on, and the command is off, forward the off command
+    //if the fan is off and the command is off, forward the off command, though is not necessary
+    //if the fan is off, and the command is on, check that the diff 
+    //  temps are greater than histeresis
+    if(!fanOn && commandOn){
+        var tempDiff = temp - tempObj
+        var tempDiffExt = temp - tempExt
+        logInfo("temperatura_fv_elect.rules", "the difference is toObj: "+tempDiff+
+                "toExt: "+tempDiffExt)
+        if(tempDiff<0){
+            tempDiff = -tempDiff
+        }
+        if(tempDiffExt<0){
+            tempDiffExt = -temptempDiffExtDiff
+        }
+        if(tempDiffExt<tempDiff){
+            tempDiff = tempDiffExt
+        }
+        if(tempDiff>tempHist){
+            ventiladorControlPotencia.sendCommand(ON)
+            logInfo("temperatura_fv_elect.rules", "histeresis overpassed: tempDiff ("+
+                tempDiff+") > tempHist("+tempHist+")")
+        }else{
+            logInfo("temperatura_fv_elect.rules", "histeresis still applies so dont turn on: tempDiff ("+
+                tempDiff+") < tempHist("+tempHist+")")
+                ventiladorControlPotencia.sendCommand(OFF)
+        }
+
+    }else{
+        logDebug("temperatura_fv_elect.rules", "Histeresis does not apply now, forwarding command")
+        if(commandOn){
+            logDebug("temperatura_fv_elect.rules", "Forwarding ON")
+            ventiladorControlPotencia.sendCommand(ON)
+        }else{
+            logDebug("temperatura_fv_elect.rules", "Forwarding OFF")
+            ventiladorControlPotencia.sendCommand(OFF)
+        }
+    }
+    
+
+end
+
+rule "Encesa auto ventilador electronica potencia"
+when
+    Item VentiladorElectControlPotencia received command
+then
+    var ventilador = VentiladorElectronicaTest
+    var ventiladorControlPotencia = VentiladorElectControlPotencia
+
+    var minutesItem = MinutesElecFanFromBatteries
+
+    var nowmill=(new Date()).time
+
+    logDebug("temperatura_fv_elect.rules", "checking power control for the Ventilador Elec "+VentiladorBateriesControlPotencia.state)
+    
+    if(ventiladorControlPotencia.state==ON){
+        var unusedPower=(SunnyBoy_Pot_Rebutjada.state as DecimalType).intValue
+        
+        if(unusedPower>0){
+            logInfo("temperatura_fv_elect.rules", "turning the Ventilador Elec ON, as there is unused pwr: "+unusedPower)
+            ventilador.sendCommand(ON)
+            //reset the intervals
+            currentTotalFanTimeFromBat = 0L
+            lastOnTimeFanBat = 0L
+        }else{
+            //there is not unused power, so 
+            //if the fan was on, count the time since the last interval counted
+            if(lastOnTimeFanBat == 0L){
+                //this is the first ON for this period
+                lastOnTimeFanBat = nowmill
+            }else{
+                //this is a second ON from an ON
+                currentTotalFanTimeFromBat = currentTotalFanTimeFromBat + (nowmill - lastOnTimeFanBat)
+                minutesItem.postUpdate(currentTotalFanTimeFromBat/60/1000)
+                lastOnTimeFanBat = nowmill
+            }
+            if(currentTotalFanTimeFromBat>maximumTotalFanTimeFromBat){
+                logInfo("temperatura_fv_elect.rules", "turning the Ventilador Elec OFF, as time from BAT: "+currentTotalFanTimeFromBat)
+                ventilador.sendCommand(OFF)
+                lastOnTimeFanBat = 0L
+            }else{
+                logInfo("temperatura_fv_elect.rules", "turning the Ventilador Elec ON, as time from BAT: "+currentTotalFanTimeFromBat)
+                ventilador.sendCommand(ON)
+            }
+        }
+    }else{
+        if(lastOnTimeFanBat == 0L){
+            //this is an OFF, but comes from an ON with unused power
+        }else{
+            //this comes from an ON, but is an OFF now.
+            minutesItem.postUpdate(currentTotalFanTimeFromBat/60/1000)
+            currentTotalFanTimeFromBat = currentTotalFanTimeFromBat + (nowmill - lastOnTimeFanBat)
+        }
+        lastOnTimeFanBat = 0L
+        logDebug("temperatura_fv_elect.rules" , "turning the Ventilador Elec OFF, and resseting the partial time counters: currentTotalFanTimeFromBat: "+currentTotalFanTimeFromBat)
+        ventilador.sendCommand(OFF)
+    }
+end
+
+/*
+rule "five minutes per hour when fan goes by battery"
+when
+    Time cron "0 0 * ? * * *"
+then
+    var unusedPower=(SunnyBoy_Pot_Rebutjada.state as DecimalType).intValue
+    if(unusedPower>0){
+
+    }
+end
+*/

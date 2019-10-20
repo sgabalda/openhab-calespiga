@@ -1,0 +1,148 @@
+import java.util.Date
+
+var equalTreshold = 0.25  //dont take into account differences of more than 0.25ºC
+                            //if need a strict number, use 0
+
+var tempBatObjectiu = 20.0
+var tempBatHisteresi = 1.5
+
+var maximumTotalFanTimeFromBat = 1 * 60 * 60 * 1000L //1 hour
+var Long currentTotalFanTimeFromBat = 0  //current time using bat, it resets when there is unused power
+var Long lastOnTimeFanBat = 0  //time with batteries fan on last update
+
+rule "Encesa auto ventilador bateries temperatura"
+when
+    
+    Item BateriesTemperatura received update 
+    //Item BateriesTemperatura received command
+then
+    var ventiladorNomesTemp = VentiladorBateriesNomesTemp
+    var temp=(BateriesTemperatura.state as Number).floatValue
+    var tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
+    var tempObj = tempBatObjectiu
+
+    logDebug("temperatura_fv_bat.rules", "Encesa auto vent. bat. temp: "+
+        temp+" vs tempExt: "+tempExt+" vs tempObj: "+tempObj) 
+
+    var diffExt = temp - tempExt
+    var diffObj = temp - tempObj
+    if(diffExt * diffObj > 0 && diffExt>equalTreshold && diffObj>equalTreshold){
+        logDebug("temperatura_fv_bat.rules", "Should switch on the fan, as the diff is in the same direction")
+        ventiladorNomesTemp.sendCommand(ON)
+    }else{
+        logDebug("temperatura_fv_bat.rules", "Should switch off the fan, as the diff is in the opposite direction or too small")
+        ventiladorNomesTemp.sendCommand(OFF)
+    }
+
+end
+
+rule "Encesa auto ventilador bateries histeresi"
+when
+    Item VentiladorBateriesNomesTemp received command
+then
+    var ventilador = VentiladorBateriesTest  //replace with (VentiladorBateriesTest/VentiladorBateries) to test/real
+    var ventiladorNomesTemp = VentiladorBateriesNomesTemp
+    var ventiladorControlPotencia = VentiladorBateriesControlPotencia
+    var temp = (BateriesTemperatura.state as Number).floatValue
+    var tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
+    var tempObj = tempBatObjectiu
+    var tempHist = tempBatHisteresi
+
+    var fanOn = VentiladorBateriesTest.state==ON
+    logDebug("temperatura_fv_bat.rules", "ventiladorNomesTemp received command, checking histeresi: hist:"+tempHist+", fanOn: "+fanOn+", commandOn: "+(ventiladorNomesTemp.state==ON) ) 
+
+    //if the fan is currently on
+    //  and the command is to switch on, forward the on command, to check for power consumption
+    //if the fan is on, and the command is off, forward the off command
+    //if the fan is off and the command is off, forward the off command, though is not necessary
+    //if the fan is off, and the command is on, check that the diff 
+    //  temps are greater than histeresis
+    if(!fanOn && ventiladorNomesTemp.state==ON){
+        var tempDiff = temp - tempObj
+        var tempDiffExt = temp - tempExt
+        logInfo("temperatura_fv_elect.rules", "the difference is toObj: "+tempDiff+
+                "toExt: "+tempDiffExt)
+        if(tempDiff<0){
+            tempDiff = -tempDiff
+        }
+        if(tempDiffExt<0){
+            tempDiffExt = -temptempDiffExtDiff
+        }
+        if(tempDiffExt<tempDiff){
+            tempDiff = tempDiffExt
+        }
+        if(tempDiff>tempHist){
+            ventiladorControlPotencia.sendCommand(ON)
+            logInfo("temperatura_fv_bat.rules", "histeresis overpassed: tempDiff ("+
+                tempDiff+") > tempHist("+tempHist+")")
+        }else{
+            logInfo("temperatura_fv_bat.rules", "histeresis still applies so dont turn on: tempDiff ("+
+                tempDiff+") < tempHist("+tempHist+")")
+        }
+
+    }else{
+        logDebug("temperatura_fv_bat.rules", "Histeresis does not apply now, forwarding command")
+        if(ventiladorNomesTemp.state==ON){
+            ventiladorControlPotencia.sendCommand(ON)
+        }else{
+            ventiladorControlPotencia.sendCommand(OFF)
+        }
+    }
+    
+
+end
+
+rule "Encesa auto ventilador bateries potencia"
+when
+    Item VentiladorBateriesControlPotencia received command
+then
+    var ventilador = VentiladorBateriesTest     //replace with (VentiladorBateriesTest/VentiladorBateries) to test/real
+    var ventiladorControlPotencia = VentiladorBateriesControlPotencia
+    var minutesItem = MinutesBatFanFromBatteries
+
+    var nowmill=(new Date()).time
+
+    logDebug("temperatura_fv_bat.rules", "checking power control for the Ventilador Bateries "+VentiladorBateriesControlPotencia.state)
+    
+    if(ventiladorControlPotencia.state==ON){
+        var unusedPower=(SunnyBoy_Pot_Rebutjada.state as DecimalType).intValue
+        
+        if(unusedPower>0){
+            logInfo("temperatura_fv_bat.rules", "turning the Ventilador Bateries ON, as there is unused pwr: "+unusedPower)
+            ventilador.sendCommand(ON)
+            //reset the intervals
+            currentTotalFanTimeFromBat = 0L
+            lastOnTimeFanBat = 0L
+        }else{
+            //there is not unused power, so 
+            //if the fan was on, count the time since the last interval counted
+            if(lastOnTimeFanBat == 0L){
+                //this is the first ON for this period
+                lastOnTimeFanBat = nowmill
+            }else{
+                currentTotalFanTimeFromBat = currentTotalFanTimeFromBat + (nowmill - lastOnTimeFanBat)
+                minutesItem.postUpdate(currentTotalFanTimeFromBat/60/1000)
+                lastOnTimeFanBat = nowmill
+            }
+            if(currentTotalFanTimeFromBat>maximumTotalFanTimeFromBat){
+                logInfo("temperatura_fv_bat.rules", "turning the Ventilador Bateries OFF, as time from BAT: "+currentTotalFanTimeFromBat)
+                ventilador.sendCommand(OFF)
+                lastOnTimeFanBat = 0L
+            }else{
+                logInfo("temperatura_fv_bat.rules", "turning the Ventilador Bateries ON, as time from BAT: "+currentTotalFanTimeFromBat)
+                ventilador.sendCommand(ON)
+            }
+        }
+    }else{
+        if(lastOnTimeFanBat == 0L){
+            //this is another OFF
+        }else{
+            //this comes from an OFF
+            minutesItem.postUpdate(currentTotalFanTimeFromBat/60/1000)
+            currentTotalFanTimeFromBat = currentTotalFanTimeFromBat + (nowmill - lastOnTimeFanBat)
+        }
+        lastOnTimeFanBat = 0L
+        logDebug("temperatura_fv_bat.rules" , "turning the Ventilador Bateries OFF, and resseting the partial time counters: currentTotalFanTimeFromBat: "+currentTotalFanTimeFromBat)
+        ventilador.sendCommand(OFF)
+    }
+end

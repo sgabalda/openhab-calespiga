@@ -1,0 +1,32 @@
+
+Number:Temperature ElectronicaTemperatura      "T. arm. electronica: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:armarielectronica:temperature" }
+Number:Temperature BateriesTemperatura      "T. arm. bateries: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:armaribateries:temperature" }
+Number:Temperature ExteriorArmarisTemperatura      "T. fora: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:armarielectronicafora:temperature" }
+
+Switch VentiladorBateries "Ventilador bat." {gpio="pin:21 activelow:yes initialValue:high"}
+Switch VentiladorElectronica "Ventilador electr." {gpio="pin:20 activelow:yes initialValue:high"}
+
+String VentiladorGestioElect "Gestió dels ventiladors"      //pot ser "auto" o "manual"
+
+Switch VentiladorBateriesManual "Ventilador bat. manual"
+Switch VentiladorElectronicaManual "Ventilador elect. manual"
+
+Number MinutesBatFanFromBatteries   "Minuts vent. bat."
+Number MinutesElecFanFromBatteries   "Minuts vent. bat."
+
+// internal use only, to simplify rules and separate concerns
+Switch VentiladorBateriesNomesTemp
+Switch VentiladorBateriesControlPotencia
+Switch VentiladorElectNomesTemp
+Switch VentiladorElectControlPotencia
+Switch VentiladorBateriesTest
+Switch VentiladorElectronicaTest
+/* FOR TESTING PURPOSES
+
+Number:Temperature BateriesTemperatura      "T. arm. bateries test: [%.1f %unit%]" 
+Number:Temperature ExteriorArmarisTemperatura      "T. fora test: [%.1f %unit%]" 
+Number:Temperature ElectronicaTemperatura      "T. arm. electronica: [%.1f %unit%]"
+*/
+
+/*
+*/

@@ -1,0 +1,105 @@
+
+var Timer apagarBombaTimer = null
+
+rule "Encesa manual bomba reg"
+when
+    Item Encesa_Bomba_Manual received command ON
+then
+    if(apagarBombaTimer!==null){
+        apagarBombaTimer.cancel()
+        apagarBombaTimer=null
+    }
+    var minutesToRun=(Durada_Encesa_Manual.state as DecimalType).intValue
+    if(minutesToRun===null){
+        minutesToRun=0;
+    }else{
+        Encesa_Bomba.sendCommand(ON)
+        apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                apagarBombaTimer = null
+                Encesa_Bomba_Manual.sendCommand(OFF)
+            ])
+    }
+end
+
+rule "Apagada manual bomba reg"
+when
+    Item Encesa_Bomba_Manual received command OFF
+then
+    if(apagarBombaTimer!==null){
+        apagarBombaTimer.cancel()
+        apagarBombaTimer=null
+    }
+    Encesa_Bomba.sendCommand(OFF)
+end
+
+rule "Encesa auto mati bomba reg"
+when
+    Time cron "0 0 8 * * ? *"
+then
+    if(Encesa_Bomba_Auto_Mati.state==ON){
+        if(apagarBombaTimer!==null){
+            apagarBombaTimer.cancel()
+            apagarBombaTimer=null
+        }
+        var minutesToRun=(Durada_Encesa_Auto_Mati.state as DecimalType).intValue
+        if(minutesToRun===null){
+            minutesToRun=0;
+        }else{
+            Encesa_Bomba.sendCommand(ON)
+            apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                    apagarBombaTimer = null
+                    Encesa_Bomba_Manual.sendCommand(OFF)
+                ])
+        }
+    }
+end
+rule "Encesa auto migdia bomba reg"
+when
+    Time cron "0 0 14 * * ? *"
+then
+    if(Encesa_Bomba_Auto_Migdia.state==ON){
+        if(apagarBombaTimer!==null){
+            apagarBombaTimer.cancel()
+            apagarBombaTimer=null
+        }
+        var minutesToRun=(Durada_Encesa_Auto_Migdia.state as DecimalType).intValue
+        if(minutesToRun===null){
+            minutesToRun=0;
+        }else{
+            Encesa_Bomba.sendCommand(ON)
+            apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                    apagarBombaTimer = null
+                    Encesa_Bomba_Manual.sendCommand(OFF)
+                ])
+        }
+    }
+end
+rule "Encesa auto tarda bomba reg"
+when
+    Time cron "0 0 20 * * ? *"
+then
+    if(Encesa_Bomba_Auto_Tarda.state==ON){
+        if(apagarBombaTimer!==null){
+            apagarBombaTimer.cancel()
+            apagarBombaTimer=null
+        }
+        
+        var minutesToRun=(Durada_Encesa_Auto_Tarda.state as DecimalType).intValue
+        if(minutesToRun===null){
+            minutesToRun=0;
+        }else{
+            Encesa_Bomba.sendCommand(ON)
+            apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                    apagarBombaTimer = null
+                    Encesa_Bomba_Manual.sendCommand(OFF)
+                ])
+        }
+    }
+end
+
+rule "Notificacions bomba reg"
+when
+    Item Encesa_Bomba received command
+then
+    sendBroadcastNotification("Bomba ha passat a "+Encesa_Bomba.state)
+end

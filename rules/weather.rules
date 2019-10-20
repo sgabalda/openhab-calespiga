@@ -1,0 +1,31 @@
+val meteoblueUrl = "http://my.meteoblue.com/packages/basic-day?name=Borreda&lat=42.138902&lon=1.9900245&asl=880&tz=Europe%2FMadrid&apikey=bbc52ea1ddfc&temperature=C&windspeed=ms-1&winddirection=degree&precipitationamount=mm&timeformat=iso8601&format=json"
+
+//potser podem fer un bucle?
+val lectures = newHashMap(
+  "Temperatura_Min_Previsio"  -> "temperature_min",
+  "Temperatura_Max_Previsio" -> "temperature_max",
+  "Prob_Precipitacio_Previsio" -> "precipitation_probability"
+)
+
+rule "Temps forecast Meteoblue"
+when
+    Time cron "0 0 * ? * * *"
+    or System started
+then
+    //potser podem fer un bucle?
+    //val testItem = ScriptServiceUtil.getItemRegistry.getItem("Temperatura_Min_Previsio")
+    //lectures.forEach()?
+    val String resp = sendHttpGetRequest(meteoblueUrl)
+    val Float temp_min = Float::parseFloat(transform("JSONPATH", "$.data_day.temperature_min[0]", resp))
+    Temperatura_Min_Previsio.postUpdate(temp_min)
+    val Float temp_max = Float::parseFloat(transform("JSONPATH", "$.data_day.temperature_max[0]", resp))
+    Temperatura_Max_Previsio.postUpdate(temp_max)
+    val Float prob_prec = Float::parseFloat(transform("JSONPATH", "$.data_day.precipitation_probability[0]", resp))
+    Prob_Precipitacio_Previsio.postUpdate(prob_prec)
+    val Float temp_min_dema = Float::parseFloat(transform("JSONPATH", "$.data_day.temperature_min[1]", resp))
+    Temperatura_Min_Previsio_Dema.postUpdate(temp_min_dema)
+    val Float temp_max_dema = Float::parseFloat(transform("JSONPATH", "$.data_day.temperature_max[1]", resp))
+    Temperatura_Max_Previsio_Dema.postUpdate(temp_max_dema)
+    val Float prob_prec_dema = Float::parseFloat(transform("JSONPATH", "$.data_day.precipitation_probability[1]", resp))
+    Prob_Precipitacio_Previsio_Dema.postUpdate(prob_prec_dema)
+end

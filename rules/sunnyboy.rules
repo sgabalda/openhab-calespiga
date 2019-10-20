@@ -1,0 +1,106 @@
+
+val username = "usr"
+val pass = "sergi00xp"
+val login_url = "http://192.168.43.250/dyn/login.json"
+
+val data_url = "http://192.168.43.250/dyn/getValues.json"
+val total_power_code = "6100_40263F00"
+val freq_code = "6100_00465700"
+
+var String token = null
+val Integer refreshInterval = 60
+var Integer currentInterval = 0
+
+rule "Refresh sunny boy token"
+when
+    //Time cron "0 0 * ? * * *"
+    Time cron "0 * 6-21 ? * * *"
+    or Item SunnyBoy_Token received command
+    or System started
+then
+    var refreshToken = true
+    if(token!==null){
+        if(currentInterval < refreshInterval){
+            currentInterval ++
+            refreshToken = false
+            logInfo("SunnyBoy","token still valid, not refreshing it: "+currentInterval)
+        }else{
+            currentInterval = 0
+            logInfo("SunnyBoy","token not yet valid, refreshing it ")
+        }
+    }
+    if(refreshToken){
+        val notification_json = '{"right":"' + username + '","pass":"' + pass + '"}'
+        val String rawToken = sendHttpPostRequest(login_url, "application/json", notification_json)
+        logInfo("SunnyBoy","Obtingut resposta dle post: "+rawToken)
+        var String error = transform("JSONPATH", "$.err", rawToken)
+        if(error!==null && error.equals(rawToken)){
+            token = transform("JSONPATH", "$.result.sid", rawToken)
+            logInfo("SunnyBoy","El token es: "+token)
+            SunnyBoy_Token.postUpdate(token)
+        }else{
+            logError("SunnyBoy", "No s'ha pogut obtenir el token: "+rawToken)
+        }
+    }
+end
+
+rule "Produccio fotovoltaica rule"
+when
+    //Time cron "0/10 * * ? * * *"
+    Time cron "0/10 * 6-21 ? * * *"
+then
+    if(token !== null){
+
+        SunnyBoy_Time_Attempt.postUpdate(now.toString)
+        val notification_json = '{"destDev":[],"keys":["' 
+            + total_power_code + '","' 
+            + freq_code + '"]}'
+        logInfo("SunnyBoy","Enviant peticio: "+notification_json)
+        val String rawData = sendHttpPostRequest(data_url+"?sid="+token, "application/json", notification_json)
+        logInfo("SunnyBoy","Obtingut resposta del post: "+rawData)
+        var String error = transform("JSONPATH", "$.err", rawData)
+        if(error!==null && error.equals(rawData)){
+            var String data = transform("JSONPATH", "$.result.0156-76BCE994."+total_power_code+".1[0].val", rawData)
+            logInfo("SunnyBoy","La pot usada es: "+data)
+            var Float potUsada=Float::parseFloat(data);
+            SunnyBoy_Pot_Usada.postUpdate(potUsada.intValue)
+            data = transform("JSONPATH", "$.result.0156-76BCE994."+freq_code+".1[0].val", rawData)
+            logInfo("SunnyBoy","La freq es: "+data)
+            var Float freq=Float::parseFloat(data)/100;
+            SunnyBoy_Freq.postUpdate(freq)
+            var Float tot_power = 0.0
+            var Float potRebutjada = 0.0
+            if(freq<=51.0){ 
+                logInfo("SunnyBoy","No pot rebutjada!")
+                potRebutjada = 0 
+                tot_power = potUsada
+            }
+            else if(freq>=52.0){
+                logInfo("SunnyBoy","Tota rebutjada!")
+                tot_power=3000
+                potRebutjada = tot_power - potUsada
+            }
+            else {
+                logInfo("SunnyBoy","Soso")
+                tot_power = potUsada / (52-freq)
+                if(tot_power>3000){
+                    tot_power = 3000
+                }
+                potRebutjada = tot_power - potUsada
+            }
+
+            logInfo("SunnyBoy","les potencies son: Tot: "+tot_power+", reb:"+potRebutjada)
+            SunnyBoy_Pot_Rebutjada.postUpdate(potRebutjada)
+            SunnyBoy_Pot_Actual.postUpdate(tot_power)
+            
+            SunnyBoy_Time_Read.postUpdate(now.toString)
+        }else if(error!==null && error.equals("401")){
+            logWarn("SunnyBoy","Obtingut 401 del POST "+rawData+", posant el token a null i forçant refresh del token")
+            token = null
+            SunnyBoy_Token.sendCommand("ToRefresh")
+        }else{
+            logError("SunnyBoy", "No s'ha pogut obtenir les dades: Error: "+error)
+        }
+    }
+    
+end

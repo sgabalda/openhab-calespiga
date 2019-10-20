@@ -1,0 +1,13 @@
+Switch Encesa_Bomba "Encesa bomba reg" {gpio="pin:2 activelow:yes initialValue:high"}
+
+Switch Encesa_Bomba_Manual "Encesa manual bomba reg"
+Number Durada_Encesa_Manual "Durada encesa manual (minuts)"
+
+Switch Encesa_Bomba_Auto_Mati "Encesa auto bomba reg matí"
+Number Durada_Encesa_Auto_Mati "Durada matí (minuts)"
+
+Switch Encesa_Bomba_Auto_Migdia "Encesa auto bomba reg migdia"
+Number Durada_Encesa_Auto_Migdia "Durada migdia (minuts)"
+
+Switch Encesa_Bomba_Auto_Tarda "Encesa auto bomba reg tarda"
+Number Durada_Encesa_Auto_Tarda "Durada tarda (minuts)"

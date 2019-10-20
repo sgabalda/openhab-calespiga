@@ -1,0 +1,72 @@
+sitemap default label="Ca l'espiga" {
+    
+    Frame label="Fotovoltaica" {
+        Text icon="light" item=SunnyBoy_Pot_Usada
+        Text icon="smoke" item=SunnyBoy_Pot_Rebutjada
+        Text icon="energy" item=SunnyBoy_Pot_Actual
+        //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea1
+        //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea2
+        Text icon="pressure" item=SunnyBoy_Freq
+        //Text icon="solarplant" item=SunnyBoy_Token
+        Text icon="time" item=SunnyBoy_Time_Attempt
+        Text icon="time" item=SunnyBoy_Time_Read
+    }
+    
+    Frame label="Reg de l'hort" {
+        Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="pump"
+        Text icon="water"
+        Switch item=Encesa_Bomba_Manual icon="faucet"
+        Setpoint item=Durada_Encesa_Manual icon="time" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
+        Switch item=Encesa_Bomba_Auto_Mati icon="faucet"
+        Setpoint item=Durada_Encesa_Auto_Mati icon="time" label="Durada mati [%.1f min]" minValue=1 maxValue=30 step=1
+        Switch item=Encesa_Bomba_Auto_Migdia icon="faucet"
+        Setpoint item=Durada_Encesa_Auto_Migdia icon="time" label="Durada migdia [%.1f min]" minValue=1 maxValue=30 step=1
+        Switch item=Encesa_Bomba_Auto_Tarda icon="faucet"
+        Setpoint item=Durada_Encesa_Auto_Tarda icon="time" label="Durada tarda [%.1f min]" minValue=1 maxValue=30 step=1
+    }
+
+    Frame label="Temperatures sistema elèctric" {
+        
+        Text item=ElectronicaTemperatura
+        Text item=BateriesTemperatura
+        Text item=ExteriorArmarisTemperatura
+        
+        Text item=VentiladorBateries label="Vent. bateries: [%s]" icon="fan"
+        Text item=VentiladorElectronica label="Vent. electr.: [%s]" icon="fan"
+
+        Selection item=VentiladorGestioElect icon='wallswitch' mappings=["auto"="Automatic", "manual"="Manual"]
+
+        Switch item=VentiladorBateriesManual icon="fan"
+        Switch item=VentiladorElectronicaManual icon="fan"
+
+        /*
+        disable manual turning on and off
+        Switch item=VentiladorBateries icon="fan"
+        Switch item=VentiladorElectronica icon="fan"
+        */
+        /*
+        FOR TESTING PURPOSES
+        
+        Setpoint item=BateriesTemperatura icon="time" label="T. arm. bateries test: [%.1f %unit%]" minValue=1 maxValue=30 step=1
+        Setpoint item=ExteriorArmarisTemperatura icon="time" label="T. ext. test: [%.1f %unit%]" minValue=1 maxValue=30 step=1
+        Setpoint item=ElectronicaTemperatura icon="time" label="T. arm. elect test: [%.1f %unit%]" minValue=1 maxValue=30 step=1
+        
+        Text item=VentiladorBateriesTest label="Vent. bateries test: [%s]" icon="fan"
+        Text item=VentiladorElectronicaTest label="Vent. electr. test: [%s]" icon="fan"
+        
+        */
+        Text item=MinutesBatFanFromBatteries label="Min. vent. bat. amb bat.: [%s]" icon="time"
+        Text item=MinutesElecFanFromBatteries label="Min. vent. elec. amb bat.: [%s]" icon="time"
+    }
+
+    
+    Frame label="Previsió de temps" {
+        Text icon="temperature" item=Temperatura_Max_Previsio
+        Text icon="temperature" item=Temperatura_Min_Previsio
+        Text icon="water" item=Prob_Precipitacio_Previsio
+        Text icon="temperature" item=Temperatura_Max_Previsio_Dema
+        Text icon="temperature" item=Temperatura_Min_Previsio_Dema
+        Text icon="water" item=Prob_Precipitacio_Previsio_Dema
+    }
+    
+}

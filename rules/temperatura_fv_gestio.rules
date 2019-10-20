@@ -1,0 +1,95 @@
+
+rule "Encesa auto ventilador bateries auto final"
+when
+    Item VentiladorBateriesTest received command
+then
+    logDebug("temperatura_fv_bat.rules", "VentiladorBateriesTest received "+VentiladorBateriesTest.state)
+    var ventiladorTest = VentiladorBateriesTest  
+    var ventilador = VentiladorBateries   
+
+    var gestioVentilador = VentiladorGestioElect.state
+    logInfo("temperatura_fv_bat.rules", "Auto switch of bat. Gestio is "+gestioVentilador)
+    if(gestioVentilador!="manual"){
+        if(ventiladorTest.state==ON) {
+            ventilador.sendCommand(ON)
+        }else{
+            ventilador.sendCommand(OFF)
+        }
+    }else{
+        logInfo("temperatura_fv_bat.rules", "Not propagatting the command, as the management is not automatic")
+    }    
+end
+
+rule "Encesa manual ventilador bateries"
+when
+    Item VentiladorBateriesManual received command
+then
+    logInfo("temperatura_fv_bat.rules", "VentiladorBateriesManual received "+VentiladorBateriesManual.state)
+    var ventiladorTest = VentiladorBateriesManual  
+    var ventilador = VentiladorBateries   
+    var gestioVentilador = VentiladorGestioElect.state
+    logInfo("temperatura_fv_bat.rules", "Manual switch of bat. Gestio is "+gestioVentilador)
+    if(gestioVentilador=="manual"){ 
+        if(ventiladorTest.state==ON) {
+            ventilador.sendCommand(ON)
+        }else{
+            ventilador.sendCommand(OFF)
+        }
+    }else{
+        logInfo("temperatura_fv_bat.rules", "Not propagatting the command, as the management is automatic")
+    }
+end
+
+rule "Encesa auto ventilador electr final"
+when
+    Item VentiladorElectronicaTest received command
+then
+    logDebug("temperatura_fv_elect.rules", "VentiladorElectronicaTest received "+VentiladorElectronicaTest.state) 
+    var ventiladorTest = VentiladorElectronicaTest  
+    var ventilador = VentiladorElectronica    
+
+    var gestioVentilador = VentiladorGestioElect.state
+    logInfo("temperatura_fv_elect.rules", "Auto switch of elect. Gestio is "+gestioVentilador)
+    if(gestioVentilador!="manual"){
+        if(ventiladorTest.state==ON) {
+            ventilador.sendCommand(ON)
+        }else{
+            ventilador.sendCommand(OFF)
+        }
+    }else{
+        logInfo("temperatura_fv_elect.rules", "Not propagatting the command, as the management is not automatic")
+    }    
+    
+end
+
+rule "Encesa manual ventilador elect"
+when
+    Item VentiladorElectronicaManual received command
+then
+    logInfo("temperatura_fv_elect.rules", "VentiladorBateriesManual received "+VentiladorElectronicaManual.state)
+    var ventiladorTest = VentiladorElectronicaManual  
+    var ventilador = VentiladorElectronica   
+    var gestioVentilador = VentiladorGestioElect.state
+    logInfo("temperatura_fv_elect.rules", "Manual switch of elec. Gestio is "+gestioVentilador)
+    if(gestioVentilador=="manual"){ 
+        if(ventiladorTest.state==ON) {
+            ventilador.sendCommand(ON)
+        }else{
+            ventilador.sendCommand(OFF)
+        }
+    }else{
+        logInfo("temperatura_fv_elect.rules", "Not propagatting the command, as the management is automatic")
+    }
+end
+
+rule "Canvi a manual"
+when
+    Item VentiladorGestioElect received command
+then
+    logInfo("temperatura_fv_elect.rules", "VentiladorGestioElect received "+VentiladorGestioElect.state)
+    logInfo("temperatura_fv_bat.rules", "VentiladorGestioElect received "+VentiladorGestioElect.state)
+    VentiladorElectronica.sendCommand(OFF)
+    VentiladorBateries.sendCommand(OFF)
+    VentiladorElectronicaManual.sendCommand(OFF)
+    VentiladorBateriesManual.sendCommand(OFF)
+end
