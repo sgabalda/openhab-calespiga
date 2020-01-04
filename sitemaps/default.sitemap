@@ -6,23 +6,30 @@ sitemap default label="Ca l'espiga" {
         Text icon="energy" item=SunnyBoy_Pot_Actual
         //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea1
         //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea2
-        Text icon="pressure" item=SunnyBoy_Freq
+        //Text icon="pressure" item=SunnyBoy_Freq
         //Text icon="solarplant" item=SunnyBoy_Token
         Text icon="time" item=SunnyBoy_Time_Attempt
         Text icon="time" item=SunnyBoy_Time_Read
     }
+
+    Frame label="Calentador" {
+        Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
+        Selection item=Calentador_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "500"="500W", "1000"="1000W", "2000"="2000W"]
+        Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat (W): [%s]" 
+        //Setpoint item=SunnyBoy_Pot_Rebutjada_TEST icon="time" label="Durada encesa manual [%.1f min]" minValue=0 maxValue=2000 step=500
+    }
     
     Frame label="Reg de l'hort" {
-        Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="pump"
+        Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
         Text icon="water"
-        Switch item=Encesa_Bomba_Manual icon="faucet"
-        Setpoint item=Durada_Encesa_Manual icon="time" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
-        Switch item=Encesa_Bomba_Auto_Mati icon="faucet"
-        Setpoint item=Durada_Encesa_Auto_Mati icon="time" label="Durada mati [%.1f min]" minValue=1 maxValue=30 step=1
-        Switch item=Encesa_Bomba_Auto_Migdia icon="faucet"
-        Setpoint item=Durada_Encesa_Auto_Migdia icon="time" label="Durada migdia [%.1f min]" minValue=1 maxValue=30 step=1
-        Switch item=Encesa_Bomba_Auto_Tarda icon="faucet"
-        Setpoint item=Durada_Encesa_Auto_Tarda icon="time" label="Durada tarda [%.1f min]" minValue=1 maxValue=30 step=1
+        Switch item=Encesa_Bomba_Manual icon="sprinkler"
+        Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
+        Switch item=Encesa_Bomba_Auto_Mati icon="sprinkler"
+        Setpoint item=Durada_Encesa_Auto_Mati icon="stopwatch" label="Durada mati [%.1f min]" minValue=1 maxValue=30 step=1
+        Switch item=Encesa_Bomba_Auto_Migdia icon="sprinkler"
+        Setpoint item=Durada_Encesa_Auto_Migdia icon="stopwatch" label="Durada migdia [%.1f min]" minValue=1 maxValue=30 step=1
+        Switch item=Encesa_Bomba_Auto_Tarda icon="sprinkler"
+        Setpoint item=Durada_Encesa_Auto_Tarda icon="stopwatch" label="Durada tarda [%.1f min]" minValue=1 maxValue=30 step=1
     }
 
     Frame label="Temperatures sistema elèctric" {
@@ -34,7 +41,7 @@ sitemap default label="Ca l'espiga" {
         Text item=VentiladorBateries label="Vent. bateries: [%s]" icon="fan"
         Text item=VentiladorElectronica label="Vent. electr.: [%s]" icon="fan"
 
-        Selection item=VentiladorGestioElect icon='wallswitch' mappings=["auto"="Automatic", "manual"="Manual"]
+        Selection item=VentiladorGestioElect icon="thermostat_heater" mappings=["auto"="Automatic", "manual"="Manual"]
 
         Switch item=VentiladorBateriesManual icon="fan"
         Switch item=VentiladorElectronicaManual icon="fan"
@@ -61,12 +68,12 @@ sitemap default label="Ca l'espiga" {
 
     
     Frame label="Previsió de temps" {
-        Text icon="temperature" item=Temperatura_Max_Previsio
-        Text icon="temperature" item=Temperatura_Min_Previsio
-        Text icon="water" item=Prob_Precipitacio_Previsio
-        Text icon="temperature" item=Temperatura_Max_Previsio_Dema
-        Text icon="temperature" item=Temperatura_Min_Previsio_Dema
-        Text icon="water" item=Prob_Precipitacio_Previsio_Dema
+        Text icon="temperature_hot" item=Temperatura_Max_Previsio
+        Text icon="temperature_cold" item=Temperatura_Min_Previsio
+        Text icon="rain" item=Prob_Precipitacio_Previsio
+        Text icon="temperature_hot" item=Temperatura_Max_Previsio_Dema
+        Text icon="temperature_cold" item=Temperatura_Min_Previsio_Dema
+        Text icon="rain" item=Prob_Precipitacio_Previsio_Dema
     }
     
 }

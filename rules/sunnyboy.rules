@@ -11,10 +11,13 @@ var String token = null
 val Integer refreshInterval = 60
 var Integer currentInterval = 0
 
+var Timer zeroPowerIfTooMuchTimeTimer = null
+val minutesWithoutPowerMeasurementBeforSettingZero = 5
+
 rule "Refresh sunny boy token"
 when
     //Time cron "0 0 * ? * * *"
-    Time cron "0 * 6-21 ? * * *"
+    Time cron "0 0/15 6-21 ? * * *"
     or Item SunnyBoy_Token received command
     or System started
 then
@@ -94,6 +97,20 @@ then
             SunnyBoy_Pot_Actual.postUpdate(tot_power)
             
             SunnyBoy_Time_Read.postUpdate(now.toString)
+
+            //set up the timer to set the measurements to 0 if too much time without 
+            // measurements => thsi way the rest of the system does not think that
+            // there is unused power from an old measurement.
+            if(zeroPowerIfTooMuchTimeTimer!==null){
+                zeroPowerIfTooMuchTimeTimer.cancel()
+                zeroPowerIfTooMuchTimeTimer=null
+            }
+            zeroPowerIfTooMuchTimeTimer = createTimer(now.plusMinutes(minutesWithoutPowerMeasurementBeforSettingZero), [|
+                zeroPowerIfTooMuchTimeTimer = null
+                SunnyBoy_Pot_Rebutjada.postUpdate(potRebutjada)
+                SunnyBoy_Pot_Actual.postUpdate(tot_power)
+            ])
+
         }else if(error!==null && error.equals("401")){
             logWarn("SunnyBoy","Obtingut 401 del POST "+rawData+", posant el token a null i forçant refresh del token")
             token = null
@@ -103,4 +120,15 @@ then
         }
     }
     
+end
+
+// per assegurar que a la nit no s'interpreta que hi ha potencia produida o rebutjada
+rule "Assegura nit zero"
+when
+    //Time cron "0/10 * * ? * * *"
+    Time cron "0 0 0,1,2,3,4,5,22,23 ? * * *"
+then
+    SunnyBoy_Pot_Rebutjada.postUpdate(0)
+    SunnyBoy_Pot_Actual.postUpdate(0)
+    SunnyBoy_Pot_Usada.postUpdate(0)
 end

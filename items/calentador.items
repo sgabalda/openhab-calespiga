@@ -1,0 +1,10 @@
+String GestioAutomaticaCalentador "Gestio automàtica del calentador" <thermostat_heater>
+//Number SunnyBoy_Pot_Rebutjada_TEST "Pot. rebutjada TEST [%d W]"       //only for testing
+//th enxt two swithces are ready in case the arduino mqqt client does not work, and there is a
+//wire conencting to the relays for 500 and 1000W
+//Switch Encesa_Calentador_500 "Encesa calentador 500" {gpio="pin:5 activelow:yes initialValue:high"}
+//Switch Encesa_Calentador_1000 "Encesa calentador 1000" {gpio="pin:6 activelow:yes initialValue:high"}
+
+String Calentador_Potencia_ProxyItem "Proxy Item calentador"    //for internal use, will be forwarded to MQTT or GPIOs
+String Calentador_Potencia_UserSelection "Pot. seleccionada (W)"  <dial_heater>   //what the user selects as current power to use
+String Calentador_Potencia_UserDisplay "Consum (W)"   <water_heater> //what the user sees as current power used

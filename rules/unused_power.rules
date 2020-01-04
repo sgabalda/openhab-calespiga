@@ -1,0 +1,97 @@
+
+
+val useDirectGpioCalentador = false              // if true, in addition to send the mqtt, the GPIO 4 and 5 are turned on for 500 and 1000W
+
+rule "Manage unused power"
+when
+    Time cron "0/30 * 7-21 ? * * *"
+    or System started
+then
+    val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    val currentUsedState = ArduinoCalentadorThing_CalentadorPotenciaEstat.state
+    //val unusedPower = (SunnyBoy_Pot_Rebutjada_TEST.state as Number).intValue
+    val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
+    var currentUsedPower = 0;
+    if(currentUsedState != null && currentUsedState != "OFF" ){
+        logInfo("unused_power.rules", "CurrentPower is " + currentUsedState)
+        currentUsedPower = Integer::parseInt(currentUsedState.toString)
+    }
+    logInfo("unused_power.rules", "The unused power is "+unusedPower+", the power used by optional laods is "+currentUsedPower+", the gestio is "+gestioAutoCalentador)
+    if(gestioAutoCalentador == "auto"){
+        if(unusedPower <= 0.0){
+            //turn off the optional loads
+            logInfo("unused_power.rules", "the unused power is 0. Turning off optional loads")
+            Calentador_Potencia_ProxyItem.sendCommand("0");
+        }else{
+            val Integer availablePower = currentUsedPower + unusedPower
+            logInfo("unused_power.rules", "Available power is "+availablePower)
+            if(availablePower >= 2000){
+                Calentador_Potencia_ProxyItem.sendCommand("2000");
+            }else if(availablePower >= 1000){
+                Calentador_Potencia_ProxyItem.sendCommand("1000");
+            }else if(availablePower >= 500){
+                Calentador_Potencia_ProxyItem.sendCommand("500");
+            }
+        }
+    }else{
+        //refresh the value to avoid auto-turn off
+        val currentPowerSelection = Calentador_Potencia_UserSelection.state
+        logInfo("unused_power.rules", "Gestio Calentador is manual. Refresh status to "+currentPowerSelection)
+        Calentador_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
+    }
+            
+end 
+
+rule "Canvi manual calentador"
+when 
+    Item Calentador_Potencia_UserSelection received command
+    or Item GestioAutomaticaCalentador received command
+then
+    val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    if(gestioAutoCalentador != "auto"){
+        val currentPowerSelection = Calentador_Potencia_UserSelection.state
+        logInfo("unused_power.rules", "Gestio Calentador is manual. Refreshed status to "+currentPowerSelection)
+        Calentador_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
+    }else{
+        logInfo("unused_power.rules", "Gestio Calentador is auto. Changing the power has no effects")
+    }
+end
+
+rule "Turn On Calentador"
+when
+    Item Calentador_Potencia_ProxyItem received command
+then
+    if(useDirectGpioCalentador){
+        var pin500W = Encesa_Calentador_500
+        var pin1000W = Encesa_Calentador_1000
+        val currentUsedState = Calentador_Potencia_UserDisplay
+        val recievedCommandPower = Integer::parseInt(receivedCommand.toString)
+        if(recievedCommandPower < 500){
+            pin500W.sendCommand(OFF)
+            pin1000W.sendCommand(OFF)
+            currentUsedState.postUpdate("0")
+        }else if(recievedCommandPower < 1000){
+            pin500W.sendCommand(ON)
+            pin1000W.sendCommand(OFF)
+            currentUsedState.postUpdate("500")
+        }else{
+            pin500W.sendCommand(ON)
+            pin1000W.sendCommand(ON)
+            currentUsedState.postUpdate("1000")
+        }
+    }else{
+        ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
+        logInfo("unused_power.rules", "Sending to calentador MQTT "+receivedCommand)
+    
+    }
+    
+end
+
+rule "update display state from MQTT"
+when
+    Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update
+then
+    if(!useDirectGpioCalentador){
+        Calentador_Potencia_UserDisplay.postUpdate(ArduinoCalentadorThing_CalentadorPotenciaEstat.state)
+    }
+end  
