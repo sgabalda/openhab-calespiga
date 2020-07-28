@@ -1,7 +1,7 @@
 import java.util.Date
 
 var upperlimitTempBat = 30.0
-var lowerlimitTempBat = 5.0
+var lowerlimitTempBat = 2.0
 
 var upperlimitTempElec = 30.0
 var lowerlimitTempElec = 0.0

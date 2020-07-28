@@ -15,8 +15,8 @@ sitemap default label="Ca l'espiga" {
     Frame label="Calentador" {
         Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
         Selection item=Calentador_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "500"="500W", "1000"="1000W", "2000"="2000W"]
-        Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat (W): [%s]" 
-        //Setpoint item=SunnyBoy_Pot_Rebutjada_TEST icon="time" label="Durada encesa manual [%.1f min]" minValue=0 maxValue=2000 step=500
+        Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat: [%d W]" 
+        Text item=Calentador_Energia_Avui icon="heater_display" label="Energia avui: [%.3f kWh]" 
     }
     
     Frame label="Reg de l'hort" {

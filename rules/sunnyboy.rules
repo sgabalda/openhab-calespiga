@@ -1,9 +1,9 @@
 
 val username = "usr"
 val pass = "sergi00xp"
-val login_url = "http://192.168.43.250/dyn/login.json"
+val login_url = "http://192.168.2.115/dyn/login.json"
 
-val data_url = "http://192.168.43.250/dyn/getValues.json"
+val data_url = "http://192.168.2.115/dyn/getValues.json"
 val total_power_code = "6100_40263F00"
 val freq_code = "6100_00465700"
 

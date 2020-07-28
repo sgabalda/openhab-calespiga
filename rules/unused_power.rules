@@ -2,26 +2,41 @@
 
 val useDirectGpioCalentador = false              // if true, in addition to send the mqtt, the GPIO 4 and 5 are turned on for 500 and 1000W
 
+var long lastChangePower = -1
+
+rule "By default automatic management of heater"
+when
+	System started
+then
+	GestioAutomaticaCalentador.sendCommand("auto")
+end
+
 rule "Manage unused power"
 when
     Time cron "0/30 * 7-21 ? * * *"
     or System started
 then
     val gestioAutoCalentador = GestioAutomaticaCalentador.state
-    val currentUsedState = ArduinoCalentadorThing_CalentadorPotenciaEstat.state
+    val currentUsedState = Calentador_Potencia_UserDisplay.state
     //val unusedPower = (SunnyBoy_Pot_Rebutjada_TEST.state as Number).intValue
     val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
     var currentUsedPower = 0;
-    if(currentUsedState != null && currentUsedState != "OFF" ){
+    if(currentUsedState !== null && currentUsedState!= NULL && currentUsedState != "OFF" ){
         logInfo("unused_power.rules", "CurrentPower is " + currentUsedState)
-        currentUsedPower = Integer::parseInt(currentUsedState.toString)
+        currentUsedPower = (currentUsedState as Number).intValue
     }
     logInfo("unused_power.rules", "The unused power is "+unusedPower+", the power used by optional laods is "+currentUsedPower+", the gestio is "+gestioAutoCalentador)
     if(gestioAutoCalentador == "auto"){
         if(unusedPower <= 0.0){
             //turn off the optional loads
-            logInfo("unused_power.rules", "the unused power is 0. Turning off optional loads")
-            Calentador_Potencia_ProxyItem.sendCommand("0");
+            logInfo("unused_power.rules", "the unused power is 0. Lowing down optional loads")
+            if(currentUsedPower >= 2000){
+                Calentador_Potencia_ProxyItem.sendCommand("1000");
+            }else if(currentUsedPower >= 1000){
+                Calentador_Potencia_ProxyItem.sendCommand("500");
+            }else {
+                Calentador_Potencia_ProxyItem.sendCommand("0");
+            }
         }else{
             val Integer availablePower = currentUsedPower + unusedPower
             logInfo("unused_power.rules", "Available power is "+availablePower)
@@ -92,6 +107,43 @@ when
     Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update
 then
     if(!useDirectGpioCalentador){
-        Calentador_Potencia_UserDisplay.postUpdate(ArduinoCalentadorThing_CalentadorPotenciaEstat.state)
+        val receivedEstat = ArduinoCalentadorThing_CalentadorPotenciaEstat.state.toString
+        var newPower = 0
+        if(receivedEstat != "OFF"){
+            newPower = Double::parseDouble(receivedEstat)
+        }
+        
+        val oldPowerState = Calentador_Potencia_UserDisplay.state
+        var oldPower = 0.0
+        if(oldPowerState != NULL){
+            oldPower = (oldPowerState as Number).doubleValue
+        }
+
+        val now_millis = now.millis
+        logInfo("unused_power.rules", "Going to update energy from "+lastChangePower+" with "+oldPower)
+        if(lastChangePower>0 ){
+            val timeMillis = now_millis - lastChangePower
+            val timeHours = (timeMillis/1000.0)/3600
+            val energyToAdd = oldPower*timeHours/1000
+
+            val energyCurrent = (Calentador_Energia_Avui.state as Number).doubleValue
+
+            logInfo("unused_power.rules", "Adding energy calentador "+energyToAdd+" to "+energyCurrent)
+
+            Calentador_Energia_Avui.postUpdate(energyCurrent + energyToAdd)
+
+        }
+        lastChangePower = now_millis
+
+        Calentador_Potencia_UserDisplay.postUpdate(newPower)
     }
-end  
+end 
+
+rule "Reset energy today"
+when
+    Time cron "0 0 0 ? * * *"
+    or System started
+then
+    Calentador_Energia_Avui.postUpdate(0)
+    lastChangePower = -1
+end
