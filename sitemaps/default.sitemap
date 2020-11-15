@@ -6,10 +6,12 @@ sitemap default label="Ca l'espiga" {
         Text icon="energy" item=SunnyBoy_Pot_Actual
         //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea1
         //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea2
-        //Text icon="pressure" item=SunnyBoy_Freq
-        //Text icon="solarplant" item=SunnyBoy_Token
         Text icon="time" item=SunnyBoy_Time_Attempt
         Text icon="time" item=SunnyBoy_Time_Read
+    }
+    
+    Frame{
+    Webview height=10 url="http://192.168.2.114:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
     }
 
     Frame label="Calentador" {
