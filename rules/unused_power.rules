@@ -102,6 +102,22 @@ then
     
 end
 
+rule "update termostat state from MQTT"
+when
+    Item ArduinoCalentadorThing_CalentadorTermostatStatus  received update
+then
+
+    val receivedEstat = ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString
+    logInfo("unused_power.rules", "Calentador termostat changed to "+receivedEstat)
+    if(receivedEstat == "HOT"){
+        logInfo("unused_power.rules", "Calentador is HOT, changing last HOT date")
+        Calentador_Hot_Date.postUpdate(now.toString)
+    }
+    
+    Calentador_Termostat_UserDisplay.postUpdate(receivedEstat)    
+    
+end
+
 rule "update display state from MQTT"
 when
     Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update

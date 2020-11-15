@@ -11,17 +11,15 @@ sitemap default label="Ca l'espiga" {
     }
     
     Frame{
-        Webview height=12 url="http://192.168.2.114:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
+    Webview height=12 url="http://192.168.2.114:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
     }
 
     Frame label="Calentador" {
         Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
         Selection item=Calentador_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "500"="500W", "1000"="1000W", "2000"="2000W"]
         Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat Pot.: [%d W]" 
-        
         Text item=Calentador_Termostat_UserDisplay icon="water_heater" label="Estat Term.: [%s]" 
         Text item=Calentador_Hot_Date icon="time" label="Ultim cop calent: [%1$td/%1$tm/%1$tY %1$tT]" 
-        
         Text item=Calentador_Energia_Avui icon="heater_display" label="Energia avui: [%.3f kWh]" 
     }
     
@@ -55,10 +53,8 @@ sitemap default label="Ca l'espiga" {
         Text item=MinutesBatFanFromBatteries label="Min. vent. bat. amb bat.: [%s]" icon="time"
         Text item=MinutesElecFanFromBatteries label="Min. vent. elec. amb bat.: [%s]" icon="time"
     }
-
     Frame{
-        Webview height=12 url="http://192.168.2.114:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
+    Webview height=12 url="http://192.168.2.114:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
     }
-    
     
 }

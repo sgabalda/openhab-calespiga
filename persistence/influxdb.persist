@@ -9,4 +9,6 @@ GestioAutomaticaCalentador,Durada_Encesa_Manual,Encesa_Bomba_Auto_Mati,Durada_En
 SunnyBoy_Pot_Actual,SunnyBoy_Pot_Usada,SunnyBoy_Pot_Rebutjada: strategy = everyChange
 VentiladorGestioElect,VentiladorBateriesManual,VentiladorElectronicaManual: strategy = everyChange, restoreOnStartup
 ElectronicaTemperatura,BateriesTemperatura,ExteriorArmarisTemperatura: strategy = everyChange
+Calentador_Hot_Date: strategy = restoreOnStartup
+Calentador_Potencia_UserDisplay,Calentador_Termostat_UserDisplay: strategy = everyMinute
 }

@@ -1,0 +1,10 @@
+Number:Power Unused_Power "Proxy item unused power"  //internal use, to post the unused power and decide what to do with it
+
+Number:Power Calentador_Available_Power "Proxy item heater available power"  //internal use, to post the power that is available for the heater
+Number:Power Calentador_Left_Power "Proxy item heater left power"  //internal use, to post the power that is available for other devices after the heater
+
+Number:Power Cotxe_Available_Power "Proxy item car available power"  //internal use, to post the power that is available for the car
+Number:Power Cotxe_Left_Power "Proxy item car left power"  //internal use, to post the power that is available for other devices after the car
+
+Number:Power Estufa_Available_Power "Proxy item warming available power"  //internal use, to post the power that is available for the warming device
+Number:Power Estufa_Left_Power "Proxy item warming left power"  //internal use, to post the power that is available for other devices after the warming device
