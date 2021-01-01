@@ -43,6 +43,7 @@ sitemap default label="Ca l'espiga" {
         Text item=ElectronicaTemperatura
         Text item=BateriesTemperatura
         Text item=ExteriorArmarisTemperatura
+        Text item=BateriesTemperaturaAdosada
         
         Text item=VentiladorBateries label="Vent. bateries: [%s]" icon="fan"
         Text item=VentiladorElectronica label="Vent. electr.: [%s]" icon="fan"
