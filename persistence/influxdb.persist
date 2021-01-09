@@ -10,4 +10,5 @@ SunnyBoy_Pot_Actual,SunnyBoy_Pot_Usada,SunnyBoy_Pot_Rebutjada: strategy = everyC
 VentiladorGestioElect,VentiladorBateriesManual,VentiladorElectronicaManual: strategy = everyChange, restoreOnStartup
 ElectronicaTemperatura,BateriesTemperatura,ExteriorArmarisTemperatura,BateriesTemperaturaAdosada: strategy = everyChange
 Calentador_Hot_Date: strategy = restoreOnStartup
+Calentador_Energia_Avui,Calentador_Potencia_UserDisplay: strategy = everyChange, restoreOnStartup
 }
