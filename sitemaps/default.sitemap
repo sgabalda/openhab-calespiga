@@ -58,7 +58,7 @@ sitemap default label="Ca l'espiga" {
     }
 
     Frame{
-        Webview height=12 url="http://192.168.2.114:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
+        Webview height=16 url="http://192.168.2.114:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
     }
     
     
