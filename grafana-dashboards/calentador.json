@@ -30,7 +30,7 @@
         },
         "overrides": []
       },
-      "fill": 1,
+      "fill": 2,
       "fillGradient": 0,
       "gridPos": {
         "h": 6,
@@ -50,7 +50,7 @@
         "values": false
       },
       "lines": true,
-      "linewidth": 1,
+      "linewidth": 5,
       "nullPointMode": "null",
       "percentage": false,
       "pluginVersion": "7.1.1",
@@ -81,6 +81,8 @@
           "measurement": "Calentador_Potencia_UserDisplay",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"Calentador_Potencia_UserDisplay\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -194,7 +196,11 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "alias": "Energia (kWh)"
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -218,7 +224,7 @@
           "measurement": "Calentador_Energia_Avui",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT max(\"value\") FROM \"Calentador_Energia_Avui\" WHERE time > now() - 7d GROUP BY time(1d) fill(null)",
+          "query": "SELECT max(\"value\") FROM \"Calentador_Energia_Avui\" WHERE $timeFilter GROUP BY time(1d) fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -240,7 +246,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
+      "timeFrom": "7d",
       "timeRegions": [],
       "timeShift": null,
       "title": "Energia per dia",
@@ -289,7 +295,7 @@
     "list": []
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -308,5 +314,5 @@
   "timezone": "",
   "title": "Calentador",
   "uid": "yImV7EWgz",
-  "version": 6
+  "version": 18
 }
