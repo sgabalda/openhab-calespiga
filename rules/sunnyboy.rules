@@ -6,6 +6,7 @@ val login_url = "http://192.168.2.115/dyn/login.json"
 val data_url = "http://192.168.2.115/dyn/getValues.json"
 val total_power_code = "6100_40263F00"
 val freq_code = "6100_00465700"
+val lines_power = "6380_40251E00"
 
 var String token = null
 val Integer refreshInterval = 60
@@ -56,17 +57,28 @@ then
 
         SunnyBoy_Time_Attempt.postUpdate(now.toString)
         val notification_json = '{"destDev":[],"keys":["' 
-            + total_power_code + '","' 
-            + freq_code + '"]}'
+            + total_power_code + '","'
+            + freq_code + '","'
+            + lines_power + '"]}'
         logInfo("SunnyBoy","Enviant peticio: "+notification_json)
         val String rawData = sendHttpPostRequest(data_url+"?sid="+token, "application/json", notification_json)
         logInfo("SunnyBoy","Obtingut resposta del post: "+rawData)
         var String error = transform("JSONPATH", "$.err", rawData)
-        if(error!==null && error.equals(rawData)){
+        if(error!==null && error.equals(rawData)){ 
             var String data = transform("JSONPATH", "$.result.0156-76BCE994."+total_power_code+".1[0].val", rawData)
             logInfo("SunnyBoy","La pot usada es: "+data)
             var Float potUsada=Float::parseFloat(data);
             SunnyBoy_Pot_Usada.postUpdate(potUsada.intValue)
+            
+            data = transform("JSONPATH", "$.result.0156-76BCE994."+lines_power+".1[0].val", rawData)
+            logInfo("SunnyBoy","La pot linea 1 es: "+data)
+            var Float potLinea1=Float::parseFloat(data);
+            SunnyBoy_Pot_Actual_Linea1.postUpdate(potLinea1.intValue)
+            data = transform("JSONPATH", "$.result.0156-76BCE994."+lines_power+".1[1].val", rawData)
+            logInfo("SunnyBoy","La pot usada es: "+data)
+            var Float potLinea2=Float::parseFloat(data);
+            SunnyBoy_Pot_Actual_Linea2.postUpdate(potLinea2.intValue)
+            
             data = transform("JSONPATH", "$.result.0156-76BCE994."+freq_code+".1[0].val", rawData)
             logInfo("SunnyBoy","La freq es: "+data)
             var Float freq=Float::parseFloat(data)/100;

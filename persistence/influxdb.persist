@@ -6,7 +6,7 @@ everyDay : "0 0 0 * * ?"
 
 Items {
 GestioAutomaticaCalentador,Durada_Encesa_Manual,Encesa_Bomba_Auto_Mati,Durada_Encesa_Auto_Mati,Encesa_Bomba_Auto_Migdia,Durada_Encesa_Auto_Migdia,Encesa_Bomba_Auto_Tarda,Durada_Encesa_Auto_Tarda:  strategy = everyChange, restoreOnStartup
-SunnyBoy_Pot_Actual,SunnyBoy_Pot_Usada,SunnyBoy_Pot_Rebutjada: strategy = everyChange
+SunnyBoy_Pot_Actual,SunnyBoy_Pot_Usada,SunnyBoy_Pot_Rebutjada,SunnyBoy_Pot_Actual_Linea1,SunnyBoy_Pot_Actual_Linea2: strategy = everyChange
 VentiladorGestioElect,VentiladorBateriesManual,VentiladorElectronicaManual: strategy = everyChange, restoreOnStartup
 ElectronicaTemperatura,BateriesTemperatura,ExteriorArmarisTemperatura,BateriesTemperaturaAdosada: strategy = everyChange
 Calentador_Hot_Date: strategy = restoreOnStartup
