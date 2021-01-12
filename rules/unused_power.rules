@@ -138,15 +138,18 @@ then
         val now_millis = now.millis
         logInfo("unused_power.rules", "Going to update energy from "+lastChangePower+" with "+oldPower)
         if(lastChangePower>0 ){
-            val timeMillis = now_millis - lastChangePower
-            val timeHours = (timeMillis/1000.0)/3600
-            val energyToAdd = oldPower*timeHours/1000
+        		val termostat = Calentador_Termostat_UserDisplay.state
+        		if(termostat != "HOT"){
+        			val timeMillis = now_millis - lastChangePower
+            	val timeHours = (timeMillis/1000.0)/3600
+            	val energyToAdd = oldPower*timeHours/1000
 
-            val energyCurrent = (Calentador_Energia_Avui.state as Number).doubleValue
+            	val energyCurrent = (Calentador_Energia_Avui.state as Number).doubleValue
 
-            logInfo("unused_power.rules", "Adding energy calentador "+energyToAdd+" to "+energyCurrent)
+            	logInfo("unused_power.rules", "Adding energy calentador "+energyToAdd+" to "+energyCurrent)
 
-            Calentador_Energia_Avui.postUpdate(energyCurrent + energyToAdd)
+            	Calentador_Energia_Avui.postUpdate(energyCurrent + energyToAdd)
+        		}
 
         }
         lastChangePower = now_millis

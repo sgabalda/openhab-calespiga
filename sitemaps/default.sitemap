@@ -11,7 +11,7 @@ sitemap default label="Ca l'espiga" {
     }
     
     Frame{
-        Webview height=12 url="http://192.168.2.114:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
+        Webview height=12 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
     }
 
     Frame label="Calentador" {
@@ -25,7 +25,7 @@ sitemap default label="Ca l'espiga" {
         Text item=Calentador_Energia_Avui icon="heater_display" label="Energia avui: [%.3f kWh]" 
     }
     Frame{
-        Webview height=14 url="http://192.168.2.114:3000/d/yImV7EWgz/calentador?orgId=1"
+        Webview height=14 url="http://calespiga.ddns.net:3000/d/yImV7EWgz/calentador?orgId=1"
     }
     
     Frame label="Reg de l'hort" {
@@ -61,7 +61,7 @@ sitemap default label="Ca l'espiga" {
     }
 
     Frame{
-        Webview height=16 url="http://192.168.2.114:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
+        Webview height=16 url="http://calespiga.ddns.net:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
     }
     
     
