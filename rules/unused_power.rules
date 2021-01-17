@@ -161,7 +161,6 @@ end
 rule "Reset energy today"
 when
     Time cron "0 0 0 ? * * *"
-    or System started
 then
     Calentador_Energia_Avui.postUpdate(0)
     lastChangePower = -1
