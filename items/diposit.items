@@ -1,0 +1,1 @@
+String DipositPercent "[%s]" {channel="exec:command:diposit:output"}

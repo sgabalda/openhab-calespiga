@@ -1,0 +1,91 @@
+#Libraries
+import RPi.GPIO as GPIO
+import time
+
+TIME_BETWEEN_MEASUREMENTS = 0.5
+DISCARDED_START_MEASUREMENTS = 1
+DISCARDED_END_MEASUREMENTS = 1
+MEASUREMENTS_TOTAL = 8
+DEVIATION_DISCARD_MEASURE = 0.2
+ 
+#GPIO Mode (BOARD / BCM)
+GPIO.setmode(GPIO.BCM)
+ 
+#set GPIO Pins
+GPIO_TRIGGER = 18
+GPIO_ECHO = 24
+ 
+#set GPIO direction (IN / OUT)
+GPIO.setup(GPIO_TRIGGER, GPIO.OUT)
+GPIO.setup(GPIO_ECHO, GPIO.IN)
+ 
+def distance():
+    # set Trigger to HIGH
+    GPIO.output(GPIO_TRIGGER, True)
+ 
+    # set Trigger after 0.01ms to LOW
+    time.sleep(0.00001)
+    GPIO.output(GPIO_TRIGGER, False)
+ 
+    StartTime = time.time()
+    StopTime = time.time()
+ 
+    # save StartTime
+    while GPIO.input(GPIO_ECHO) == 0:
+        StartTime = time.time()
+ 		
+    # save time of arrival
+    while GPIO.input(GPIO_ECHO) == 1:
+        StopTime = time.time()
+     
+    # time difference between start and arrival
+    TimeElapsed = StopTime - StartTime
+    # multiply with the sonic speed (34300 cm/s)
+    # and divide by 2, because there and back
+    distance = (TimeElapsed * 34300) / 2
+ 
+    return distance
+    
+def getRawMeasurements():
+	measurements = []
+ 	for x in range(MEASUREMENTS_TOTAL):
+ 		dist = distance()
+ 		measurements.append(dist)
+ 		#print ("Measured Distance = %.1f cm" % dist)
+ 		time.sleep(TIME_BETWEEN_MEASUREMENTS)
+ 	return measurements
+ 	
+def getFilteredMeasurements(measurements):
+	measurements = measurements[DISCARDED_START_MEASUREMENTS:]
+ 	if DISCARDED_END_MEASUREMENTS > 0:
+ 		measurements = measurements[:-DISCARDED_END_MEASUREMENTS]
+ 	
+ 	mean = sum(measurements) / float(len(measurements))
+ 	#print (mean)
+ 	
+ 	result = [a for a in measurements if abs(a - mean) < DEVIATION_DISCARD_MEASURE]
+ 	if len(result) == 0:
+ 		result = [mean]
+ 		
+ 	return result
+ 	
+def getMeasurement(measurements):
+	return sum(measurements) / float(len(measurements))
+	
+def cmToPercentage(measurement):
+	result = 100 - (measurement - 9.1)*100/200
+	if result < 0:
+		result = 0
+	return result 
+ 
+if __name__ == '__main__':
+    try:
+    	measurement = getMeasurement(getFilteredMeasurements(getRawMeasurements()))
+    	
+    	percentage = cmToPercentage(measurement)
+    	print ("%.1f" % percentage)
+    	
+
+ 		
+    finally:
+        GPIO.cleanup()
