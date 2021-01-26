@@ -30,7 +30,7 @@ sitemap default label="Ca l'espiga" {
     
     Frame label="Reg de l'hort" {
         Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
-        Text icon="water" item=DipositPercent label="Nivell diposit: [%s]"
+        Text icon="water" item=DipositPercent label="Nivell diposit: [%s %%]"
         Switch item=Encesa_Bomba_Manual icon="sprinkler"
         Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
         Switch item=Encesa_Bomba_Auto_Mati icon="sprinkler"

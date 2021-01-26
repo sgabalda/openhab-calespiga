@@ -4,7 +4,7 @@ import time
 
 TIME_BETWEEN_MEASUREMENTS = 0.5
 DISCARDED_START_MEASUREMENTS = 1
-DISCARDED_END_MEASUREMENTS = 1
+DISCARDED_END_MEASUREMENTS = 0
 MEASUREMENTS_TOTAL = 8
 DEVIATION_DISCARD_MEASURE = 0.2
  
@@ -83,9 +83,7 @@ if __name__ == '__main__':
     	measurement = getMeasurement(getFilteredMeasurements(getRawMeasurements()))
     	
     	percentage = cmToPercentage(measurement)
-    	print ("%.1f" % percentage)
-    	
+    	print ("%.2f" % percentage)
 
- 		
     finally:
         GPIO.cleanup()

@@ -15,7 +15,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 4,
   "links": [],
   "panels": [
     {
@@ -23,7 +23,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Openhab",
+      "datasource": null,
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -33,7 +33,7 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 9,
+        "h": 8,
         "w": 24,
         "x": 0,
         "y": 0
@@ -63,7 +63,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "Potencia generada",
           "groupBy": [
             {
               "params": [
@@ -78,88 +77,10 @@
               "type": "fill"
             }
           ],
-          "hide": false,
-          "measurement": "SunnyBoy_Pot_Actual",
+          "measurement": "DipositPercentNumber",
           "orderByTime": "ASC",
-          "policy": "autogen",
+          "policy": "default",
           "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "Potencia usada",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "SunnyBoy_Pot_Usada",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT mean(\"value\") FROM \"SunnyBoy_Pot_Usada\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "alias": "Potencia rebutjada",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "hide": false,
-          "measurement": "SunnyBoy_Pot_Rebutjada",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "C",
           "resultFormat": "time_series",
           "select": [
             [
@@ -182,7 +103,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Fotovoltaica",
+      "title": "Dipòsit",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -198,11 +119,11 @@
       },
       "yaxes": [
         {
-          "format": "watt",
+          "format": "percent",
           "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
+          "max": "100",
+          "min": "0",
           "show": true
         },
         {
@@ -220,6 +141,7 @@
       }
     }
   ],
+  "refresh": "10s",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -227,7 +149,7 @@
     "list": []
   },
   "time": {
-    "from": "now-2d",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
@@ -244,7 +166,7 @@
     ]
   },
   "timezone": "",
-  "title": "Fotovoltaica",
-  "uid": "PUsS3Cmgz",
-  "version": 8
+  "title": "Diposit",
+  "uid": "HSNUkZzRk",
+  "version": 3
 }
