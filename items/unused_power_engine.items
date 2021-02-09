@@ -1,0 +1,13 @@
+Number:Power AvailablePower "Potència disponible"  
+//internal use, to post the power that is available to be used by devices
+String AvailablePowerProcessStatus "Estat del processat de la potència sobrant"      
+//what is the status of the processing. May be "start", "processing" or "finished"
+
+String DestinationDevices "Dispositius per enviar la potència disponible"      
+//comma separated list of the devices where to send the availiable power, in order of priority
+
+//			INFO
+//	all unused devices must define this Items:
+//		<device>_AvailablePower -> that receives the power available for the device
+//		<device>_RequiredPower	-> that exposes the power that will be used by the device
+//		<device>_ApplyChange	-> that triggers the change to consume what was exposed in the RequiredPower
