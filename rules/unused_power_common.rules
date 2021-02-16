@@ -19,16 +19,22 @@ when
     Time cron "0/30 * 7-21 ? * * *"
     or System started
 then
-	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
-	val devices = DestinationDevices.state.toString.split(',')
-	var availablePower = unusedPower
-	var i = 0
-	while(i<devices.length){
-		val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
-		availablePower = availablePower + currentItem.state
-	}
-	logWarn("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
+    val engineStatus = AvailablePowerProcessStatus.state
+	if(engineStatus == "finished"){
+	    val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
+		val devices = DestinationDevices.state.toString.split(',')
+		var availablePower = unusedPower
+		var i = 0
+		while(i<devices.length){
+			val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
+			availablePower = availablePower + currentItem.state
+		}
+		logWarn("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
 
-	//TODO update all devices available power in order
+		//TODO update all devices available power in order
+    }else{
+    	//TODO record that it has been finished and send a notification if not executed after N tries
+
+    }
 
 end
