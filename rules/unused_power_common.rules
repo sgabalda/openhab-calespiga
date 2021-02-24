@@ -1,15 +1,19 @@
 import org.eclipse.smarthome.model.script.ScriptServiceUtil
 
+var finishedRetries = 0
+val MAX_FINISHED_RETRIES = 10
+val currentItemUpdated = 0
+
 rule "Default boot values"
 when
 	System started
 then
 	AvailablePower.sendCommand(0)
-	AvailablePowerProcessStatus.sendCommand("finished")
+	AvailablePowerProcessStatus.postUpdate("finished")
 
 	//testing stuff, to be removed
 
-	DestinationDevices.sendCommand("Calentador,Cotxe")
+	DestinationDevices.postUpdate("Calentador,Cotxe")
 	Calentador_UsedPower.sendCommand(500)
 	Cotxe_UsedPower.sendCommand(2300)
 end
@@ -23,18 +27,38 @@ then
 	if(engineStatus == "finished"){
 	    val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
 		val devices = DestinationDevices.state.toString.split(',')
-		var availablePower = unusedPower
-		var i = 0
-		while(i<devices.length){
-			val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
-			availablePower = availablePower + currentItem.state
+		if(devices.length > 0){
+			var availablePower = unusedPower
+			var i = 0
+			while(i<devices.length){
+				val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
+				availablePower = availablePower + currentItem.state
+			}
+			logWarn("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
+
+			//set status as started and update all devices available power in order
+			AvailablePowerProcessStatus.postUpdate("started")
+			val firstItemAvailable = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_AvailablePower")
+			currentItemUpdated = 1
+			firstItemAvailable.sendCommand(availablePower)
+		}else{
+			logWarn("UnusedPower","There are no devices?! ")
 		}
-		logWarn("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
-
-		//TODO update all devices available power in order
     }else{
-    	//TODO record that it has been finished and send a notification if not executed after N tries
 
+    	finishedRetries = finishedRetries + 1
+    	logWarn("UnusedPower","Going to manage the unused power,but the engine is not finished. For "+finishedRetries+ " times")
+    	if(finishedRetries > MAX_FINISHED_RETRIES){
+    		sendBroadcastNotification("La gestió de la potencia sobrant s'ha encallat. Intentarem resetejar però potser alguna cosa no funciona")
+    		currentItemUpdated = 1
+    		while(i<devices.length){
+    			val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_AvailablePower")
+    			currentItem.sendCommand(0)
+    		}
+    		AvailablePowerProcessStatus.postUpdate("finished")
+    	}
     }
 
 end
+
+//TODO add a rule to update the next AvailablePower and increment currentItemUpdated up to the 

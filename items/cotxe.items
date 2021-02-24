@@ -5,6 +5,6 @@
 //		<device>_ApplyChange	-> that triggers the change to consume what was exposed in the 
 
 Number:Power Cotxe_AvailablePower "Potencia sobrant disponible pel Cotxe"
-Number:Power Cotxe_UsedPower "Potencia sobrant disponible pel Cotxe"
-Number:Power Cotxe_RequiredPower "Potencia sobrant disponible pel Cotxe"
+Number:Power Cotxe_UsedPower "Potencia actualment usada pel Cotxe"
+Number:Power Cotxe_RequiredPower "Potencia que serà usada pel Cotxe"
 Switch Cotxe_ApplyChange "Dispara el càlcul de potència"
