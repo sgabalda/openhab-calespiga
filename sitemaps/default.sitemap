@@ -3,7 +3,7 @@ sitemap default label="Ca l'espiga" {
     Frame label="Testing" {
         Text icon="light" item=SunnyBoy_Pot_Usada
     }
-    Text item=FotovoltaicaTitle label="Fotovoltaica" labelcolor=["gold"]
+    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="sun_clouds"
     {
         Frame label="Fotovoltaica" {
             Text icon="light" item=SunnyBoy_Pot_Usada
@@ -20,7 +20,7 @@ sitemap default label="Ca l'espiga" {
         }
     }
 
-    Text item=CalentadorTitle label="Calentador" labelcolor=["gold"]
+    Text item=CalentadorTitle label="Calentador" icon="pressure"
     {
         Frame label="Calentador" {
             Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
@@ -37,7 +37,7 @@ sitemap default label="Ca l'espiga" {
         }
     }
 
-    Text item=RegTitle label="Reg i aigua" labelcolor=["gold"]
+    Text item=RegTitle label="Reg i aigua" icon="faucet"
     {
         Frame label="Reg de l'hort" {
             Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
@@ -53,7 +53,7 @@ sitemap default label="Ca l'espiga" {
         }
     }
 
-    Text item=TemperaturesTitle label="Temperatures" labelcolor=["gold"]
+    Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
     {
         Frame label="Temperatures sistema elèctric" {
             
