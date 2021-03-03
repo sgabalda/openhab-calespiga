@@ -1,4 +1,8 @@
 sitemap default label="Ca l'espiga" {
+
+    Frame label="Testing" {
+        Text icon="light" item=SunnyBoy_Pot_Usada
+    }
     
     Frame label="Fotovoltaica" {
         Text icon="light" item=SunnyBoy_Pot_Usada
