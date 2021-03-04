@@ -4,28 +4,36 @@ var finishedRetries = 0
 val MAX_FINISHED_RETRIES = 10
 var currentItemUpdated = 0
 
+// TESTING STUFF STARTS
+
+
+// TESTING STUFF ENDS
+
 rule "Default boot values"
 when
 	System started
 then
 	AvailablePower.sendCommand(0)
 	AvailablePowerProcessStatus.postUpdate("finished")
+end
 
-	//testing stuff, to be removed
-
-	DestinationDevices.postUpdate("Calentador,Cotxe")
-	Calentador_UsedPower.sendCommand(500)
-	//Cotxe_UsedPower.sendCommand(2300)
+rule "update extra power"
+when
+	Item SunnyBoy_Pot_Rebutjada changed
+then
+	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
+	NotUsedPower.postUpdate(unusedPower)
 end
 
 rule "Manage unused power"
 when
-    Time cron "0/30 * 7-21 ? * * *"
+    Time cron "0/30 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21 ? * * *"
     or System started
 then
     val engineStatus = AvailablePowerProcessStatus.state
 	if(engineStatus == "finished"){
-	    val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
+	    val unusedPower = (NotUsedPower.state as Number).intValue
+
 		val devices = DestinationDevices.state.toString.split(',')
 		if(devices.length > 0){
 			var availablePower = unusedPower
@@ -35,6 +43,8 @@ then
 				availablePower = availablePower + currentItem.state
 			}
 			logWarn("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
+
+			AvailablePower.postUpdate(availablePower)
 
 			//set status as started and update all devices available power in order
 			AvailablePowerProcessStatus.postUpdate("started")

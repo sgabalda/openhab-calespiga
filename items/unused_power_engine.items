@@ -1,5 +1,8 @@
-Number:Power AvailablePower "Potència extra"  
-//internal use, to post the power that is available to be used by devices
+Number:Power NotUsedPower "Potència extra"
+//the extra power not currently used that is available to be used by devices
+Number:Power AvailablePower "Potència disponible"
+//the power available to the devices, some of it may be used at the moment
+
 String AvailablePowerProcessStatus "Estat del processat"      
 //what is the status of the processing. May be "start", "processing" or "finished"
 

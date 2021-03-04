@@ -1,7 +1,0 @@
-Number   Temperatura_Min_Previsio   "Temp Min Prevista [%.2f °C]"
-Number   Temperatura_Max_Previsio   "Temp Max Prevista [%.2f °C]"
-Number   Prob_Precipitacio_Previsio   "Prob. precipitació [%d %%]"
-Number   Temperatura_Min_Previsio_Dema   "Temp Min Prevista Dema [%.2f °C]"
-Number   Temperatura_Max_Previsio_Dema   "Temp Max Prevista Dema [%.2f °C]"
-Number   Prob_Precipitacio_Previsio_Dema  "Prob. precipitació Dema [%d %%]"
-
