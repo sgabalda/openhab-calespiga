@@ -2,7 +2,7 @@ import org.eclipse.smarthome.model.script.ScriptServiceUtil
 
 var finishedRetries = 0
 val MAX_FINISHED_RETRIES = 10
-val currentItemUpdated = 0
+var currentItemUpdated = 0
 
 rule "Default boot values"
 when

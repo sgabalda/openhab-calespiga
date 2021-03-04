@@ -1,6 +1,8 @@
 
 
-rule "testing calentador"
-when Calentador_AvailablePower received command
+rule "Potencia disponible calentador"
+when 
+	Item Calentador_AvailablePower received command
 then
+	logInfo("Calentador.rules", "Calentador available power received command")
 end

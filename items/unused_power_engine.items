@@ -14,3 +14,5 @@ String DestinationDevices "Dispositius per enviar la potència disponible"
 //		<device>_ApplyChange	-> that triggers the change to consume what was exposed in the RequiredPower
 
 String DestinationDeviceUpdated "Monitor de dispositiu actualitzat"
+
+String PotenciaSobrantTitle "Potencia sobrant"
