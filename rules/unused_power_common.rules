@@ -15,7 +15,7 @@ then
 
 	DestinationDevices.postUpdate("Calentador,Cotxe")
 	Calentador_UsedPower.sendCommand(500)
-	Cotxe_UsedPower.sendCommand(2300)
+	//Cotxe_UsedPower.sendCommand(2300)
 end
 
 rule "Manage unused power"

@@ -1,6 +1,6 @@
-Number:Power AvailablePower "Potència disponible"  
+Number:Power AvailablePower "Potència extra"  
 //internal use, to post the power that is available to be used by devices
-String AvailablePowerProcessStatus "Estat del processat de la potència sobrant"      
+String AvailablePowerProcessStatus "Estat del processat"      
 //what is the status of the processing. May be "start", "processing" or "finished"
 
 String DestinationDevices "Dispositius per enviar la potència disponible"      
