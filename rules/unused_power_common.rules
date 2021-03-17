@@ -42,8 +42,10 @@ then
 			while(i<devices.length){
 				logInfo("UnusedPower","Getting used power by device "+devices.get(i))
 				val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
+				logInfo("UnusedPower","Got the current item used power")
 				if(currentItem.state != null){
-					availablePower = availablePower + currentItem.state
+					logInfo("UnusedPower","it is not null, going to add it: "+currentItem.state)
+					availablePower = availablePower + (currentItem.state as Number).intValue
 				}
 				logInfo("UnusedPower","Available power is now "+availablePower)
 			}
