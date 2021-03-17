@@ -15,7 +15,7 @@ when
 then
 	AvailablePower.sendCommand(0)
 	AvailablePowerProcessStatus.postUpdate("finished")
-	NotUsedPower.postUpdate(0)
+	NotUsedPower.sendCommand(0)
 end
 
 rule "update extra power"
@@ -23,7 +23,7 @@ when
 	Item SunnyBoy_Pot_Rebutjada changed
 then
 	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
-	NotUsedPower.postUpdate(unusedPower)
+	NotUsedPower.sendCommand(unusedPower)
 end
 
 rule "Manage not used power"
@@ -32,22 +32,28 @@ when
 then
     val engineStatus = AvailablePowerProcessStatus.state
 	if(engineStatus == "finished"){
+		logInfo("UnusedPower","Not used power engien si currently finished, starting a new one")
 	    val unusedPower = (NotUsedPower.state as Number).intValue
-
 		val devices = DestinationDevices.state.toString.split(',')
 		if(devices.length > 0){
+			logInfo("UnusedPower","There are devices, starting")
 			var availablePower = unusedPower
 			var i = 0
 			while(i<devices.length){
+				logInfo("UnusedPower","Getting used power by device "+devices.get(i))
 				val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
-				availablePower = availablePower + currentItem.state
+				if(currentItem.state != null){
+					availablePower = availablePower + currentItem.state
+				}
+				logInfo("UnusedPower","Available power is now "+availablePower)
 			}
-			logWarn("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
+			logInfo("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
 
 			AvailablePower.postUpdate(availablePower)
 
 			//set status as started and update all devices available power in order
 			AvailablePowerProcessStatus.postUpdate("started")
+			logInfo("UnusedPower","Sending available power to 1st device "+devices.get(i))
 			val firstItemAvailable = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_AvailablePower")
 			currentItemUpdated = 1
 			firstItemAvailable.sendCommand(availablePower)
