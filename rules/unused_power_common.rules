@@ -70,14 +70,22 @@ then
     	if(finishedRetries > MAX_FINISHED_RETRIES){
     		sendBroadcastNotification("La gestió de la potencia sobrant s'ha encallat. Intentarem resetejar però potser alguna cosa no funciona")
     		currentItemUpdated = 1
+    		var i = 0
     		while(i<devices.length){
     			val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_AvailablePower")
     			currentItem.sendCommand(0)
+    			i = i + 1
     		}
-    		AvailablePowerProcessStatus.postUpdate("finished")
+    		AvailablePowerProcessStatus.postUpdate("finished")	//TODO remove from here and put at the end of the processing
     	}
     }
 
 end
 
-//TODO add a rule to update the next AvailablePower and increment currentItemUpdated up to the 
+rule "Destination Device Updated"
+when
+	Item DestinationDeviceUpdated changed
+then
+	logInfo("UnusedPower","DestinationDeviceUpdated received command, next item is "+ currentItemUpdated)
+
+end
