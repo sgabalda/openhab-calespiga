@@ -23,6 +23,7 @@ then
         }else{
         	requiredPower = 0
         }
+        logInfo("Calentador.rules", "The power that the Calentador will use is "+requiredPower)
 	}else{
 		logInfo("Calentador.rules", "Received unused power, but calentador is manual, so ignoring it")
 	}
@@ -31,7 +32,7 @@ end
 
 rule "update required power"
 when
-	Calentador_RequiredPower received command
+	Item Calentador_RequiredPower received command
 then
 	DestinationDeviceUpdated.sendCommand("done")
 end
