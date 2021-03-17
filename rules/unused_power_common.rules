@@ -31,10 +31,11 @@ when
     Time cron "0/30 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21 
 then
     val engineStatus = AvailablePowerProcessStatus.state
+    val devices = DestinationDevices.state.toString.split(',')
+    
 	if(engineStatus == "finished"){
 		logInfo("UnusedPower","Not used power engien si currently finished, starting a new one")
 	    val unusedPower = (NotUsedPower.state as Number).intValue
-		val devices = DestinationDevices.state.toString.split(',')
 		if(devices.length > 0){
 			logInfo("UnusedPower","There are devices, starting")
 			var availablePower = unusedPower

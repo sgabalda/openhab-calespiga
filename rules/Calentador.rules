@@ -62,9 +62,9 @@ when
 then
 
     val receivedEstat = ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString
-    logInfo("unused_power.rules", "Calentador termostat changed to "+receivedEstat)
+    logInfo("Calentador.rules", "Calentador termostat changed to "+receivedEstat)
     if(receivedEstat == "HOT"){
-        logInfo("unused_power.rules", "Calentador is HOT, changing last HOT date and turning off")
+        logInfo("Calentador.rules", "Calentador is HOT, changing last HOT date and turning off")
         Calentador_Hot_Date.postUpdate(now.toString)
         //we are not using unused power, because it is hot.
         Calentador_UsedPower.sendCommand(0)
@@ -81,7 +81,7 @@ when
     Item Calentador_Potencia_ProxyItem received command
 then
     ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
-    logInfo("unused_power.rules", "Sending to calentador MQTT "+receivedCommand)
+    logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
 end
 
 rule "update display state from MQTT"
@@ -101,7 +101,7 @@ then
     }
 
     val now_millis = now.millis
-    logInfo("unused_power.rules", "Going to update energy from "+lastChangePower+" with "+oldPower)
+    logInfo("Calentador.rules", "Going to update energy from "+lastChangePower+" with "+oldPower)
     if(lastChangePower>0 ){
 		val termostat = Calentador_Termostat_UserDisplay.state
 		if(termostat != "HOT"){
@@ -111,7 +111,7 @@ then
 
 	    	val energyCurrent = (Calentador_Energia_Avui.state as Number).doubleValue
 
-	    	logInfo("unused_power.rules", "Adding energy calentador "+energyToAdd+" to "+energyCurrent)
+	    	logInfo("Calentador.rules", "Adding energy calentador "+energyToAdd+" to "+energyCurrent)
 
 	    	Calentador_Energia_Avui.postUpdate(energyCurrent + energyToAdd)
 		}
