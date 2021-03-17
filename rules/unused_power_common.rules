@@ -1,7 +1,7 @@
 import org.eclipse.smarthome.model.script.ScriptServiceUtil
 
 var finishedRetries = 0
-val MAX_FINISHED_RETRIES = 10
+val MAX_FINISHED_RETRIES = 5
 var currentItemUpdated = 0
 
 // TESTING STUFF STARTS
@@ -53,11 +53,11 @@ then
 			logInfo("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
 
 			AvailablePower.postUpdate(availablePower)
-
+			logInfo("UnusedPower","Updated available power")
 			//set status as started and update all devices available power in order
 			AvailablePowerProcessStatus.postUpdate("started")
-			logInfo("UnusedPower","Sending available power to 1st device "+devices.get(i))
-			val firstItemAvailable = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_AvailablePower")
+			logInfo("UnusedPower","Sending available power to 1st device "+devices.get(0))
+			val firstItemAvailable = ScriptServiceUtil.getItemRegistry.getItem(devices.get(0) + "_AvailablePower")
 			currentItemUpdated = 1
 			firstItemAvailable.sendCommand(availablePower)
 		}else{
