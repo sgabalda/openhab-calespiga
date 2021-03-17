@@ -15,6 +15,7 @@ when
 then
 	AvailablePower.sendCommand(0)
 	AvailablePowerProcessStatus.postUpdate("finished")
+	NotUsedPower.postUpdate(0)
 end
 
 rule "update extra power"
@@ -25,10 +26,9 @@ then
 	NotUsedPower.postUpdate(unusedPower)
 end
 
-rule "Manage unused power"
+rule "Manage not used power"
 when
-    Time cron "0/30 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21 ? * * *"
-    or System started
+    Time cron "0/30 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21 
 then
     val engineStatus = AvailablePowerProcessStatus.state
 	if(engineStatus == "finished"){

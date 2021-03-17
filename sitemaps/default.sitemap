@@ -83,7 +83,7 @@ sitemap default label="Ca l'espiga" {
             Text item=AvailablePowerProcessStatus icon="settings"
         }
         Frame label="Testing energia sobrant" {
-            Setpoint item=NotUsedPower label="Força potencia extra" minValue=1 maxValue=3000 step=200
+            Setpoint item=NotUsedPower label="Força potencia extra" minValue=0 maxValue=3000 step=200
         }
     }
 }

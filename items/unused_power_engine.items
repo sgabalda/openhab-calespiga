@@ -1,4 +1,4 @@
-Number:Power NotUsedPower "Potència extra"
+Number NotUsedPower "Potència extra"
 //the extra power not currently used that is available to be used by devices
 Number:Power AvailablePower "Potència disponible"
 //the power available to the devices, some of it may be used at the moment
