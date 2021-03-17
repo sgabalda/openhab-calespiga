@@ -48,6 +48,7 @@ then
 					availablePower = availablePower + (currentItem.state as Number).intValue
 				}
 				logInfo("UnusedPower","Available power is now "+availablePower)
+				i = i + 1
 			}
 			logInfo("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
 
