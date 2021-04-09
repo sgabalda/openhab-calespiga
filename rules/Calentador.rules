@@ -34,15 +34,54 @@ rule "update required power"
 when
 	Item Calentador_RequiredPower received command
 then
-	DestinationDeviceUpdated.sendCommand("done")
+	DestinationDeviceUpdated.sendCommand("calentador")
+end
+
+rule "Apply power"
+when
+	Item Calentador_ApplyChange received command
+then
+    val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    if(gestioAutoCalentador == "auto"){
+        logInfo("Calentador.rules", "Going to apply the required power")
+        val requiredPowerState = Calentador_RequiredPower.state
+        var powerToApply = 0
+        if(requiredPowerState != NULL){
+            powerToApply = (requiredPowerState as Number).intValue
+        }
+        logInfo("Calentador.rules", "The required power to apply is "+powerToApply)
+        Calentador_Potencia_ProxyItem.sendCommand(powerToApply+"")
+        Calentador_UsedPower.sendCommand(powerToApply)
+        DestinationDeviceApplied.sendCommand("calentador")
+    }else{
+        logInfo("Calentador.rules", "Gestio is not automatic, so not applying required power, but notifying as applied")
+        Calentador_UsedPower.sendCommand(0)
+        DestinationDeviceApplied.sendCommand("calentador")
+    }
 end
 
 //rules not to manage unused power
+rule "Canvi gestio calentador"
+when
+    Item GestioAutomaticaCalentador received command
+then
+    val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    if(gestioAutoCalentador != "auto"){
+        val currentPowerSelection = Calentador_Potencia_UserSelection.state
+        logInfo("Calentador.rules", "Gestio Calentador changed to manual. Refreshed status to "+currentPowerSelection)
+        Calentador_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
+        //we are not using unused power, because all is manual.
+        Calentador_UsedPower.sendCommand(0)
+    }else{
+        logInfo("Calentador.rules", "Gestio Calentador changed to auto, starting from 0 used power")
+        Calentador_UsedPower.sendCommand(0)
+        Calentador_Potencia_ProxyItem.sendCommand("0")
+    }
+end
 
 rule "Canvi manual calentador"
 when 
     Item Calentador_Potencia_UserSelection received command
-    or Item GestioAutomaticaCalentador received command
 then
     val gestioAutoCalentador = GestioAutomaticaCalentador.state
     if(gestioAutoCalentador != "auto"){

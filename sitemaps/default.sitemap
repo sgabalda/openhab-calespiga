@@ -84,7 +84,8 @@ sitemap default label="Ca l'espiga" {
         }
         Frame label="Testing energia sobrant" {
             Setpoint item=NotUsedPower label="Força potencia extra" minValue=0 maxValue=3000 step=200
-            Text item=Calentador_RequiredPower label="Potencia futura calentador"
+            Text item=Calentador_UsedPower label="Potencia extra usada calent."
+            Text item=Calentador_RequiredPower label="Potencia extra futura calent."
         }
     }
 }
