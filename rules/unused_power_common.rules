@@ -1,5 +1,6 @@
 import org.eclipse.smarthome.model.script.ScriptServiceUtil
 
+val availableDevices = ["Calentador"]
 var finishedRetries = 0
 val MAX_FINISHED_RETRIES = 5
 var currentItemUpdated = 0
@@ -12,6 +13,16 @@ then
 	AvailablePower.sendCommand(0)
 	AvailablePowerProcessStatus.postUpdate("finished")
 	NotUsedPower.sendCommand(0)
+	var destinationsString = ""
+	var i = 0
+    while(i<availableDevices.length){
+        if(i != 0){
+            destinationsString = destinationsString + ","
+        }
+        destinationsString = destinationsString + availableDevices[i]
+        i = i + 1
+    }
+	DestinationDevices.sendCommand(destinationsString)
 end
 
 rule "update extra power"
@@ -19,7 +30,7 @@ when
 	Item SunnyBoy_Pot_Rebutjada changed
 then
 	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
-	NotUsedPower.sendCommand(unusedPower)
+	//NotUsedPower.sendCommand(unusedPower)
 end
 
 rule "Manage not used power"
@@ -30,7 +41,7 @@ then
     devices = DestinationDevices.state.toString.split(',')
     
 	if(engineStatus == "finished"){
-		logInfo("UnusedPower","Not used power engien si currently finished, starting a new one")
+		logInfo("UnusedPower","Not used power engine is currently finished, starting a new one")
 	    val unusedPower = (NotUsedPower.state as Number).intValue
 		if(devices.length > 0){
 			logInfo("UnusedPower","There are devices, starting")
