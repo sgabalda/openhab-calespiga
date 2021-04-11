@@ -4,7 +4,7 @@ val availableDevices = newArrayList("Calentador")
 var finishedRetries = 0
 val MAX_FINISHED_RETRIES = 5
 var currentItemUpdated = 0
-var List<String> devices = newArrayList()
+var devices = "".split(",")
 
 rule "Default boot values"
 when
@@ -99,13 +99,8 @@ then
     val nextItem = currentItemUpdated + 1
     if(nextItem >= devices.length()){
         logInfo("UnusedPower","DestinationDeviceUpdated received command, all devices ready to apply changes")
-        var i = devices.length() - 1
-        while(i >= 0){
-            val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_ApplyChange")
-            currentItem.sendCommand(0)
-            i = i - 1
-            Thread::sleep(200)
-        }
+        currentItemUpdated = devices.length() - 1
+        DestinationDeviceApplied.sendCommand(0)
     }else{
         logInfo("UnusedPower","DestinationDeviceUpdated received command, next device is "+ devices.get(nextItem))
         val previousAvailablePowerItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_AvailablePower")
