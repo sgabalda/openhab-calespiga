@@ -49,7 +49,7 @@ then
 
 			var availablePower = unusedPower
 			var forgetLastUsedPower = false
-			if(availablePower>0){
+			if(availablePower<=0){
 			    forgetLastUsedPower = true
 			}
 
