@@ -103,6 +103,7 @@ then
         currentItemUpdated = devices.length() - 1
         logInfo("UnusedPower","Applying changes to last device "+devices.get(currentItemUpdated))
         val nextItemToApply = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_ApplyChange")
+        nextItemToApply.sendCommand("apply")
         logInfo("UnusedPower","Sent command to apply to "+devices.get(currentItemUpdated))
     }else{
         logInfo("UnusedPower","DestinationDeviceUpdated received command, next device is "+ devices.get(nextItem))
