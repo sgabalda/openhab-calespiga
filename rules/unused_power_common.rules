@@ -46,23 +46,32 @@ then
 	    val unusedPower = (NotUsedPower.state as Number).intValue
 		if(devices.length() > 0){
 			logInfo("UnusedPower","There are devices, starting")
+
 			var availablePower = unusedPower
+			var forgetLastUsedPower = false
 			if(availablePower>0){
-                var i = 0
-                while(i<devices.length()){
-                    logInfo("UnusedPower","Getting used power by device "+devices.get(i))
-                    val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
-                    logInfo("UnusedPower","Got the current item used power")
-                    if(currentItem.state != null){
-                        logInfo("UnusedPower","it is not null, going to add it: "+currentItem.state)
+			    forgetLastUsedPower = true
+			}
+
+            var i = devices.length() - 1
+            while(i >= 0){
+                logInfo("UnusedPower","Getting used power by device "+devices.get(i))
+                val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
+                logInfo("UnusedPower","Got the current item used power")
+                if(currentItem.state != null){
+                    val unusedByDevice = (currentItem.state as Number).intValue
+                    if(forgetLastUsedPower && unusedByDevice != 0){
+                        forgetLastUsedPower = false
+                        logInfo("UnusedPower","Unused power for "+devices.get(i)+" will be ignored: "+currentItem.state)
+                    }else{
+                        logInfo("UnusedPower","Unused power added to available power: "+currentItem.state)
                         availablePower = availablePower + (currentItem.state as Number).intValue
                     }
-                    logInfo("UnusedPower","Available power is now "+availablePower)
-                    i = i + 1
                 }
-            }else{
-                logInfo("UnusedPower","there is not extra power, so available power is 0")
+                logInfo("UnusedPower","Available power is now "+availablePower)
+                i = i - 1
             }
+
 			logInfo("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
 
 			AvailablePower.postUpdate(availablePower)
