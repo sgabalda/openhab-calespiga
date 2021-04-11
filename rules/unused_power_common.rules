@@ -131,6 +131,7 @@ then
         logInfo("UnusedPower","Applying changes to device "+devices.get(currentItemUpdated))
         val nextItemToApply = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_ApplyChange")
         nextItemToApply.sendCommand("apply")
+        logInfo("UnusedPower","Sent command to apply to "+devices.get(currentItemUpdated))
     }else{
         logInfo("UnusedPower","Done applying changes to all devices, finishing management of unused power cycle")
         AvailablePowerProcessStatus.postUpdate("finished")
