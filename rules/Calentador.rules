@@ -44,6 +44,7 @@ when
 	Item Calentador_ApplyChange received command
 then
     val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    logInfo("Calentador.rules", "Received command to apply the power")
     if(gestioAutoCalentador == "auto"){
         logInfo("Calentador.rules", "Going to apply the required power")
         val requiredPowerState = Calentador_RequiredPower.state

@@ -12,7 +12,7 @@ when
 then
 	AvailablePower.sendCommand(0)
 	AvailablePowerProcessStatus.postUpdate("finished")
-	NotUsedPower.sendCommand(0)
+	NotUsedPower.postUpdate(0)
 	var destinationsString = ""
 	var i = 0
     while(i<availableDevices.length()){
@@ -36,7 +36,7 @@ end
 
 rule "Manage not used power"
 when
-    Time cron "0 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21
+    Time cron "0/30 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21
 then
     val engineStatus = AvailablePowerProcessStatus.state
     logInfo("UnusedPower","The current destination devices are "+ DestinationDevices.state)
