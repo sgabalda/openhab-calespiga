@@ -29,14 +29,15 @@ end
 rule "update extra power"
 when
 	Item SunnyBoy_Pot_Rebutjada changed
+	or Time cron "15 * * ? * * *"
 then
 	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
-	//NotUsedPower.sendCommand(unusedPower)
+	NotUsedPower.sendCommand(unusedPower)
 end
 
 rule "Manage not used power"
 when
-    Time cron "0/30 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21
+    Time cron "0/30 * 6-22 ? * * *"
 then
     val engineStatus = AvailablePowerProcessStatus.state
     logInfo("UnusedPower","The current destination devices are "+ DestinationDevices.state)
