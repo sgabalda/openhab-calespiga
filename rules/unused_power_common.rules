@@ -15,13 +15,14 @@ then
 	NotUsedPower.sendCommand(0)
 	var destinationsString = ""
 	var i = 0
-    while(i<availableDevices.size){
+    while(i<availableDevices.size()){
         if(i != 0){
             destinationsString = destinationsString + ","
         }
         destinationsString = destinationsString + availableDevices.get(i)
         i = i + 1
     }
+    logInfo("UnusedPower","The starting destination devices are "+destinationsString)
 	DestinationDevices.sendCommand(destinationsString)
 end
 
@@ -38,16 +39,17 @@ when
     Time cron "0/30 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21 
 then
     val engineStatus = AvailablePowerProcessStatus.state
+    logInfo("UnusedPower","The current destination devices are "+ DestinationDevices.state)
     devices = DestinationDevices.state.toString.split(',')
-    
+    logInfo("UnusedPower","The list with all devices is "+ devices)
 	if(engineStatus == "finished"){
 		logInfo("UnusedPower","Not used power engine is currently finished, starting a new one")
 	    val unusedPower = (NotUsedPower.state as Number).intValue
-		if(devices.size > 0){
+		if(devices.size() > 0){
 			logInfo("UnusedPower","There are devices, starting")
 			var availablePower = unusedPower
 			var i = 0
-			while(i<devices.size){
+			while(i<devices.size()){
 				logInfo("UnusedPower","Getting used power by device "+devices.get(i))
 				val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
 				logInfo("UnusedPower","Got the current item used power")
@@ -79,12 +81,12 @@ then
     		sendBroadcastNotification("La gestió de la potencia sobrant s'ha encallat. Intentarem resetejar però potser alguna cosa no funciona")
 
     		var i = 0
-    		while(i<devices.size){
+    		while(i<devices.size()){
     			val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_RequiredPower")
     			currentItem.sendCommand(0)
     			i = i + 1
     		}
-    		currentItemUpdated = devices.size - 1
+    		currentItemUpdated = devices.size() - 1
     		AvailablePowerProcessStatus.postUpdate("finished")	//TODO remove from here and put at the end of the processing
     	}
     }
@@ -96,9 +98,9 @@ when
 	Item DestinationDeviceUpdated changed
 then
     val nextItem = currentItemUpdated + 1
-    if(nextItem >= devices.size){
+    if(nextItem >= devices.size()){
         logInfo("UnusedPower","DestinationDeviceUpdated received command, all devices ready to apply changes")
-        var i = devices.size - 1
+        var i = devices.size() - 1
         while(i >= 0){
             val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_ApplyChange")
             currentItem.sendCommand(0)
