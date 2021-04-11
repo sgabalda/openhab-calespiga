@@ -16,6 +16,6 @@ DateTime Calentador_Hot_Date "Ultim moment calent" <time>
 Number:Power Calentador_AvailablePower "Potencia sobrant disponible pel calentador"
 Number:Power Calentador_UsedPower "Potencia sobrant disponible pel calentador"
 Number:Power Calentador_RequiredPower "Potencia sobrant disponible pel calentador"
-Switch Calentador_ApplyChange "Dispara el càlcul de potència"
+String Calentador_ApplyChange "Dispara el càlcul de potència"
 
 String CalentadorTitle "Calentador"
