@@ -57,10 +57,12 @@ then
             while(i >= 0){
                 logInfo("UnusedPower","Getting used power by device "+devices.get(i))
                 val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
-                logInfo("UnusedPower","Got the current item used power")
+                logInfo("UnusedPower","Got the current item used power (forget next is "+forgetLastUsedPower+")")
                 if(currentItem.state != null){
                     val unusedByDevice = (currentItem.state as Number).intValue
-                    if(forgetLastUsedPower && unusedByDevice != 0){
+                    if(unusedByDevice == 0){
+                        logInfo("UnusedPower","Unused power for "+devices.get(i)+" is 0, not adding it: "+currentItem.state)
+                    }else if(forgetLastUsedPower){
                         forgetLastUsedPower = false
                         logInfo("UnusedPower","Unused power for "+devices.get(i)+" will be ignored: "+currentItem.state)
                     }else{
