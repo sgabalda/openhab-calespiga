@@ -1,10 +1,10 @@
 import org.eclipse.smarthome.model.script.ScriptServiceUtil
 
-val availableDevices = ["Calentador"]
+val String[] availableDevices = #["Calentador"]
 var finishedRetries = 0
 val MAX_FINISHED_RETRIES = 5
 var currentItemUpdated = 0
-var devices = []
+var String[] devices = #[]
 
 rule "Default boot values"
 when
