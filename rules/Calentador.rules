@@ -34,6 +34,7 @@ rule "update required power"
 when
 	Item Calentador_RequiredPower received command
 then
+    logInfo("Calentador.rules", "Required power updated, notifying the DestinationDeviceUpdated")
 	DestinationDeviceUpdated.sendCommand("calentador")
 end
 

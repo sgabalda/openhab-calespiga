@@ -94,8 +94,9 @@ end
 
 rule "Destination Device Updated"
 when
-	Item DestinationDeviceUpdated changed
+	Item DestinationDeviceUpdated received command
 then
+    logInfo("UnusedPower","DestinationDeviceUpdated received command, current item is "+devices.get(currentItemUpdated))
     val nextItem = currentItemUpdated + 1
     if(nextItem >= devices.length()){
         logInfo("UnusedPower","DestinationDeviceUpdated received command, all devices ready to apply changes")
@@ -121,7 +122,7 @@ end
 
 rule "Destination Device Apply"
 when
-	Item DestinationDeviceApplied changed
+	Item DestinationDeviceApplied received command
 then
     logInfo("UnusedPower","Applying changes to device "+devices.get(currentItemUpdated))
     val nextItemToApply = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_ApplyChange")
