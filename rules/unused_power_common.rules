@@ -36,7 +36,7 @@ end
 
 rule "Manage not used power"
 when
-    Time cron "0/30 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21 
+    Time cron "0 * * ? * * *"		//TODO make it run only between 7-21: Time cron "0/30 * 7-21
 then
     val engineStatus = AvailablePowerProcessStatus.state
     logInfo("UnusedPower","The current destination devices are "+ DestinationDevices.state)
@@ -86,7 +86,7 @@ then
     			i = i + 1
     		}
     		currentItemUpdated = devices.length() - 1
-    		AvailablePowerProcessStatus.postUpdate("finished")	//TODO remove from here and put at the end of the processing
+    		DestinationDeviceApplied.sendCommand(0)
     	}
     }
 
