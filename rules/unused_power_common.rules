@@ -1,0 +1,158 @@
+import org.eclipse.smarthome.model.script.ScriptServiceUtil
+
+val availableDevices = newArrayList("Calentador")
+var finishedRetries = 0
+val MAX_FINISHED_RETRIES = 5
+var currentItemUpdated = 0
+var devices = "".split(",")
+
+rule "Default boot values"
+when
+	System started
+then
+	AvailablePower.sendCommand(0)
+	AvailablePowerProcessStatus.postUpdate("finished")
+	NotUsedPower.postUpdate(0)
+	var destinationsString = ""
+	var i = 0
+    while(i<availableDevices.length()){
+        if(i != 0){
+            destinationsString = destinationsString + ","
+        }
+        destinationsString = destinationsString + availableDevices.get(i)
+        i = i + 1
+    }
+    logInfo("UnusedPower","The starting destination devices are "+destinationsString)
+	DestinationDevices.sendCommand(destinationsString)
+end
+
+rule "update extra power"
+when
+	Item SunnyBoy_Pot_Rebutjada changed
+	or Time cron "15 * * ? * * *"
+then
+	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
+	NotUsedPower.sendCommand(unusedPower)
+end
+
+rule "Manage not used power"
+when
+    Time cron "0/30 * 6-22 ? * * *"
+then
+    val engineStatus = AvailablePowerProcessStatus.state
+    logInfo("UnusedPower","The current destination devices are "+ DestinationDevices.state)
+    devices = DestinationDevices.state.toString.split(',')
+	if(engineStatus == "finished"){
+		logInfo("UnusedPower","Not used power engine is currently finished, starting a new one")
+	    val unusedPower = (NotUsedPower.state as Number).intValue
+		if(devices.length() > 0){
+			logInfo("UnusedPower","There are devices, starting")
+
+			var availablePower = unusedPower
+			var forgetLastUsedPower = false
+			if(availablePower<=0){
+			    forgetLastUsedPower = true
+			}
+
+            var i = devices.length() - 1
+            while(i >= 0){
+                logInfo("UnusedPower","Getting used power by device "+devices.get(i))
+                val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
+                logInfo("UnusedPower","Got the current item used power (forget next is "+forgetLastUsedPower+")")
+                if(currentItem.state != null){
+                    val unusedByDevice = (currentItem.state as Number).intValue
+                    if(unusedByDevice == 0){
+                        logInfo("UnusedPower","Unused power for "+devices.get(i)+" is 0, not adding it: "+currentItem.state)
+                    }else if(forgetLastUsedPower){
+                        forgetLastUsedPower = false
+                        logInfo("UnusedPower","Unused power for "+devices.get(i)+" will be ignored: "+currentItem.state)
+                    }else{
+                        logInfo("UnusedPower","Unused power added to available power: "+currentItem.state)
+                        availablePower = availablePower + (currentItem.state as Number).intValue
+                    }
+                }
+                logInfo("UnusedPower","Available power is now "+availablePower)
+                i = i - 1
+            }
+
+			logInfo("UnusedPower","Currently unused power is "+unusedPower+", available power is "+availablePower)
+
+			AvailablePower.postUpdate(availablePower)
+			logInfo("UnusedPower","Updated available power")
+			//set status as started and update all devices available power in order
+			AvailablePowerProcessStatus.postUpdate("started")
+			logInfo("UnusedPower","Sending available power to 1st device "+devices.get(0))
+			val firstItemAvailable = ScriptServiceUtil.getItemRegistry.getItem(devices.get(0) + "_AvailablePower")
+			currentItemUpdated = 0
+			firstItemAvailable.sendCommand(availablePower)
+		}else{
+			logWarn("UnusedPower","There are no devices?! ")
+		}
+    }else{
+
+    	finishedRetries = finishedRetries + 1
+    	logWarn("UnusedPower","Going to manage the unused power,but the engine is not finished. For "+finishedRetries+ " times")
+    	if(finishedRetries > MAX_FINISHED_RETRIES){
+    		sendBroadcastNotification("La gestió de la potencia sobrant s'ha encallat. Intentarem resetejar però potser alguna cosa no funciona")
+
+    		var i = 0
+    		while(i<devices.length()){
+    			val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_RequiredPower")
+    			currentItem.sendCommand(0)
+    			i = i + 1
+    		}
+    		currentItemUpdated = devices.length() - 1
+    		DestinationDeviceApplied.sendCommand(0)
+    	}
+    }
+
+end
+
+rule "Destination Device Updated"
+when
+	Item DestinationDeviceUpdated received command
+then
+    logInfo("UnusedPower","DestinationDeviceUpdated received command, current item is "+devices.get(currentItemUpdated))
+    val nextItem = currentItemUpdated + 1
+    if(nextItem >= devices.length()){
+        logInfo("UnusedPower","DestinationDeviceUpdated received command, all devices ready to apply changes")
+        currentItemUpdated = devices.length() - 1
+        logInfo("UnusedPower","Applying changes to last device "+devices.get(currentItemUpdated))
+        val nextItemToApply = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_ApplyChange")
+        nextItemToApply.sendCommand("apply")
+        logInfo("UnusedPower","Sent command to apply to "+devices.get(currentItemUpdated))
+    }else{
+        logInfo("UnusedPower","DestinationDeviceUpdated received command, next device is "+ devices.get(nextItem))
+        val previousAvailablePowerItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_AvailablePower")
+        val previousAvailablePower = (previousAvailablePowerItem.state as Number).intValue
+        val previousRequiredPowerItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_RequiredPower")
+        val previousRequiredPower = (previousRequiredPowerItem.state as Number).intValue
+
+        var availablePower = 0
+        if(previousAvailablePower > previousRequiredPower){
+            availablePower = previousAvailablePower - previousRequiredPower
+        }
+        logInfo("UnusedPower","Available power for " + devices.get(nextItem)+" is " + availablePower)
+        val nextItemAvailable = ScriptServiceUtil.getItemRegistry.getItem(devices.get(nextItem) + "_AvailablePower")
+        currentItemUpdated = nextItem
+        firstItemAvailable.sendCommand(availablePower)
+    }
+end
+
+rule "Destination Device Apply"
+when
+	Item DestinationDeviceApplied received command
+then
+    val nextItem = currentItemUpdated - 1
+    if(nextItem >= 0){
+        currentItemUpdated = nextItem
+        logInfo("UnusedPower","Applying changes to device "+devices.get(currentItemUpdated))
+        val nextItemToApply = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_ApplyChange")
+        nextItemToApply.sendCommand("apply")
+        logInfo("UnusedPower","Sent command to apply to "+devices.get(currentItemUpdated))
+    }else{
+        logInfo("UnusedPower","Done applying changes to all devices, finishing management of unused power cycle")
+        AvailablePowerProcessStatus.postUpdate("finished")
+        currentItemUpdated = 0
+    }
+end

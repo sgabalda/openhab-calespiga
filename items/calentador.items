@@ -1,9 +1,4 @@
 String GestioAutomaticaCalentador "Gestio automàtica del calentador" <thermostat_heater>
-//Number SunnyBoy_Pot_Rebutjada_TEST "Pot. rebutjada TEST [%d W]"       //only for testing
-//th enxt two swithces are ready in case the arduino mqqt client does not work, and there is a
-//wire conencting to the relays for 500 and 1000W
-//Switch Encesa_Calentador_500 "Encesa calentador 500" {gpio="pin:5 activelow:yes initialValue:high"}
-//Switch Encesa_Calentador_1000 "Encesa calentador 1000" {gpio="pin:6 activelow:yes initialValue:high"}
 
 String Calentador_Potencia_ProxyItem "Proxy Item calentador"    //for internal use, will be forwarded to MQTT or GPIOs
 String Calentador_Potencia_UserSelection "Pot. seleccionada (W)"  <dial_heater>   //what the user selects as current power to use
@@ -12,3 +7,15 @@ Number:Energy Calentador_Energia_Avui "Energia "   <heater_display> //what the u
 
 String Calentador_Termostat_UserDisplay "Proxy Item termostat"
 DateTime Calentador_Hot_Date "Ultim moment calent" <time>
+
+//		<device>_AvailablePower -> that receives the power available for the device
+//		<device>_UsedPower		-> that exposes the power that is currently using the device
+//		<device>_RequiredPower	-> that exposes the power that will be used by the device
+//		<device>_ApplyChange	-> switch that triggers the change to consume what was exposed in the _RequiredPower
+
+Number:Power Calentador_AvailablePower "Potencia sobrant disponible pel calentador"
+Number:Power Calentador_UsedPower "Potencia sobrant disponible pel calentador"
+Number:Power Calentador_RequiredPower "Potencia sobrant disponible pel calentador"
+String Calentador_ApplyChange "Dispara el càlcul de potència"
+
+String CalentadorTitle "Calentador"

@@ -1,0 +1,174 @@
+var long lastChangePower = -1
+
+//rules to manage unused power
+
+rule "Potencia disponible calentador"
+when 
+	Item Calentador_AvailablePower received command
+then
+	val gestioAutoCalentador = GestioAutomaticaCalentador.state
+	var requiredPower = 0
+	if(gestioAutoCalentador == "auto"){
+		logInfo("Calentador.rules", "Received new power available for Calentador auto")
+	    val oldPowerState = Calentador_AvailablePower.state
+	    var availablePower = 0.0
+	    if(oldPowerState != NULL){
+	        availablePower = (oldPowerState as Number).doubleValue
+	    }
+	    if(availablePower >= 2000){
+            requiredPower = 2000
+        }else if(availablePower >= 1000){
+            requiredPower = 1000
+        }else if(availablePower >= 500){
+            requiredPower = 500
+        }else{
+        	requiredPower = 0
+        }
+        logInfo("Calentador.rules", "The power that the Calentador will use is "+requiredPower)
+	}else{
+		logInfo("Calentador.rules", "Received unused power, but calentador is manual, so ignoring it")
+	}
+	Calentador_RequiredPower.sendCommand(requiredPower)	
+end
+
+rule "update required power"
+when
+	Item Calentador_RequiredPower received command
+then
+    logInfo("Calentador.rules", "Required power updated, notifying the DestinationDeviceUpdated")
+	DestinationDeviceUpdated.sendCommand("calentador")
+end
+
+rule "Apply power"
+when
+	Item Calentador_ApplyChange received command
+then
+    val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    logInfo("Calentador.rules", "Received command to apply the power")
+    if(gestioAutoCalentador == "auto"){
+        logInfo("Calentador.rules", "Going to apply the required power")
+        val requiredPowerState = Calentador_RequiredPower.state
+        var powerToApply = 0
+        if(requiredPowerState != NULL){
+            powerToApply = (requiredPowerState as Number).intValue
+        }
+        logInfo("Calentador.rules", "The required power to apply is "+powerToApply)
+        Calentador_Potencia_ProxyItem.sendCommand(powerToApply+"")
+        Calentador_UsedPower.sendCommand(powerToApply)
+        DestinationDeviceApplied.sendCommand("calentador")
+    }else{
+        logInfo("Calentador.rules", "Gestio is not automatic, so not applying required power, but notifying as applied")
+        Calentador_UsedPower.sendCommand(0)
+        DestinationDeviceApplied.sendCommand("calentador")
+    }
+end
+
+//rules not to manage unused power
+rule "Canvi gestio calentador"
+when
+    Item GestioAutomaticaCalentador received command
+then
+    val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    if(gestioAutoCalentador != "auto"){
+        val currentPowerSelection = Calentador_Potencia_UserSelection.state
+        logInfo("Calentador.rules", "Gestio Calentador changed to manual. Refreshed status to "+currentPowerSelection)
+        Calentador_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
+        //we are not using unused power, because all is manual.
+        Calentador_UsedPower.sendCommand(0)
+    }else{
+        logInfo("Calentador.rules", "Gestio Calentador changed to auto, starting from 0 used power")
+        Calentador_UsedPower.sendCommand(0)
+        Calentador_Potencia_ProxyItem.sendCommand("0")
+    }
+end
+
+rule "Canvi manual calentador"
+when 
+    Item Calentador_Potencia_UserSelection received command
+then
+    val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    if(gestioAutoCalentador != "auto"){
+        val currentPowerSelection = Calentador_Potencia_UserSelection.state
+        logInfo("Calentador.rules", "Gestio Calentador is manual. Refreshed status to "+currentPowerSelection)
+        Calentador_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
+        //we are not using unused power, because all is manual.
+        Calentador_UsedPower.sendCommand(0)
+    }else{
+        logInfo("Calentador.rules", "Gestio Calentador is auto. Changing the power has no effects")
+    }
+end
+
+rule "update termostat state from MQTT"
+when
+    Item ArduinoCalentadorThing_CalentadorTermostatStatus  received update
+then
+
+    val receivedEstat = ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString
+    logInfo("Calentador.rules", "Calentador termostat changed to "+receivedEstat)
+    if(receivedEstat == "HOT"){
+        logInfo("Calentador.rules", "Calentador is HOT, changing last HOT date and turning off")
+        Calentador_Hot_Date.postUpdate(now.toString)
+        //we are not using unused power, because it is hot.
+        Calentador_UsedPower.sendCommand(0)
+        //turn off
+        Calentador_Potencia_ProxyItem.sendCommand(0+"")
+    }
+    
+    Calentador_Termostat_UserDisplay.postUpdate(receivedEstat)    
+    
+end
+
+rule "Turn On Calentador"
+when
+    Item Calentador_Potencia_ProxyItem received command
+then
+    ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
+    logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
+end
+
+rule "update display state from MQTT"
+when
+    Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update
+then
+    val receivedEstat = ArduinoCalentadorThing_CalentadorPotenciaEstat.state.toString
+    var newPower = 0
+    if(receivedEstat != "OFF"){
+        newPower = Double::parseDouble(receivedEstat)
+    }
+    
+    val oldPowerState = Calentador_Potencia_UserDisplay.state
+    var oldPower = 0.0
+    if(oldPowerState != NULL){
+        oldPower = (oldPowerState as Number).doubleValue
+    }
+
+    val now_millis = now.millis
+    logInfo("Calentador.rules", "Going to update energy from "+lastChangePower+" with "+oldPower)
+    if(lastChangePower>0 ){
+		val termostat = Calentador_Termostat_UserDisplay.state
+		if(termostat != "HOT"){
+			val timeMillis = now_millis - lastChangePower
+	    	val timeHours = (timeMillis/1000.0)/3600
+	    	val energyToAdd = oldPower*timeHours/1000
+
+	    	val energyCurrent = (Calentador_Energia_Avui.state as Number).doubleValue
+
+	    	logInfo("Calentador.rules", "Adding energy calentador "+energyToAdd+" to "+energyCurrent)
+
+	    	Calentador_Energia_Avui.postUpdate(energyCurrent + energyToAdd)
+		}
+
+    }
+    lastChangePower = now_millis
+
+    Calentador_Potencia_UserDisplay.postUpdate(newPower)
+
+end 
+
+rule "Reset energy today"
+when
+    Time cron "0 0 0 ? * * *"
+then
+    Calentador_Energia_Avui.postUpdate(0)
+    lastChangePower = -1
+end

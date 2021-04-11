@@ -1,2 +1,10 @@
 
-Contact Cotxe_Carregant "Cotxe carregant" //indica si el carregador del cotxe esta encès en aquest moment
+//		<device>_AvailablePower -> that receives the power available for the device
+//		<device>_UsedPower		-> that exposes the power that is currently using the device
+//		<device>_RequiredPower	-> that exposes the power that will be used by the device
+//		<device>_ApplyChange	-> that triggers the change to consume what was exposed in the 
+
+Number:Power Cotxe_AvailablePower "Potencia sobrant disponible pel Cotxe"
+Number:Power Cotxe_UsedPower "Potencia actualment usada pel Cotxe"
+Number:Power Cotxe_RequiredPower "Potencia que serà usada pel Cotxe"
+Switch Cotxe_ApplyChange "Dispara el càlcul de potència"

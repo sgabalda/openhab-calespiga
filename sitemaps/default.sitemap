@@ -1,68 +1,91 @@
 sitemap default label="Ca l'espiga" {
-    
-    Frame label="Fotovoltaica" {
-        Text icon="light" item=SunnyBoy_Pot_Usada
-        Text icon="smoke" item=SunnyBoy_Pot_Rebutjada
-        Text icon="energy" item=SunnyBoy_Pot_Actual
-        //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea1
-        //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea2
-        Text icon="time" item=SunnyBoy_Time_Attempt
-        Text icon="time" item=SunnyBoy_Time_Read
-    }
-    
-    Frame{
-        Webview height=12 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
-    }
 
-    Frame label="Calentador" {
-        Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
-        Selection item=Calentador_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "500"="500W", "1000"="1000W", "2000"="2000W"]
-        Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat Pot.: [%d W]" 
+    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="sun_clouds"
+    {
+        Frame label="Fotovoltaica" {
+            Text icon="light" item=SunnyBoy_Pot_Usada
+            Text icon="smoke" item=SunnyBoy_Pot_Rebutjada
+            Text icon="energy" item=SunnyBoy_Pot_Actual
+            //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea1
+            //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea2
+            Text icon="time" item=SunnyBoy_Time_Attempt
+            Text icon="time" item=SunnyBoy_Time_Read
+        }
         
-        Text item=Calentador_Termostat_UserDisplay icon="water_heater" label="Estat Term.: [%s]" 
-        Text item=Calentador_Hot_Date icon="time" label="Ultim cop calent: [%1$td/%1$tm/%1$tY %1$tT]" 
-        
-        Text item=Calentador_Energia_Avui icon="heater_display" label="Energia avui: [%.3f kWh]" 
-    }
-    Frame{
-        Webview height=14 url="http://calespiga.ddns.net:3000/d/yImV7EWgz/calentador?orgId=1"
-    }
-    
-    Frame label="Reg de l'hort" {
-        Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
-        Text icon="water" item=DipositPercent label="Nivell diposit: [%s %%]"
-        Switch item=Encesa_Bomba_Manual icon="sprinkler"
-        Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
-        Switch item=Encesa_Bomba_Auto_Mati icon="sprinkler"
-        Setpoint item=Durada_Encesa_Auto_Mati icon="stopwatch" label="Durada mati [%.1f min]" minValue=1 maxValue=30 step=1
-        Switch item=Encesa_Bomba_Auto_Migdia icon="sprinkler"
-        Setpoint item=Durada_Encesa_Auto_Migdia icon="stopwatch" label="Durada migdia [%.1f min]" minValue=1 maxValue=30 step=1
-        Switch item=Encesa_Bomba_Auto_Tarda icon="sprinkler"
-        Setpoint item=Durada_Encesa_Auto_Tarda icon="stopwatch" label="Durada tarda [%.1f min]" minValue=1 maxValue=30 step=1
+        Frame{
+            Webview height=12 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
+        }
     }
 
-    Frame label="Temperatures sistema elèctric" {
-        
-        Text item=ElectronicaTemperatura
-        Text item=BateriesTemperatura
-        Text item=ExteriorArmarisTemperatura
-        Text item=BateriesTemperaturaAdosada
-        
-        Text item=VentiladorBateries label="Vent. bateries: [%s]" icon="fan"
-        Text item=VentiladorElectronica label="Vent. electr.: [%s]" icon="fan"
-
-        Selection item=VentiladorGestioElect icon="thermostat_heater" mappings=["auto"="Automatic", "manual"="Manual"]
-
-        Switch item=VentiladorBateriesManual icon="fan"
-        Switch item=VentiladorElectronicaManual icon="fan"
-
-        Text item=MinutesBatFanFromBatteries label="Min. vent. bat. amb bat.: [%s]" icon="time"
-        Text item=MinutesElecFanFromBatteries label="Min. vent. elec. amb bat.: [%s]" icon="time"
+    Text item=CalentadorTitle label="Calentador" icon="heating"
+    {
+        Frame label="Calentador" {
+            Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
+            Selection item=Calentador_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "500"="500W", "1000"="1000W", "2000"="2000W"]
+            Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat Pot.: [%d W]" 
+            
+            Text item=Calentador_Termostat_UserDisplay icon="water_heater" label="Estat Term.: [%s]" 
+            Text item=Calentador_Hot_Date icon="time" label="Ultim cop calent: [%1$td/%1$tm/%1$tY %1$tT]" 
+            
+            Text item=Calentador_Energia_Avui icon="heater_display" label="Energia avui: [%.3f kWh]" 
+        }
+        Frame{
+            Webview height=14 url="http://calespiga.ddns.net:3000/d/yImV7EWgz/calentador?orgId=1"
+        }
     }
 
-    Frame{
-        Webview height=16 url="http://calespiga.ddns.net:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
+    Text item=RegTitle label="Reg i aigua" icon="faucet"
+    {
+        Frame label="Reg de l'hort" {
+            Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
+            Text icon="water" item=DipositPercent label="Nivell diposit: [%s %%]"
+            Switch item=Encesa_Bomba_Manual icon="sprinkler"
+            Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
+            Switch item=Encesa_Bomba_Auto_Mati icon="sprinkler"
+            Setpoint item=Durada_Encesa_Auto_Mati icon="stopwatch" label="Durada mati [%.1f min]" minValue=1 maxValue=30 step=1
+            Switch item=Encesa_Bomba_Auto_Migdia icon="sprinkler"
+            Setpoint item=Durada_Encesa_Auto_Migdia icon="stopwatch" label="Durada migdia [%.1f min]" minValue=1 maxValue=30 step=1
+            Switch item=Encesa_Bomba_Auto_Tarda icon="sprinkler"
+            Setpoint item=Durada_Encesa_Auto_Tarda icon="stopwatch" label="Durada tarda [%.1f min]" minValue=1 maxValue=30 step=1
+        }
     }
-        
-    
+
+    Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
+    {
+        Frame label="Temperatures sistema elèctric" {
+            
+            Text item=ElectronicaTemperatura
+            Text item=BateriesTemperatura
+            Text item=ExteriorArmarisTemperatura
+            Text item=BateriesTemperaturaAdosada
+            
+            Text item=VentiladorBateries label="Vent. bateries: [%s]" icon="fan"
+            Text item=VentiladorElectronica label="Vent. electr.: [%s]" icon="fan"
+
+            Selection item=VentiladorGestioElect icon="thermostat_heater" mappings=["auto"="Automatic", "manual"="Manual"]
+
+            Switch item=VentiladorBateriesManual icon="fan"
+            Switch item=VentiladorElectronicaManual icon="fan"
+
+            Text item=MinutesBatFanFromBatteries label="Min. vent. bat. amb bat.: [%s]" icon="time"
+            Text item=MinutesElecFanFromBatteries label="Min. vent. elec. amb bat.: [%s]" icon="time"
+        }
+
+        Frame{
+            Webview height=16 url="http://calespiga.ddns.net:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
+        }
+    }
+
+//    Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
+//    {
+//        Frame label="Energia sobrant" {
+//            Text item=AvailablePower icon="energy"
+//            Text item=AvailablePowerProcessStatus icon="settings"
+//        }
+//        Frame label="Testing energia sobrant" {
+//            Setpoint item=NotUsedPower label="Força potencia extra" minValue=0 maxValue=3000 step=200
+//            Text item=Calentador_UsedPower label="Potencia extra usada calent."
+//            Text item=Calentador_RequiredPower label="Potencia extra futura calent."
+//        }
+//    }
 }

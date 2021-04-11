@@ -11,3 +11,5 @@ Number Durada_Encesa_Auto_Migdia "Durada migdia (minuts)"
 
 Switch Encesa_Bomba_Auto_Tarda "Encesa auto bomba reg tarda"
 Number Durada_Encesa_Auto_Tarda "Durada tarda (minuts)"
+
+String RegTitle "Reg i aigua"

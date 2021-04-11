@@ -22,6 +22,9 @@ Switch VentiladorElectNomesTemp
 Switch VentiladorElectControlPotencia
 Switch VentiladorBateriesTest
 Switch VentiladorElectronicaTest
+
+String TemperaturesTitle "Temperatures"
+
 /* FOR TESTING PURPOSES
 
 Number:Temperature BateriesTemperatura      "T. arm. bateries test: [%.1f %unit%]" 

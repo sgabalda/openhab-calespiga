@@ -7,3 +7,5 @@ Number SunnyBoy_Freq "Frequencia [%.2f Hz]"
 String SunnyBoy_Token "Token [%s]"
 DateTime SunnyBoy_Time_Attempt "Intent lect. [%1$td/%1$tm/%1$tY %1$tT]"
 DateTime SunnyBoy_Time_Read "Darrera lect. [%1$td/%1$tm/%1$tY %1$tT]"
+
+String FotovoltaicaTitle "Fotovoltaica"

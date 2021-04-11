@@ -1,0 +1,22 @@
+Number NotUsedPower "Potència extra"
+//the extra power not currently used that is available to be used by devices
+Number:Power AvailablePower "Potència disponible"
+//the power available to the devices, some of it may be used at the moment
+
+String AvailablePowerProcessStatus "Estat del processat"      
+//what is the status of the processing. May be "start", "processing" or "finished"
+
+String DestinationDevices "Dispositius per enviar la potència disponible"      
+//comma separated list of the devices where to send the availiable power, in order of priority
+
+//			INFO
+//	all unused devices must define this Items:
+//		<device>_AvailablePower -> that receives the power available for the device
+//		<device>_UsedPower		-> that exposes the power that is currently using the device
+//		<device>_RequiredPower	-> that exposes the power that will be used by the device. After Modifying it, the device must send a command to DestinationDeviceUpdated item
+//		<device>_ApplyChange	-> that triggers the change to consume what was exposed in the RequiredPower. After applying it, must send a command to DestinationDeviceApplied item
+
+String DestinationDeviceUpdated "Monitor de dispositiu actualitzat"
+String DestinationDeviceApplied "Monitor de dispositiu canviat"
+
+String PotenciaSobrantTitle "Potencia sobrant"
