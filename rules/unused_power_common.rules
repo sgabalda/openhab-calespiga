@@ -101,7 +101,8 @@ then
     if(nextItem >= devices.length()){
         logInfo("UnusedPower","DestinationDeviceUpdated received command, all devices ready to apply changes")
         currentItemUpdated = devices.length() - 1
-        DestinationDeviceApplied.sendCommand(0)
+        logInfo("UnusedPower","Applying changes to last device "+devices.get(currentItemUpdated))
+        val nextItemToApply = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_ApplyChange")
     }else{
         logInfo("UnusedPower","DestinationDeviceUpdated received command, next device is "+ devices.get(nextItem))
         val previousAvailablePowerItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_AvailablePower")
@@ -124,12 +125,12 @@ rule "Destination Device Apply"
 when
 	Item DestinationDeviceApplied received command
 then
-    logInfo("UnusedPower","Applying changes to device "+devices.get(currentItemUpdated))
-    val nextItemToApply = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_ApplyChange")
-    nextItemToApply.sendCommand("apply")
     val nextItem = currentItemUpdated - 1
     if(nextItem >= 0){
         currentItemUpdated = nextItem
+        logInfo("UnusedPower","Applying changes to device "+devices.get(currentItemUpdated))
+        val nextItemToApply = ScriptServiceUtil.getItemRegistry.getItem(devices.get(currentItemUpdated) + "_ApplyChange")
+        nextItemToApply.sendCommand("apply")
     }else{
         logInfo("UnusedPower","Done applying changes to all devices, finishing management of unused power cycle")
         AvailablePowerProcessStatus.postUpdate("finished")
