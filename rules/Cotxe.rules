@@ -1,0 +1,150 @@
+//rules to manage unused power
+
+val MAX_POWER = 2200.0
+
+rule "Potencia disponible cotxe"
+when
+	Item Cotxe_AvailablePower received command
+then
+	val gestioAutoCotxe = GestioAutomaticaCotxe.state
+	var requiredPower = 0
+	if(gestioAutoCotxe == "auto"){
+		logInfo("Cotxe.rules", "Received new power available for Cotxe auto")
+	    val oldPowerState = Cotxe_AvailablePower.state
+	    var availablePower = 0.0
+	    if(oldPowerState != NULL){
+	        availablePower = (oldPowerState as Number).doubleValue
+	    }
+
+        //TODO implement some sort of hysteresis
+
+	    val currentPower = 0.0
+	    val currentPowerItem = Cotxe_Potencia_UserDisplay.state
+	    if(currentPowerItem != NULL){
+	        currentPower = (currentPowerItem as Number).doubleValue
+	    }
+
+	    val isCurrentlyOn = false
+	    val switchState = CotxeEncesa_Control.state
+	    if(switchState ==ON ){
+	        isCurrentlyOn = true
+	    }
+
+	    val powerToUse = MAX_POWER  //by default it uses all the power
+	    if(currentPower > 0.0){
+	        //if it is already charging, that is the power that will continue using if possible
+	        //TODO check that the sensor does not give small values instead of 0
+	        powerToUse = currentPower
+	    }else if (isCurrentlyOn){
+	        //if it is currently on, and is using 0W, this means that is already charged
+            powerToUse = 0
+	    }
+
+	    if(availablePower >= powerToUse){
+            requiredPower = powerToUse
+        }else{
+        	requiredPower = 0
+        }
+        logInfo("Cotxe.rules", "The power that the Cotxe will use is "+requiredPower)
+	}else{
+		logInfo("Cotxe.rules", "Received unused power, but Cotxe is manual, so ignoring it")
+	}
+	Cotxe_RequiredPower.sendCommand(requiredPower)
+end
+
+rule "update required power"
+when
+	Item Cotxe_RequiredPower received command
+then
+    logInfo("Cotxe.rules", "Required power updated, notifying the DestinationDeviceUpdated")
+	DestinationDeviceUpdated.sendCommand("Cotxe")
+end
+
+rule "Apply power"
+when
+	Item Cotxe_ApplyChange received command
+then
+    val gestioAutoCotxe = GestioAutomaticaCotxe.state
+    logInfo("Cotxe.rules", "Received command to apply the power")
+    if(gestioAutoCotxe == "auto"){
+        logInfo("Cotxe.rules", "Going to apply the required power")
+        val requiredPowerState = Cotxe_RequiredPower.state
+        var powerToApply = 0
+        if(requiredPowerState != NULL){
+            powerToApply = (requiredPowerState as Number).intValue
+        }
+        logInfo("Cotxe.rules", "The required power to apply is "+powerToApply)
+        if(powerToApply > 0){
+            logInfo("Cotxe.rules", "Turning ON the cotxe charger")
+            CotxeEncesa_Control.sendCommand(ON)
+        }else{
+            logInfo("Cotxe.rules", "Turning OFF the cotxe charger")
+            CotxeEncesa_Control.sendCommand(OFF)
+        }
+        DestinationDeviceApplied.sendCommand("Cotxe")
+    }else{
+        logInfo("Cotxe.rules", "Gestio is not automatic, so not applying required power, but notifying as applied")
+        Cotxe_UsedPower.sendCommand(0)
+        DestinationDeviceApplied.sendCommand("Cotxe")
+    }
+end
+
+//rules not to manage unused power
+rule "Canvi gestio Cotxe"
+when
+    Item GestioAutomaticaCotxe received command
+then
+    val gestioAutoCotxe = GestioAutomaticaCotxe.state
+    if(gestioAutoCotxe != "auto"){
+        logInfo("Cotxe.rules", "Gestio Cotxe changed to manual. Currently switched off")
+        CotxeEncesa_Control.sendCommand(OFF)
+        //we are not using unused power, because all is manual.
+        Cotxe_UsedPower.sendCommand(0)
+    }else{
+        logInfo("Cotxe.rules", "Gestio Cotxe changed to auto, starting from current used power")
+        val currentPower = 0.0
+        val currentPowerItem = Cotxe_Potencia_UserDisplay.state
+        if(currentPowerItem != NULL){
+            currentPower = (currentPowerItem as Number).doubleValue
+        }
+        Cotxe_UsedPower.sendCommand(currentPower)
+    }
+end
+
+rule "Canvi manual Cotxe"
+when 
+    Item CotxeEncesaManual received command
+then
+    val gestioAutoCotxe = GestioAutomaticaCotxe.state
+    if(gestioAutoCotxe != "auto"){
+        CotxeEncesa_Control.sendCommand(CotxeEncesaManual.state)
+        Cotxe_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
+        //we are not using unused power, because all is manual.
+        Cotxe_UsedPower.sendCommand(0)
+    }else{
+        logInfo("Cotxe.rules", "Gestio Cotxe is auto. Changing the power has no effects")
+        CotxeEncesaManual.postUpdate(OFF)
+    }
+end
+
+rule "Activar o desactivar carregador Cotxe"
+when
+    Item CotxeEncesa_Control received command
+then
+    logInfo("Cotxe.rules", "The cotxe plug will be set to "+ CotxeEncesa_Control.state)
+end
+
+rule "Canvi manual Cotxe"
+when
+    Item CotxeEncesa_Control received command
+then
+    logInfo("Cotxe.rules", "The cotxe plug will be set to "+ CotxeEncesa_Control.state)
+end
+
+rule "Canvi potencia cotxe"
+when
+    Item Cotxe_Potencia_UserDisplay received command
+then
+    logInfo("Cotxe.rules", "The cotxe is now using "+ Cotxe_Potencia_UserDisplay.state)
+    Cotxe_UsedPower.sendCommand(Cotxe_Potencia_UserDisplay.state)
+end

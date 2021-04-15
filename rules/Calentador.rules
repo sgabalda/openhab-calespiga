@@ -8,6 +8,7 @@ when
 then
 	val gestioAutoCalentador = GestioAutomaticaCalentador.state
 	var requiredPower = 0
+	//TODO if the calentador is hot, set required power to 0
 	if(gestioAutoCalentador == "auto"){
 		logInfo("Calentador.rules", "Received new power available for Calentador auto")
 	    val oldPowerState = Calentador_AvailablePower.state

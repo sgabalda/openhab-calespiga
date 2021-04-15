@@ -1,4 +1,10 @@
 
+String GestioAutomaticaCotxe "Gestio automàtica del cotxe"
+Number:Power Cotxe_Potencia_UserDisplay "Consum (W)"  //what the user sees as current power used
+Switch CotxeEncesaManual "Encesa manual del cotxe"
+
+Switch CotxeEncesa_Control "Encesa del cotxe"
+
 //		<device>_AvailablePower -> that receives the power available for the device
 //		<device>_UsedPower		-> that exposes the power that is currently using the device
 //		<device>_RequiredPower	-> that exposes the power that will be used by the device
@@ -7,4 +13,4 @@
 Number:Power Cotxe_AvailablePower "Potencia sobrant disponible pel Cotxe"
 Number:Power Cotxe_UsedPower "Potencia actualment usada pel Cotxe"
 Number:Power Cotxe_RequiredPower "Potencia que serà usada pel Cotxe"
-Switch Cotxe_ApplyChange "Dispara el càlcul de potència"
+String Calentador_ApplyChange "Dispara el càlcul de potència"
