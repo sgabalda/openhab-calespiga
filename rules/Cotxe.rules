@@ -120,7 +120,7 @@ then
         CotxeEncesa_Control.sendCommand(CotxeEncesaManual.state)
         Cotxe_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
         //we are not using unused power, because all is manual.
-        Cotxe_UsedPower.sendCommand(0)
+        Cotxe_UsedPower.sendCommand(0+"")
     }else{
         logInfo("Cotxe.rules", "Gestio Cotxe is auto. Changing the power has no effects")
         CotxeEncesaManual.postUpdate(OFF)
