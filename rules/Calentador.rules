@@ -1,5 +1,5 @@
 var long lastChangePower = -1
-val test = true     //set to true to enable testing
+var test = true     //set to true to enable testing
                     //(actual commands will not be sent to the calentador, and the last
                     //hot date will not be changed
 
@@ -32,7 +32,8 @@ then
 	}else{
 		logInfo("Calentador.rules", "Received unused power, but calentador is manual, so ignoring it")
 	}
-	Calentador_RequiredPower.sendCommand(requiredPower)	
+	Calentador_RequiredPower.sendCommand(requiredPower)
+	logInfo("Calentador.rules", "Sent required power to Calentador_RequiredPower")
 end
 
 rule "update required power"
@@ -106,7 +107,18 @@ rule "Forward termostat state from MQTT"
 when
     Item ArduinoCalentadorThing_CalentadorTermostatStatus  received update
 then
-    Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
+    if(!test){
+        Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
+    }
+end
+
+rule "Forward termostat state from MQTT Fake"
+when
+    Item Calentador_Estat_Fake  received command
+then
+    if(test){
+        Calentador_Estat_ProxyItem.postUpdate(Calentador_Estat_Fake.state.toString)
+    }
 end
 
 rule "forward last hot date"

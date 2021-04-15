@@ -18,19 +18,19 @@ then
 
         //TODO implement some sort of hysteresis
 
-	    val currentPower = 0.0
+	    var currentPower = 0.0
 	    val currentPowerItem = Cotxe_Potencia_UserDisplay.state
 	    if(currentPowerItem != NULL){
 	        currentPower = (currentPowerItem as Number).doubleValue
 	    }
 
-	    val isCurrentlyOn = false
+	    var isCurrentlyOn = false
 	    val switchState = CotxeEncesa_Control.state
 	    if(switchState ==ON ){
 	        isCurrentlyOn = true
 	    }
 
-	    val powerToUse = MAX_POWER  //by default it uses all the power
+	    var powerToUse = MAX_POWER  //by default it uses all the power
 	    if(currentPower > 0.0){
 	        //if it is already charging, that is the power that will continue using if possible
 	        //TODO check that the sensor does not give small values instead of 0

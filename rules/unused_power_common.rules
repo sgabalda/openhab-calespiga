@@ -1,6 +1,6 @@
 import org.eclipse.smarthome.model.script.ScriptServiceUtil
 
-val test = true     //set t true to use test mode (unused power will not be read from Sunny boy
+var test = true     //set t true to use test mode (unused power will not be read from Sunny boy
 
 val availableDevices = newArrayList("Calentador")
 var finishedRetries = 0
