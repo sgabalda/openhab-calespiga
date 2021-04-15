@@ -134,13 +134,6 @@ then
     logInfo("Cotxe.rules", "The cotxe plug will be set to "+ CotxeEncesa_Control.state)
 end
 
-rule "Canvi manual Cotxe"
-when
-    Item CotxeEncesa_Control received command
-then
-    logInfo("Cotxe.rules", "The cotxe plug will be set to "+ CotxeEncesa_Control.state)
-end
-
 rule "Canvi potencia cotxe"
 when
     Item Cotxe_Potencia_UserDisplay received command

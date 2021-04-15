@@ -75,17 +75,27 @@ sitemap default label="Ca l'espiga" {
             Webview height=16 url="http://calespiga.ddns.net:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
         }
     }
-
-//    Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
-//    {
-//        Frame label="Energia sobrant" {
-//            Text item=AvailablePower icon="energy"
-//            Text item=AvailablePowerProcessStatus icon="settings"
-//        }
-//        Frame label="Testing energia sobrant" {
-//            Setpoint item=NotUsedPower label="Força potencia extra" minValue=0 maxValue=3000 step=200
-//            Text item=Calentador_UsedPower label="Potencia extra usada calent."
-//            Text item=Calentador_RequiredPower label="Potencia extra futura calent."
-//        }
-//    }
+    Text item=CotxeTitle label="Carregador cotxe" icon="energy"
+    {
+        Frame label="Cotxe" {
+            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe" icon="battery"
+            Switch item=GestioAutomaticaCalentador icon="wallswitch" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
+            Switch item=CotxeEncesaManual icon="poweroutlet"
+        }
+    }
+    Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
+    {
+        Frame label="Energia sobrant" {
+            Text item=AvailablePower icon="energy"
+            Text item=AvailablePowerProcessStatus icon="settings"
+        }
+        Frame label="Testing energia sobrant" {
+            Setpoint item=NotUsedPower label="Força potencia extra" minValue=0 maxValue=3000 step=200
+            Text item=Calentador_UsedPower label="Potencia extra usada calent."
+            Text item=Calentador_RequiredPower label="Potencia extra futura calent."
+            Text item=Calentador_Potencia_ProxyItem label="Potencia enviada calentador"
+            Text item=Calentador_Hot_Date_Fake icon="time" label="Ultim cop calent (Fake): [%1$td/%1$tm/%1$tY %1$tT]"
+            Setpoint item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe" minValue=0 maxValue=3000 step=200
+        }
+    }
 }

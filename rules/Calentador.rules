@@ -1,4 +1,7 @@
 var long lastChangePower = -1
+val test = true     //set to true to enable testing
+                    //(actual commands will not be sent to the calentador, and the last
+                    //hot date will not be changed
 
 //rules to manage unused power
 
@@ -99,16 +102,36 @@ then
     }
 end
 
-rule "update termostat state from MQTT"
+rule "Forward termostat state from MQTT"
 when
     Item ArduinoCalentadorThing_CalentadorTermostatStatus  received update
 then
+    Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
+end
 
-    val receivedEstat = ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString
+rule "forward last hot date"
+when
+    Item Calentador_Hot_Date_Proxy  received update
+then
+    val value = Calentador_Hot_Date_Proxy.state
+    if(test){
+        Calentador_Hot_Date_Fake.postUpdate(value.toString)
+    }else{
+        Calentador_Hot_Date_.postUpdate(value.toString)
+    }
+end
+
+rule "update termostat state from MQTT"
+when
+    Item Calentador_Estat_ProxyItem  received update
+then
+    //TODO allow control of HOT/COLD when in test mode
+    val receivedEstat = Calentador_Estat_ProxyItem.state.toString
     logInfo("Calentador.rules", "Calentador termostat changed to "+receivedEstat)
     if(receivedEstat == "HOT"){
         logInfo("Calentador.rules", "Calentador is HOT, changing last HOT date and turning off")
-        Calentador_Hot_Date.postUpdate(now.toString)
+        Calentador_Hot_Date_Proxy.postUpdate(now.toString)
+
         //we are not using unused power, because it is hot.
         Calentador_UsedPower.sendCommand(0)
         //turn off
@@ -123,7 +146,10 @@ rule "Turn On Calentador"
 when
     Item Calentador_Potencia_ProxyItem received command
 then
-    ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
+    //TODO uncomment to disable testing mode
+    if(!test){
+        ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
+    }
     logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
 end
 
