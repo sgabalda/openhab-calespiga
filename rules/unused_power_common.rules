@@ -1,5 +1,7 @@
 import org.eclipse.smarthome.model.script.ScriptServiceUtil
 
+val test = true     //set t true to use test mode (unused power will not be read from Sunny boy
+
 val availableDevices = newArrayList("Calentador")
 var finishedRetries = 0
 val MAX_FINISHED_RETRIES = 5
@@ -32,7 +34,9 @@ when
 	or Time cron "15 * * ? * * *"
 then
 	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
-	NotUsedPower.sendCommand(unusedPower)
+	if(!test){
+	    NotUsedPower.sendCommand(unusedPower)
+    }
 end
 
 rule "Manage not used power"
