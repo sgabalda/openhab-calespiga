@@ -139,7 +139,7 @@ then
         logInfo("UnusedPower","Available power for " + devices.get(nextItem)+" is " + availablePower)
         val nextItemAvailable = ScriptServiceUtil.getItemRegistry.getItem(devices.get(nextItem) + "_AvailablePower")
         currentItemUpdated = nextItem
-        firstItemAvailable.sendCommand(availablePower)
+        nextItemAvailable.sendCommand(availablePower)
     }
 end
 
