@@ -11,24 +11,29 @@ when
 then
 	val gestioAutoCalentador = GestioAutomaticaCalentador.state
 	var requiredPower = 0
-	//TODO if the calentador is hot, set required power to 0
 	if(gestioAutoCalentador == "auto"){
 		logInfo("Calentador.rules", "Received new power available for Calentador auto")
-	    val oldPowerState = Calentador_AvailablePower.state
-	    var availablePower = 0.0
-	    if(oldPowerState != NULL){
-	        availablePower = (oldPowerState as Number).doubleValue
-	    }
-	    if(availablePower >= 2000){
-            requiredPower = 2000
-        }else if(availablePower >= 1000){
-            requiredPower = 1000
-        }else if(availablePower >= 500){
-            requiredPower = 500
+		val receivedEstat = Calentador_Estat_ProxyItem.state.toString
+        if(receivedEstat == "HOT"){
+            logInfo("Calentador.rules", "The calentador is hot, so required power set to 0")
+            requiredPower = 0
         }else{
-        	requiredPower = 0
+            val oldPowerState = Calentador_AvailablePower.state
+            var availablePower = 0.0
+            if(oldPowerState != NULL){
+                availablePower = (oldPowerState as Number).doubleValue
+            }
+            if(availablePower >= 2000){
+                requiredPower = 2000
+            }else if(availablePower >= 1000){
+                requiredPower = 1000
+            }else if(availablePower >= 500){
+                requiredPower = 500
+            }else{
+                requiredPower = 0
+            }
+            logInfo("Calentador.rules", "The power that the Calentador will use is "+requiredPower)
         }
-        logInfo("Calentador.rules", "The power that the Calentador will use is "+requiredPower)
 	}else{
 		logInfo("Calentador.rules", "Received unused power, but calentador is manual, so ignoring it")
 	}
@@ -137,7 +142,6 @@ rule "update termostat state from MQTT"
 when
     Item Calentador_Estat_ProxyItem  received update
 then
-    //TODO allow control of HOT/COLD when in test mode
     val receivedEstat = Calentador_Estat_ProxyItem.state.toString
     logInfo("Calentador.rules", "Calentador termostat changed to "+receivedEstat)
     if(receivedEstat == "HOT"){
@@ -149,7 +153,6 @@ then
         //turn off
         Calentador_Potencia_ProxyItem.sendCommand(0+"")
     }
-    
     Calentador_Termostat_UserDisplay.postUpdate(receivedEstat)    
     
 end
@@ -158,7 +161,6 @@ rule "Turn On Calentador"
 when
     Item Calentador_Potencia_ProxyItem received command
 then
-    //TODO uncomment to disable testing mode
     if(!test){
         ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
     }
