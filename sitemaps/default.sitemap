@@ -78,7 +78,7 @@ sitemap default label="Ca l'espiga" {
     Text item=CotxeTitle label="Carregador cotxe" icon="energy"
     {
         Frame label="Cotxe" {
-            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe" icon="battery"
+            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%d W]" icon="battery"
             Switch item=GestioAutomaticaCalentador icon="wallswitch" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
             Switch item=CotxeEncesaManual icon="poweroutlet"
         }
@@ -86,18 +86,18 @@ sitemap default label="Ca l'espiga" {
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
     {
         Frame label="Energia sobrant" {
-            Text item=AvailablePower icon="energy"
-            Text item=AvailablePowerProcessStatus icon="settings"
+            Text item=AvailablePower icon="energy" label="Potencia disponible [%d W]"
+            Text item=AvailablePowerProcessStatus icon="settings" label="Status [%s]"
         }
         Frame label="Testing energia sobrant" {
-            Setpoint item=NotUsedPower label="Força potencia extra" minValue=0 maxValue=3000 step=200
-            Text item=Calentador_UsedPower label="Potencia extra usada calent."
-            Text item=Calentador_RequiredPower label="Potencia extra futura calent."
-            Text item=Calentador_Potencia_ProxyItem label="Potencia enviada calentador"
+            Setpoint item=NotUsedPower label="Força potencia extra [%d W]" minValue=0 maxValue=3000 step=200
+            Text item=Calentador_UsedPower label="Potencia extra usada calent. [%d W]"
+            Text item=Calentador_RequiredPower label="Potencia extra futura calent.[%d W]"
+            Text item=Calentador_Potencia_ProxyItem label="Potencia enviada calentador [%d W]"
             Text item=Calentador_Hot_Date_Fake icon="time" label="Ultim cop calent (Fake): [%1$td/%1$tm/%1$tY %1$tT]"
             Switch item=GestioAutomaticaCalentador icon="wallswitch" label="Gestió carregador" mappings=["HOT"="HOT", "COLD"="COLD"]
             Switch item=GestioAutomaticaCotxe icon="wallswitch" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
-            Setpoint item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe" minValue=0 maxValue=3000 step=200
+            Setpoint item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%d W]" minValue=0 maxValue=3000 step=200
         }
     }
 }
