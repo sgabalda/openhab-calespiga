@@ -41,7 +41,7 @@ then
 	logInfo("Calentador.rules", "Sent required power to Calentador_RequiredPower")
 end
 
-rule "update required power"
+rule "update calentador required power"
 when
 	Item Calentador_RequiredPower received command
 then
@@ -49,7 +49,7 @@ then
 	DestinationDeviceUpdated.sendCommand("calentador")
 end
 
-rule "Apply power"
+rule "Apply power calentador"
 when
 	Item Calentador_ApplyChange received command
 then
@@ -108,7 +108,7 @@ then
     }
 end
 
-rule "Forward termostat state from MQTT"
+rule "Forward termostat state from MQTT calentador"
 when
     Item ArduinoCalentadorThing_CalentadorTermostatStatus  received update
 then
@@ -117,7 +117,7 @@ then
     }
 end
 
-rule "Forward termostat state from MQTT Fake"
+rule "Forward termostat state from MQTT Fake calentador"
 when
     Item Calentador_Estat_Fake  received command
 then
@@ -126,7 +126,7 @@ then
     }
 end
 
-rule "forward last hot date"
+rule "forward last hot date calentador"
 when
     Item Calentador_Hot_Date_Proxy  received update
 then
@@ -138,7 +138,7 @@ then
     }
 end
 
-rule "update termostat state from MQTT"
+rule "update termostat state from MQTT calentador"
 when
     Item Calentador_Estat_ProxyItem  received update
 then
@@ -167,7 +167,7 @@ then
     logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
 end
 
-rule "update display state from MQTT"
+rule "update display state from MQTT calentador"
 when
     Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update
 then
@@ -206,7 +206,7 @@ then
 
 end 
 
-rule "Reset energy today"
+rule "Reset energy today calentador"
 when
     Time cron "0 0 0 ? * * *"
 then

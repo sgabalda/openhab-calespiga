@@ -52,7 +52,7 @@ then
 	Cotxe_RequiredPower.sendCommand(requiredPower)
 end
 
-rule "update required power"
+rule "update cotxe required power"
 when
 	Item Cotxe_RequiredPower received command
 then
@@ -60,7 +60,7 @@ then
 	DestinationDeviceUpdated.sendCommand("Cotxe")
 end
 
-rule "Apply power"
+rule "Apply power cotxe"
 when
 	Item Cotxe_ApplyChange received command
 then

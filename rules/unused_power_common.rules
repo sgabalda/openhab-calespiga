@@ -35,7 +35,7 @@ when
 then
 	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
 	if(!test){
-	    NotUsedPower.sendCommand(unusedPower)
+	    NotUsedPower.postUpdate(unusedPower)
     }
 end
 
