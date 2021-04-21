@@ -1,9 +1,9 @@
 
-String GestioAutomaticaCotxe "Gestio automàtica del cotxe"
-Number:Power Cotxe_Potencia_UserDisplay "Consum (W)"  //what the user sees as current power used
-Switch CotxeEncesaManual "Encesa manual del cotxe"
+String GestioAutomaticaCotxe "Gestio automàtica del cotxe"  //this decides if the gestio is auto or manual
+Number:Power Cotxe_Potencia_UserDisplay "Consum (W)"  //what the sensor reports as current power used
+Switch CotxeEncesaManual "Encesa manual del cotxe"      //this is the user control to turn on/off the charger (only valid if gestio is manual)
 
-Switch CotxeEncesa_Control "Encesa del cotxe"
+Switch CotxeEncesa_Control "Encesa del cotxe"      //this is the actual item tant turns on or off the charger
 
 //		<device>_AvailablePower -> that receives the power available for the device
 //		<device>_UsedPower		-> that exposes the power that is currently using the device
