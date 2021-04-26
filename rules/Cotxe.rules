@@ -1,5 +1,5 @@
 //rules to manage unused power
-
+var test = true     //ste to true to use the test items instead of the real ones
 val MAX_POWER = 2200.0
 
 rule "Potencia disponible cotxe"
@@ -25,7 +25,7 @@ then
 	    }
 
 	    var isCurrentlyOn = false
-	    val switchState = CotxeEncesa_Control.state
+	    val switchState = CotxeEncesa_Control_Proxy.state
 	    if(switchState ==ON ){
 	        isCurrentlyOn = true
 	    }
@@ -43,6 +43,7 @@ then
 	    if(availablePower >= powerToUse){
             requiredPower = powerToUse
         }else{
+            //TODO if it was ON, do some sort of histeresys
         	requiredPower = 0
         }
         logInfo("Cotxe.rules", "The power that the Cotxe will use is "+requiredPower)
@@ -76,10 +77,10 @@ then
         logInfo("Cotxe.rules", "The required power to apply is "+powerToApply)
         if(powerToApply > 0){
             logInfo("Cotxe.rules", "Turning ON the cotxe charger")
-            CotxeEncesa_Control.sendCommand(ON)
+            CotxeEncesa_Control_Proxy.sendCommand(ON)
         }else{
             logInfo("Cotxe.rules", "Turning OFF the cotxe charger")
-            CotxeEncesa_Control.sendCommand(OFF)
+            CotxeEncesa_Control_Proxy.sendCommand(OFF)
         }
         DestinationDeviceApplied.sendCommand("Cotxe")
     }else{
@@ -97,7 +98,7 @@ then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
     if(gestioAutoCotxe != "auto"){
         logInfo("Cotxe.rules", "Gestio Cotxe changed to manual. Currently switched off")
-        CotxeEncesa_Control.sendCommand(OFF)
+        CotxeEncesa_Control_Proxy.sendCommand(OFF)
         //we are not using unused power, because all is manual.
         Cotxe_UsedPower.sendCommand(0)
     }else{
@@ -117,7 +118,7 @@ when
 then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
     if(gestioAutoCotxe != "auto"){
-        CotxeEncesa_Control.sendCommand(CotxeEncesaManual.state)
+        CotxeEncesa_Control_Proxy.sendCommand(CotxeEncesaManual.state)
         Cotxe_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
         //we are not using unused power, because all is manual.
         Cotxe_UsedPower.sendCommand(0+"")
@@ -129,15 +130,44 @@ end
 
 rule "Activar o desactivar carregador Cotxe"
 when
-    Item CotxeEncesa_Control received command
+    Item CotxeEncesa_Control_Proxy received command
 then
-    logInfo("Cotxe.rules", "The cotxe plug will be set to "+ CotxeEncesa_Control.state)
+    logInfo("Cotxe.rules", "The cotxe plug will be set to "+ CotxeEncesa_Control_Proxy.state)
+    if(test){
+        CotxeEncesa_Control_Fake.sendCommand(CotxeEncesa_Control_Proxy.state)
+    }else{
+        CotxeEncesa_Control.sendCommand(CotxeEncesa_Control_Proxy.state)
+    }
 end
 
 rule "Canvi potencia cotxe"
 when
     Item Cotxe_Potencia_UserDisplay received command
 then
-    logInfo("Cotxe.rules", "The cotxe is now using "+ Cotxe_Potencia_UserDisplay.state)
+    logInfo("Cotxe.rules", "The cotxe is now using "+ Cotxe_Potencia_UserDisplay.state+", updating UsedPower")
     Cotxe_UsedPower.sendCommand(Cotxe_Potencia_UserDisplay.state)
+end
+
+rule "Canvi potencia cotxe sensor"
+when
+    Item Cotxe_Potencia_Sensor received command
+then
+    if(!test){
+        logInfo("Cotxe.rules", "The cotxe power sensor received "+ Cotxe_Potencia_Sensor.state)
+        Cotxe_Potencia_UserDisplay.sendCommand(Cotxe_Potencia_Sensor.state)
+    }else{
+        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ Cotxe_Potencia_Sensor.state)
+    }
+end
+
+rule "Canvi potencia cotxe sensor Fake"
+when
+    Item Cotxe_Potencia_Sensor_Fake received command
+then
+    if(test){
+        logInfo("Cotxe.rules", "The FAKE cotxe power sensor received "+ Cotxe_Potencia_Sensor_Fake.state)
+        Cotxe_Potencia_UserDisplay.sendCommand(Cotxe_Potencia_Sensor_Fake.state)
+    }else{
+        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ Cotxe_Potencia_Sensor.state)
+    }
 end

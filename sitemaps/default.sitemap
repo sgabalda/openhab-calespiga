@@ -96,7 +96,8 @@ sitemap default label="Ca l'espiga" {
             Text item=Calentador_Potencia_ProxyItem label="Potencia enviada calentador [%d W]"
             Text item=Calentador_Hot_Date_Fake icon="time" label="Ultim cop calent (Fake): [%1$td/%1$tm/%1$tY %1$tT]"
             Switch item=Calentador_Estat_Fake icon="wallswitch" label="Estat fake calentador" mappings=["HOT"="HOT", "COLD"="COLD"]
-            Setpoint item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%d W]" minValue=0 maxValue=3000 step=200
+            Switch item=CotxeEncesa_Control_Fake icon="wallswitch" label="Estat fake calentador" mappings=["HOT"="HOT", "COLD"="COLD"]
+            Setpoint item=Cotxe_Potencia_Sensor_Fake label="Potencia enviada cotxe fake [%d W]" minValue=0 maxValue=3000 step=200
         }
     }
 }
