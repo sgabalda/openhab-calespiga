@@ -171,3 +171,11 @@ then
         logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ Cotxe_Potencia_Sensor.state)
     }
 end
+
+rule "lectura sensor cotxe"
+when
+    Item Cotxe_Sensor_Lectura changed
+then
+    logInfo("Cotxe.rules", "Received new info from sensor cotxe "+ Cotxe_Sensor_Lectura.state)
+    //TODO get the current power and save it to the Cotxe_Potencia_Sensor
+end
