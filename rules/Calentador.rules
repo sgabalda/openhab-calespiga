@@ -1,5 +1,5 @@
 var long lastChangePower = -1
-var test = true     //set to true to enable testing
+var test = false     //set to true to enable testing
                     //(actual commands will not be sent to the calentador, and the last
                     //hot date will not be changed
 

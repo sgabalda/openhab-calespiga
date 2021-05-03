@@ -1,5 +1,5 @@
 //rules to manage unused power
-var test = true     //ste to true to use the test items instead of the real ones
+var test = false     //set to true to use the test items instead of the real ones
 val MAX_POWER = 2200.0
 
 rule "Potencia disponible cotxe"
