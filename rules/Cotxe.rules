@@ -103,7 +103,7 @@ then
         Cotxe_UsedPower.sendCommand(0)
     }else{
         logInfo("Cotxe.rules", "Gestio Cotxe changed to auto, starting from current used power")
-        CotxeEncesa_Control_Proxy.sendCommand(OFF)
+        CotxeEncesaManual.postUpdate(OFF)
         var currentPower = 0.0
         val currentPowerItem = Cotxe_Potencia_UserDisplay.state
         if(currentPowerItem != NULL){
