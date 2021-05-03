@@ -118,8 +118,8 @@ when
 then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
     if(gestioAutoCotxe != "auto"){
-        CotxeEncesa_Control_Proxy.sendCommand(CotxeEncesaManual.state)
-        Cotxe_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
+        logInfo("Cotxe.rules", "Gestio Cotxe is manual. Changing the cotxe charger to " + CotxeEncesaManual.state)
+        CotxeEncesa_Control_Proxy.sendCommand(CotxeEncesaManual.state)  //turn it on or off
         //we are not using unused power, because all is manual.
         Cotxe_UsedPower.sendCommand(0+"")
     }else{
