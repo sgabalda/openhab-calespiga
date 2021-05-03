@@ -21,6 +21,6 @@ String Cotxe_ApplyChange "Dispara el càlcul de potència"
 
 String CotxeTitle "Carregador cotxe"
 
-Switch CotxeEncesa_Control_Fake "Encesa del cotxe fake"
+String CotxeEncesa_Control_Fake "Encesa del cotxe fake"
 Number:Power Cotxe_Potencia_Sensor_Fake "Potencia fake usada pel Cotxe"
 
