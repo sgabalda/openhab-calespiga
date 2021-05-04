@@ -185,8 +185,12 @@ rule "lectura sensor cotxe"
 when
     Item Cotxe_Sensor_Lectura changed
 then
+    var rawData = Cotxe_Sensor_Lectura.state
     logInfo("Cotxe.rules", "Received new info from sensor cotxe "+ Cotxe_Sensor_Lectura.state)
-    var String data = transform("JSONPATH", "$.power", rawData)
-    val Float power=Float::parseFloat(data)
-    Cotxe_Potencia_Sensor.sendCommand(power)
+    if(rawData != null){
+        var String data = transform("JSONPATH", "$.power", rawData)
+        val Float power=Float::parseFloat(data)
+        Cotxe_Potencia_Sensor.sendCommand(power)
+    }
+
 end
