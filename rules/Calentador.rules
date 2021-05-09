@@ -134,7 +134,7 @@ then
     if(test){
         Calentador_Hot_Date_Fake.postUpdate(value.toString)
     }else{
-        Calentador_Hot_Date_.postUpdate(value.toString)
+        Calentador_Hot_Date.postUpdate(value.toString)
     }
 end
 

@@ -6,7 +6,7 @@ Switch CotxeEncesaManual "Encesa manual del cotxe"      //this is the user contr
 String Cotxe_Sensor_Lectura "[%s]" {channel="exec:command:cotxe:output"}
 Number:Power Cotxe_Potencia_Sensor "Sensor consum (W)"  //what the cotxe is using ATM direcly from sensor
 
-Switch CotxeEncesa_Control "Encesa del cotxe" {gpio="pin:3 activelow:yes initialValue:high"} //this is the actual item tant turns on or off the charger
+Switch CotxeEncesa_Control "Encesa del cotxe" {gpio="pin:3 activelow:no initialValue:low"} //this is the actual item tant turns on or off the charger
 Switch CotxeEncesa_Control_Proxy "Encesa del cotxe"      //proxy to turn on or off the cotxe, or test it
 
 //		<device>_AvailablePower -> that receives the power available for the device

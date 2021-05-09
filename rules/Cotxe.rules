@@ -95,7 +95,7 @@ rule "Canvi gestio Cotxe"
 when
     Item GestioAutomaticaCotxe received command
 then
-    val gestioAutoCotxe = GestioAutomaticaCotxe.state
+    val gestioAutoCotxe = receivedCommand
     if(gestioAutoCotxe != "auto"){
         logInfo("Cotxe.rules", "Gestio Cotxe changed to manual. Currently switched off")
         CotxeEncesa_Control_Proxy.sendCommand(OFF)
@@ -119,8 +119,8 @@ when
 then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
     if(gestioAutoCotxe != "auto"){
-        logInfo("Cotxe.rules", "Gestio Cotxe is manual. Changing the cotxe charger to " + CotxeEncesaManual.state)
-        if (CotxeEncesaManual.state == ON) {
+        logInfo("Cotxe.rules", "Gestio Cotxe is manual. Changing the cotxe charger to " + receivedCommand)
+        if (receivedCommand == ON) {
             CotxeEncesa_Control_Proxy.sendCommand(ON)  //turn it on or off
         }else{
             CotxeEncesa_Control_Proxy.sendCommand(OFF) 
@@ -137,11 +137,11 @@ rule "Activar o desactivar carregador Cotxe"
 when
     Item CotxeEncesa_Control_Proxy received command
 then
-    logInfo("Cotxe.rules", "The cotxe plug will be set to "+ CotxeEncesa_Control_Proxy.state)
+    logInfo("Cotxe.rules", "The cotxe plug will be set to "+ receivedCommand)
     if(test){
-        CotxeEncesa_Control_Fake.sendCommand(CotxeEncesa_Control_Proxy.state)
+        CotxeEncesa_Control_Fake.sendCommand(receivedCommand)
     }else{
-        if (CotxeEncesa_Control_Proxy.state == ON) {
+        if (receivedCommand == ON) {
             CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
         }else{
             CotxeEncesa_Control.sendCommand(OFF) 
@@ -153,8 +153,8 @@ rule "Canvi potencia cotxe"
 when
     Item Cotxe_Potencia_UserDisplay received command
 then
-    logInfo("Cotxe.rules", "The cotxe is now using "+ Cotxe_Potencia_UserDisplay.state+", updating UsedPower")
-    Cotxe_UsedPower.sendCommand(Cotxe_Potencia_UserDisplay.state)
+    logInfo("Cotxe.rules", "The cotxe is now using "+ receivedCommand +", updating UsedPower")
+    Cotxe_UsedPower.sendCommand(receivedCommand)
 end
 
 rule "Canvi potencia cotxe sensor"
@@ -162,10 +162,10 @@ when
     Item Cotxe_Potencia_Sensor received command
 then
     if(!test){
-        logInfo("Cotxe.rules", "The cotxe power sensor received "+ Cotxe_Potencia_Sensor.state)
-        Cotxe_Potencia_UserDisplay.sendCommand(Cotxe_Potencia_Sensor.state)
+        logInfo("Cotxe.rules", "The cotxe power sensor received "+ receivedCommand)
+        Cotxe_Potencia_UserDisplay.sendCommand(receivedCommand)
     }else{
-        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ Cotxe_Potencia_Sensor.state)
+        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ receivedCommand)
     }
 end
 
@@ -174,10 +174,10 @@ when
     Item Cotxe_Potencia_Sensor_Fake received command
 then
     if(test){
-        logInfo("Cotxe.rules", "The FAKE cotxe power sensor received "+ Cotxe_Potencia_Sensor_Fake.state)
-        Cotxe_Potencia_UserDisplay.sendCommand(Cotxe_Potencia_Sensor_Fake.state)
+        logInfo("Cotxe.rules", "The FAKE cotxe power sensor received "+ receivedCommand)
+        Cotxe_Potencia_UserDisplay.sendCommand(receivedCommand)
     }else{
-        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ Cotxe_Potencia_Sensor.state)
+        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ receivedCommand)
     }
 end
 
@@ -185,8 +185,8 @@ rule "lectura sensor cotxe"
 when
     Item Cotxe_Sensor_Lectura changed
 then
-    var rawData = Cotxe_Sensor_Lectura.state
-    logInfo("Cotxe.rules", "Received new info from sensor cotxe "+ Cotxe_Sensor_Lectura.state)
+    var rawData = Cotxe_Sensor_Lectura.state.toString
+    logInfo("Cotxe.rules", "Received new info from sensor cotxe "+ rawData)
     if(rawData != null){
         var String data = transform("JSONPATH", "$.power", rawData)
         val Float power=Float::parseFloat(data)
