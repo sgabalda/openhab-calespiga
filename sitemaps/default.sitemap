@@ -1,6 +1,6 @@
 sitemap default label="Ca l'espiga" {
 
-    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="sun_clouds"
+    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solarplant"
     {
         Frame label="Fotovoltaica" {
             Text icon="light" item=SunnyBoy_Pot_Usada
@@ -78,7 +78,8 @@ sitemap default label="Ca l'espiga" {
     Text item=CotxeTitle label="Carregador cotxe" icon="energy"
     {
         Frame label="Cotxe" {
-            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%d W]" icon="battery"
+            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%d W]" icon="energy"
+            Text item=Cotxe_Energia_Avui label="Energia avui [%d Wh]" icon="battery"
             Switch item=GestioAutomaticaCotxe icon="wallswitch" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
             Switch item=CotxeEncesaManual icon="poweroutlet"
         }

@@ -1,6 +1,6 @@
 //rules to manage unused power
 var test = false     //set to true to use the test items instead of the real ones
-val MAX_POWER = 2200.0
+val MAX_POWER = 2300.0
 
 rule "Potencia disponible cotxe"
 when
@@ -187,10 +187,45 @@ when
 then
     var rawData = Cotxe_Sensor_Lectura.state.toString
     logInfo("Cotxe.rules", "Received new info from sensor cotxe "+ rawData)
-    if(rawData != null){
+    if(rawData !== null){
         var String data = transform("JSONPATH", "$.power", rawData)
         val Float power=Float::parseFloat(data)
-        Cotxe_Potencia_Sensor.sendCommand(power)
+        Cotxe_Potencia_Sensor.postUpdate(power)
+
+        data = transform("JSONPATH", "$.energy", rawData)
+        val Float energy=Float::parseFloat(data)
+        Cotxe_Energia_Sensor.postUpdate(energy)
     }
+end
+
+rule "Energia avui cotxe"
+when
+    Item Cotxe_Energia_Sensor changed
+then
+    val energiaTotalSensor = Cotxe_Energia_Sensor.state
+    val energiaTotal = 0
+    if(energiaTotalSensor != NULL){
+        energiaTotal = (energiaTotalSensor as Number).doubleValue
+    }
+    val energiaAhirSensor = Cotxe_Energia_Ahir.state
+    val energiaAhir = 0
+    if(energiaAhirSensor != NULL){
+        energiaAhir = (energiaAhirSensor as Number).doubleValue
+    }
+    Cotxe_Energia_Avui.postUpdate(energiaTotal - energiaAhir)
 
 end
+
+rule "Reset energy today cotxe"
+when
+    Time cron "0 0 0 ? * * *"
+then
+    val energiaTotalSensor = Cotxe_Energia_Sensor.state
+    val energiaTotal = 0
+    if(energiaTotalSensor != NULL){
+        energiaTotal = (energiaTotalSensor as Number).doubleValue
+    }
+    Cotxe_Energia_Ahir.postUpdate(energiaTotal)
+    Cotxe_Energia_Avui.postUpdate(0)
+end
+
