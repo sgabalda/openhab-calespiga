@@ -203,12 +203,12 @@ when
     Item Cotxe_Energia_Sensor changed
 then
     val energiaTotalSensor = Cotxe_Energia_Sensor.state
-    val energiaTotal = 0
+    var energiaTotal = 0
     if(energiaTotalSensor != NULL){
         energiaTotal = (energiaTotalSensor as Number).doubleValue
     }
     val energiaAhirSensor = Cotxe_Energia_Ahir.state
-    val energiaAhir = 0
+    var energiaAhir = 0
     if(energiaAhirSensor != NULL){
         energiaAhir = (energiaAhirSensor as Number).doubleValue
     }
@@ -221,7 +221,7 @@ when
     Time cron "0 0 0 ? * * *"
 then
     val energiaTotalSensor = Cotxe_Energia_Sensor.state
-    val energiaTotal = 0
+    var energiaTotal = 0
     if(energiaTotalSensor != NULL){
         energiaTotal = (energiaTotalSensor as Number).doubleValue
     }
