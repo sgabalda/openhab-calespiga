@@ -161,7 +161,11 @@ rule "Canvi potencia cotxe sensor"
 when
     Item Cotxe_Potencia_Sensor changed
 then
-    val potencia = Cotxe_Potencia_Sensor.state
+    val potenciaSensor = Cotxe_Potencia_Sensor.state
+    var potencia = 0
+    if(potenciaSensor != NULL){
+        potencia = (potenciaSensor as Number).doubleValue
+    }
     if(!test){
         logInfo("Cotxe.rules", "The cotxe power sensor received "+ potencia)
         Cotxe_Potencia_UserDisplay.sendCommand(potencia)
