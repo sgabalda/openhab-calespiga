@@ -159,13 +159,14 @@ end
 
 rule "Canvi potencia cotxe sensor"
 when
-    Item Cotxe_Potencia_Sensor received command
+    Item Cotxe_Potencia_Sensor changed
 then
+    val potencia = Cotxe_Potencia_Sensor.state
     if(!test){
-        logInfo("Cotxe.rules", "The cotxe power sensor received "+ receivedCommand)
-        Cotxe_Potencia_UserDisplay.sendCommand(receivedCommand)
+        logInfo("Cotxe.rules", "The cotxe power sensor received "+ potencia)
+        Cotxe_Potencia_UserDisplay.sendCommand(potencia)
     }else{
-        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ receivedCommand)
+        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ potencia)
     }
 end
 
@@ -183,7 +184,7 @@ end
 
 rule "lectura sensor cotxe"
 when
-    Item Cotxe_Sensor_Lectura changed
+    Item Cotxe_Sensor_Lectura received update
 then
     var rawData = Cotxe_Sensor_Lectura.state.toString
     logInfo("Cotxe.rules", "Received new info from sensor cotxe "+ rawData)
@@ -195,6 +196,7 @@ then
         data = transform("JSONPATH", "$.energy", rawData)
         val Float energy=Float::parseFloat(data)
         Cotxe_Energia_Sensor.postUpdate(energy)
+        logInfo("Cotxe.rules", "Updated info from sensor: Power = "+ power + ", energy = "+energy)
     }
 end
 
@@ -212,6 +214,7 @@ then
     if(energiaAhirSensor != NULL){
         energiaAhir = (energiaAhirSensor as Number).doubleValue
     }
+    logInfo("Cotxe.rules", "Calculating energia avui: total = "+ energiaTotal + ", ahir = "+ energiaAhir)
     Cotxe_Energia_Avui.postUpdate(energiaTotal - energiaAhir)
 
 end
@@ -225,6 +228,7 @@ then
     if(energiaTotalSensor != NULL){
         energiaTotal = (energiaTotalSensor as Number).doubleValue
     }
+    logInfo("Cotxe.rules", "Resetting energia ahir i avui:  ahir = "+ energiaTotal)
     Cotxe_Energia_Ahir.postUpdate(energiaTotal)
     Cotxe_Energia_Avui.postUpdate(0)
 end
