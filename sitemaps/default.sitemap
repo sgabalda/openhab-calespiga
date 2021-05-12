@@ -78,8 +78,8 @@ sitemap default label="Ca l'espiga" {
     Text item=CotxeTitle label="Carregador cotxe" icon="energy"
     {
         Frame label="Cotxe" {
-            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%d W]" icon="energy"
-            Text item=Cotxe_Energia_Avui label="Energia avui [%d Wh]" icon="battery"
+            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%.1f W]" icon="energy"
+            Text item=Cotxe_Energia_Avui label="Energia avui [%.1f Wh]" icon="battery"
             Text item=CotxeEncesa_Control_Proxy label="Interruptor carregador" icon="energy"
             Switch item=GestioAutomaticaCotxe icon="wallswitch" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
             Switch item=CotxeEncesaManual icon="poweroutlet"
