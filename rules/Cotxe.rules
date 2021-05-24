@@ -32,8 +32,10 @@ then
         if(isCurrentlyOn){
             //then the current power is what we are going to use
             if(availablePower >= currentPower){
+                logInfo("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is enough available power ("+availablePower+")")
                 requiredPower = currentPower
             }else{
+                logInfo("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is NOT enough available power ("+availablePower+")")
                 //TODO if it was ON, do some sort of histeresys
                 requiredPower = 0
             }
@@ -41,9 +43,11 @@ then
             //then the IDL_PWR is what we are going to use (or more, if the car is connected)
             //but we will only use it if there is enough available power for the connected car
              if(availablePower >= MAX_POWER){
+                 logInfo("Cotxe.rules", "The switch is currently OFF and there is enough available power ("+availablePower+"), so required is not 0")
                 requiredPower = IDLE_POWER
              }else{
                  //tehre is not enough available power, so there is no point in trying
+                 logInfo("Cotxe.rules", "The switch is currently OFF but there NOT is enough available power ("+availablePower+") so required is 0")
                  requiredPower = 0.0
              }
 
