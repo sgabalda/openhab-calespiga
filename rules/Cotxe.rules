@@ -1,13 +1,14 @@
 //rules to manage unused power
 var test = false     //set to true to use the test items instead of the real ones
 val MAX_POWER = 2000.0
+val IDLE_POWER = 0.6
 
 rule "Potencia disponible cotxe"
 when
 	Item Cotxe_AvailablePower received command
 then
 	val gestioAutoCotxe = GestioAutomaticaCotxe.state
-	var requiredPower = 0
+	var requiredPower = 0.0
 	if(gestioAutoCotxe == "auto"){
 		logInfo("Cotxe.rules", "Received new power available for Cotxe auto")
 	    val oldPowerState = Cotxe_AvailablePower.state
@@ -15,8 +16,6 @@ then
 	    if(oldPowerState != NULL){
 	        availablePower = (oldPowerState as Number).doubleValue
 	    }
-
-        //TODO implement some sort of hysteresis
 
 	    var currentPower = 0.0
 	    val currentPowerItem = Cotxe_Potencia_UserDisplay.state
@@ -30,22 +29,26 @@ then
 	        isCurrentlyOn = true
 	    }
 
-	    var powerToUse = MAX_POWER  //by default it uses all the power
-	    if(currentPower > 1.0){
-	        //if it is already charging, that is the power that will continue using if possible
-	        //TODO check that the sensor does not give small values instead of 0
-	        powerToUse = currentPower
-	    }else if (isCurrentlyOn){
-	        //if it is currently on, and is using 0W, this means that is already charged
-            powerToUse = 0
-	    }
-
-	    if(availablePower >= powerToUse){
-            requiredPower = powerToUse
+        if(isCurrentlyOn){
+            //then the current power is what we are going to use
+            if(availablePower >= currentPower){
+                requiredPower = currentPower
+            }else{
+                //TODO if it was ON, do some sort of histeresys
+                requiredPower = 0
+            }
         }else{
-            //TODO if it was ON, do some sort of histeresys
-        	requiredPower = 0
+            //then the IDL_PWR is what we are going to use (or more, if the car is connected)
+            //but we will only use it if there is enough available power for the connected car
+             if(availablePower >= MAX_POWER){
+                requiredPower = IDLE_POWER
+             }else{
+                 //tehre is not enough available power, so there is no point in trying
+                 requiredPower = 0.0
+             }
+
         }
+
         logInfo("Cotxe.rules", "The power that the Cotxe will use is "+requiredPower)
 	}else{
 		logInfo("Cotxe.rules", "Received unused power, but Cotxe is manual, so ignoring it")
@@ -70,12 +73,12 @@ then
     if(gestioAutoCotxe == "auto"){
         logInfo("Cotxe.rules", "Going to apply the required power")
         val requiredPowerState = Cotxe_RequiredPower.state
-        var powerToApply = 0
+        var powerToApply = 0.0
         if(requiredPowerState != NULL){
             powerToApply = (requiredPowerState as Number).intValue
         }
         logInfo("Cotxe.rules", "The required power to apply is "+powerToApply)
-        if(powerToApply > 0){
+        if(powerToApply > 0.0){
             logInfo("Cotxe.rules", "Turning ON the cotxe charger")
             CotxeEncesa_Control_Proxy.sendCommand(ON)
         }else{
