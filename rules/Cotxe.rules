@@ -117,9 +117,9 @@ end
 
 rule "Canvi minuts descarregant bateria"
 when 
-    Item Cotxe_Temps_Bateria received command
+    Item Cotxe_Temps_Bateria changed
 then
-    val minuts = (receivedCommand as DecimalType).intValue
+    val minuts = (Cotxe_Temps_Bateria.state as DecimalType).intValue
     logInfo("Cotxe.rules", "Changed the time without extra power to "+minuts+" minutes")
     maxChargingWithoutExtraPowerTime = 1000L * 60 * minuts
 end
