@@ -1,9 +1,9 @@
 //rules to manage unused power
 var test = false     //set to true to use the test items instead of the real ones
 val MAX_POWER = 2000.0
-val IDLE_POWER = 0.6
-var chargingWithoutExtraPowerTimeStart = 0
-var maxChargingWithoutExtraPowerTime = 10L * 60 * 1000
+val IDLE_POWER = 1
+var long chargingWithoutExtraPowerTimeStart = 0
+var long maxChargingWithoutExtraPowerTime = 10L * 60 * 1000
 
 rule "Potencia disponible cotxe"
 when
@@ -36,16 +36,16 @@ then
             if(availablePower >= currentPower){
                 logInfo("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is enough available power ("+availablePower+")")
                 requiredPower = currentPower
-                chargingWithoutExtraPowerTimeStart = 0               
+                chargingWithoutExtraPowerTimeStart = 0L               
             }else{
                 logInfo("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is NOT enough available power ("+availablePower+")")
                 val now_millis = now.millis
-                if(chargingWithoutExtraPowerTimeStart == 0){
+                if(chargingWithoutExtraPowerTimeStart == 0L){
                     //we used to be with enough extra power, this is the first time we have not enough
                     chargingWithoutExtraPowerTimeStart = now_millis
                     logInfo("Cotxe.rules", "This is the first time without enough power")
                 }
-                val limitWithoutExtraPower = chargingWithoutExtraPowerTimeStart + maxChargingWithoutExtraPowerTime
+                val long limitWithoutExtraPower = chargingWithoutExtraPowerTimeStart + maxChargingWithoutExtraPowerTime
                 if(now_millis >= limitWithoutExtraPower){
                     logInfo("Cotxe.rules", "Reached the limit without extra power, turning off")
                     requiredPower = 0
