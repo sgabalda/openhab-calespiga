@@ -1,6 +1,8 @@
 import org.eclipse.smarthome.model.script.ScriptServiceUtil
 
-val availableDevices = newArrayList("Calentador")
+var test = false     //set to true to use test mode (unused power will not be read from Sunny boy
+
+val availableDevices = newArrayList("Cotxe","Calentador")
 var finishedRetries = 0
 val MAX_FINISHED_RETRIES = 5
 var currentItemUpdated = 0
@@ -32,12 +34,14 @@ when
 	or Time cron "15 * * ? * * *"
 then
 	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
-	NotUsedPower.sendCommand(unusedPower)
+	if(!test){
+	    NotUsedPower.postUpdate(unusedPower)
+    }
 end
 
 rule "Manage not used power"
 when
-    Time cron "0/30 * 6-22 ? * * *"
+    Time cron "0/30 * * ? * * *"     //"0/30 * 6-22 ? * * *"
 then
     val engineStatus = AvailablePowerProcessStatus.state
     logInfo("UnusedPower","The current destination devices are "+ DestinationDevices.state)
@@ -135,7 +139,7 @@ then
         logInfo("UnusedPower","Available power for " + devices.get(nextItem)+" is " + availablePower)
         val nextItemAvailable = ScriptServiceUtil.getItemRegistry.getItem(devices.get(nextItem) + "_AvailablePower")
         currentItemUpdated = nextItem
-        firstItemAvailable.sendCommand(availablePower)
+        nextItemAvailable.sendCommand(availablePower)
     }
 end
 

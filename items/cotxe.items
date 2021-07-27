@@ -1,4 +1,18 @@
 
+String GestioAutomaticaCotxe "Gestio automàtica del cotxe"  //this decides if the gestio is auto or manual
+Number:Power Cotxe_Potencia_UserDisplay "Consum (W)"  //what the cotxe is using ATM, or in test mode what the user sets
+Switch CotxeEncesaManual "Encesa manual del cotxe"      //this is the user control to turn on/off the charger (only valid if gestio is manual)
+
+String Cotxe_Sensor_Lectura "[%s]" {channel="exec:command:cotxe:output"}
+Number:Power Cotxe_Potencia_Sensor "Sensor consum (W)"  //what the cotxe is using ATM direcly from sensor
+Number:Power Cotxe_Energia_Sensor "Sensor energia (Wh)"  //what the cotxe has used forever
+Number:Power Cotxe_Energia_Ahir "Sensor energia (Wh)"  //what the cotxe has used since the beginning until yesterday
+Number:Power Cotxe_Energia_Avui "Sensor energia (Wh)"  //what the cotxe has used today
+Number Cotxe_Temps_Bateria "Temps consumint bateria (min)" //minutes without enough extra power to keep charging the car
+
+Switch CotxeEncesa_Control "Encesa del cotxe" {gpio="pin:3 activelow:no initialValue:low"} //this is the actual item tant turns on or off the charger
+Switch CotxeEncesa_Control_Proxy "Encesa del cotxe"      //proxy to turn on or off the cotxe, or test it
+
 //		<device>_AvailablePower -> that receives the power available for the device
 //		<device>_UsedPower		-> that exposes the power that is currently using the device
 //		<device>_RequiredPower	-> that exposes the power that will be used by the device
@@ -7,4 +21,10 @@
 Number:Power Cotxe_AvailablePower "Potencia sobrant disponible pel Cotxe"
 Number:Power Cotxe_UsedPower "Potencia actualment usada pel Cotxe"
 Number:Power Cotxe_RequiredPower "Potencia que serà usada pel Cotxe"
-Switch Cotxe_ApplyChange "Dispara el càlcul de potència"
+String Cotxe_ApplyChange "Dispara el càlcul de potència"
+
+String CotxeTitle "Carregador cotxe"
+
+String CotxeEncesa_Control_Fake "Encesa del cotxe fake"
+Number:Power Cotxe_Potencia_Sensor_Fake "Potencia fake usada pel Cotxe"
+

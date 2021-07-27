@@ -1,0 +1,1 @@
+Thing exec:command:cotxe [command="python /home/openhabian/repo/openhab-calespiga/shell-scripts/cotxe-sensor.py", interval=10, timeout=10, autorun=false]

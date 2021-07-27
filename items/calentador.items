@@ -6,6 +6,7 @@ Number:Power Calentador_Potencia_UserDisplay "Consum (W)"   <water_heater> //wha
 Number:Energy Calentador_Energia_Avui "Energia "   <heater_display> //what the user sees as today used energy for the heater
 
 String Calentador_Termostat_UserDisplay "Proxy Item termostat"
+DateTime Calentador_Hot_Date_Proxy "Proxy Ultim moment calent" <time>
 DateTime Calentador_Hot_Date "Ultim moment calent" <time>
 
 //		<device>_AvailablePower -> that receives the power available for the device
@@ -19,3 +20,7 @@ Number:Power Calentador_RequiredPower "Potencia sobrant disponible pel calentado
 String Calentador_ApplyChange "Dispara el càlcul de potència"
 
 String CalentadorTitle "Calentador"
+
+String Calentador_Estat_ProxyItem "Proxy Item estat calentador"    //for testing, will be used to forward estat from MQTT
+DateTime Calentador_Hot_Date_Fake "Ultim moment calent (test mode)" <time>  //for testing, will be used to display the last fake HOT date
+String Calentador_Estat_Fake "Estat de test del calentador"

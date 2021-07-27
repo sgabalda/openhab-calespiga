@@ -1,1 +1,2 @@
-python /home/openhabian/shell-scripts/diposit.py
+python /home/openhabian/repo/openhab-calespiga/shell-scripts/diposit.py
+python /home/openhabian/repo/openhab-calespiga/shell-scripts/cotxe-sensor.py

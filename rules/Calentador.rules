@@ -1,4 +1,7 @@
 var long lastChangePower = -1
+var test = false     //set to true to enable testing
+                    //(actual commands will not be sent to the calentador, and the last
+                    //hot date will not be changed
 
 //rules to manage unused power
 
@@ -10,28 +13,35 @@ then
 	var requiredPower = 0
 	if(gestioAutoCalentador == "auto"){
 		logInfo("Calentador.rules", "Received new power available for Calentador auto")
-	    val oldPowerState = Calentador_AvailablePower.state
-	    var availablePower = 0.0
-	    if(oldPowerState != NULL){
-	        availablePower = (oldPowerState as Number).doubleValue
-	    }
-	    if(availablePower >= 2000){
-            requiredPower = 2000
-        }else if(availablePower >= 1000){
-            requiredPower = 1000
-        }else if(availablePower >= 500){
-            requiredPower = 500
+		val receivedEstat = Calentador_Estat_ProxyItem.state.toString
+        if(receivedEstat == "HOT"){
+            logInfo("Calentador.rules", "The calentador is hot, so required power set to 0")
+            requiredPower = 0
         }else{
-        	requiredPower = 0
+            val oldPowerState = Calentador_AvailablePower.state
+            var availablePower = 0.0
+            if(oldPowerState != NULL){
+                availablePower = (oldPowerState as Number).doubleValue
+            }
+            if(availablePower >= 2000){
+                requiredPower = 2000
+            }else if(availablePower >= 1000){
+                requiredPower = 1000
+            }else if(availablePower >= 500){
+                requiredPower = 500
+            }else{
+                requiredPower = 0
+            }
+            logInfo("Calentador.rules", "The power that the Calentador will use is "+requiredPower)
         }
-        logInfo("Calentador.rules", "The power that the Calentador will use is "+requiredPower)
 	}else{
 		logInfo("Calentador.rules", "Received unused power, but calentador is manual, so ignoring it")
 	}
-	Calentador_RequiredPower.sendCommand(requiredPower)	
+	Calentador_RequiredPower.sendCommand(requiredPower)
+	logInfo("Calentador.rules", "Sent required power to Calentador_RequiredPower")
 end
 
-rule "update required power"
+rule "update calentador required power"
 when
 	Item Calentador_RequiredPower received command
 then
@@ -39,7 +49,7 @@ then
 	DestinationDeviceUpdated.sendCommand("calentador")
 end
 
-rule "Apply power"
+rule "Apply power calentador"
 when
 	Item Calentador_ApplyChange received command
 then
@@ -98,22 +108,51 @@ then
     }
 end
 
-rule "update termostat state from MQTT"
+rule "Forward termostat state from MQTT calentador"
 when
     Item ArduinoCalentadorThing_CalentadorTermostatStatus  received update
 then
+    if(!test){
+        Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
+    }
+end
 
-    val receivedEstat = ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString
+rule "Forward termostat state from MQTT Fake calentador"
+when
+    Item Calentador_Estat_Fake  received command
+then
+    if(test){
+        Calentador_Estat_ProxyItem.postUpdate(Calentador_Estat_Fake.state.toString)
+    }
+end
+
+rule "forward last hot date calentador"
+when
+    Item Calentador_Hot_Date_Proxy  received update
+then
+    val value = Calentador_Hot_Date_Proxy.state
+    if(test){
+        Calentador_Hot_Date_Fake.postUpdate(value.toString)
+    }else{
+        Calentador_Hot_Date.postUpdate(value.toString)
+    }
+end
+
+rule "update termostat state from MQTT calentador"
+when
+    Item Calentador_Estat_ProxyItem  received update
+then
+    val receivedEstat = Calentador_Estat_ProxyItem.state.toString
     logInfo("Calentador.rules", "Calentador termostat changed to "+receivedEstat)
     if(receivedEstat == "HOT"){
         logInfo("Calentador.rules", "Calentador is HOT, changing last HOT date and turning off")
-        Calentador_Hot_Date.postUpdate(now.toString)
+        Calentador_Hot_Date_Proxy.postUpdate(now.toString)
+
         //we are not using unused power, because it is hot.
         Calentador_UsedPower.sendCommand(0)
         //turn off
         Calentador_Potencia_ProxyItem.sendCommand(0+"")
     }
-    
     Calentador_Termostat_UserDisplay.postUpdate(receivedEstat)    
     
 end
@@ -122,11 +161,13 @@ rule "Turn On Calentador"
 when
     Item Calentador_Potencia_ProxyItem received command
 then
-    ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
+    if(!test){
+        ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
+    }
     logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
 end
 
-rule "update display state from MQTT"
+rule "update display state from MQTT calentador"
 when
     Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update
 then
@@ -165,7 +206,7 @@ then
 
 end 
 
-rule "Reset energy today"
+rule "Reset energy today calentador"
 when
     Time cron "0 0 0 ? * * *"
 then

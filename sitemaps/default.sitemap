@@ -1,6 +1,6 @@
 sitemap default label="Ca l'espiga" {
 
-    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="sun_clouds"
+    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solarplant"
     {
         Frame label="Fotovoltaica" {
             Text icon="light" item=SunnyBoy_Pot_Usada
@@ -75,17 +75,32 @@ sitemap default label="Ca l'espiga" {
             Webview height=16 url="http://calespiga.ddns.net:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
         }
     }
-
-//    Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
-//    {
-//        Frame label="Energia sobrant" {
-//            Text item=AvailablePower icon="energy"
-//            Text item=AvailablePowerProcessStatus icon="settings"
-//        }
-//        Frame label="Testing energia sobrant" {
-//            Setpoint item=NotUsedPower label="Força potencia extra" minValue=0 maxValue=3000 step=200
-//            Text item=Calentador_UsedPower label="Potencia extra usada calent."
-//            Text item=Calentador_RequiredPower label="Potencia extra futura calent."
-//        }
-//    }
+    Text item=CotxeTitle label="Carregador cotxe" icon="energy"
+    {
+        Frame label="Cotxe" {
+            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%.1f W]" icon="energy"
+            Text item=Cotxe_Energia_Avui label="Energia avui [%.1f Wh]" icon="battery"
+            Text item=CotxeEncesa_Control_Proxy label="Encesa carregador [%s]" icon="energy"
+            Setpoint item=Cotxe_Temps_Bateria icon="stopwatch" label="Temps consumint bateria [%.1f min]" minValue=1 maxValue=60 step=1
+            Switch item=GestioAutomaticaCotxe icon="wallswitch" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
+            Switch item=CotxeEncesaManual icon="poweroutlet"
+        }
+    }
+    Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
+    {
+        Frame label="Energia sobrant" {
+            Text item=AvailablePower icon="energy" label="Potencia disponible [%d W]"
+            Text item=AvailablePowerProcessStatus icon="settings" label="Status [%s]"
+        }
+        Frame label="Testing energia sobrant" {
+            Setpoint item=NotUsedPower label="Força potencia extra [%d W]" minValue=0 maxValue=3000 step=200
+            Text item=Calentador_UsedPower label="Potencia extra usada calent. [%d W]"
+            Text item=Calentador_RequiredPower label="Potencia extra futura calent.[%d W]"
+            Text item=Calentador_Potencia_ProxyItem label="Potencia enviada calentador [%d W]"
+            Text item=Calentador_Hot_Date_Fake icon="time" label="Ultim cop calent (Fake): [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=Calentador_Estat_Fake icon="wallswitch" label="Estat fake calentador" mappings=["HOT"="HOT", "COLD"="COLD"]
+            Text item=CotxeEncesa_Control_Fake icon="wallswitch" label="Estat fake calentador"
+            Setpoint item=Cotxe_Potencia_Sensor_Fake label="Potencia enviada cotxe fake [%d W]" minValue=0 maxValue=3000 step=200
+        }
+    }
 }
