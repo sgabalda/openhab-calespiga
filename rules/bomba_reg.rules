@@ -97,9 +97,9 @@ then
     }
 end
 
-rule "Notificacions bomba reg"
-when
-    Item Encesa_Bomba received command
-then
-    sendBroadcastNotification("Bomba ha passat a "+Encesa_Bomba.state)
-end
+// rule "Notificacions bomba reg"
+// when
+//     Item Encesa_Bomba received command
+// then
+//     sendBroadcastNotification("Bomba ha passat a "+receivedCommand)
+// end

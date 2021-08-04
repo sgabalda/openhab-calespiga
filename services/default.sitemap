@@ -58,8 +58,8 @@ sitemap default label="Ca l'espiga" {
         Setpoint item=ExteriorArmarisTemperatura icon="time" label="T. ext. test: [%.1f %unit%]" minValue=1 maxValue=30 step=1
         Setpoint item=ElectronicaTemperatura icon="time" label="T. arm. elect test: [%.1f %unit%]" minValue=1 maxValue=30 step=1
         
-        Text item=VentiladorBateriesTest label="Vent. bateries test: [%s]" icon="fan"
-        Text item=VentiladorElectronicaTest label="Vent. electr. test: [%s]" icon="fan"
+        Text item=VentiladorBateriesProxy label="Vent. bateries test: [%s]" icon="fan"
+        Text item=VentiladorElectronicaProxy label="Vent. electr. test: [%s]" icon="fan"
         
         */
         Text item=MinutesBatFanFromBatteries label="Min. vent. bat. amb bat.: [%s]" icon="time"

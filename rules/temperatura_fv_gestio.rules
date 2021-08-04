@@ -1,13 +1,13 @@
 
 rule "Encesa auto ventilador bateries auto final"
 when
-    Item VentiladorBateriesTest received command
+    Item VentiladorBateriesProxy received command
 then
-    logDebug("temperatura_fv_bat.rules", "VentiladorBateriesTest received "+VentiladorBateriesTest.state)
-    var ventiladorTest = VentiladorBateriesTest  
-    var ventilador = VentiladorBateries   
+    logDebug("temperatura_fv_bat.rules", "VentiladorBateriesProxy received "+VentiladorBateriesProxy.state)
+    val ventiladorTest = VentiladorBateriesProxy  
+    val ventilador = VentiladorBateries   
 
-    var gestioVentilador = VentiladorGestioElect.state
+    val gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_bat.rules", "Auto switch of bat. Gestio is "+gestioVentilador)
     if(gestioVentilador!="manual"){
         if(ventiladorTest.state==ON) {
@@ -25,9 +25,9 @@ when
     Item VentiladorBateriesManual received command
 then
     logInfo("temperatura_fv_bat.rules", "VentiladorBateriesManual received "+VentiladorBateriesManual.state)
-    var ventiladorTest = VentiladorBateriesManual  
-    var ventilador = VentiladorBateries   
-    var gestioVentilador = VentiladorGestioElect.state
+    val ventiladorTest = VentiladorBateriesManual  
+    val ventilador = VentiladorBateries   
+    val gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_bat.rules", "Manual switch of bat. Gestio is "+gestioVentilador)
     if(gestioVentilador=="manual"){ 
         if(ventiladorTest.state==ON) {
@@ -42,10 +42,10 @@ end
 
 rule "Encesa auto ventilador electr final"
 when
-    Item VentiladorElectronicaTest received command
+    Item VentiladorElectronicaProxy received command
 then
-    logDebug("temperatura_fv_elect.rules", "VentiladorElectronicaTest received "+VentiladorElectronicaTest.state) 
-    var ventiladorTest = VentiladorElectronicaTest  
+    logDebug("temperatura_fv_elect.rules", "VentiladorElectronicaProxy received "+VentiladorElectronicaProxy.state) 
+    var ventiladorTest = VentiladorElectronicaProxy  
     var ventilador = VentiladorElectronica    
 
     var gestioVentilador = VentiladorGestioElect.state
