@@ -9,27 +9,27 @@ when
     Item Calentador_Termostat_UserDisplay received update
 then
     val receivedEstat=Calentador_Termostat_UserDisplay.state.toString
-    logInfo("HEATER - Calentador_notificacions.rules","Estat calentador updated: "+receivedEstat)
+    logInfo("Calentador_notificacions.rules","Estat calentador updated: "+receivedEstat)
     //If the state is 
     if(receivedEstat == "HOT"){
         var nowmill=(new Date()).time
-        logInfo("HEATER - Calentador_notificacions.rules", "Current time is "+nowmill) 
+        logInfo("Calentador_notificacions.rules", "Current time is "+nowmill) 
         //if last change to hot is not set, this is the first time it changes
         if(lastChangeToHot == 0){
             lastChangeToHot = nowmill
-            logInfo("HEATER - Calentador_notificacions.rules", "Starting to count time HOT") 
+            logInfo("Calentador_notificacions.rules", "Starting to count time HOT") 
         }else{
             //if the last notification was no longer ago than timeBetweenNotifications, don't notify
-            if(nowmill - lastChangeToHot > timeHotToNotify){
-                logInfo("HEATER - Calentador_notificacions.rules", "Time HOT is not yet enough to send notification")
+            if(timeHotToNotify > nowmill - lastChangeToHot){
+                logInfo("Calentador_notificacions.rules", "Time HOT is not yet enough to send notification")
             }else{
                 //sendBroadcastNotification("Calentador està HOT durant molt de temps. Potser està el termostat tancat?") 
-                logInfo("HEATER - Calentador_notificacions.rules", "Send the notification") 
+                logInfo("Calentador_notificacions.rules", "Send the notification") 
                 lastChangeToHot = nowmill  //reset it so the notification will be sent again
             }
         }
     }else{
-        logInfo("HEATER - Calentador_notificacions.rules", "State is not hot, resetting the timer") 
+        logInfo("Calentador_notificacions.rules", "HEATER - State is not hot, resetting the timer") 
         lastChangeToHot = 0
     }
 end
