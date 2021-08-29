@@ -1,0 +1,35 @@
+import java.util.Date
+
+var lastChangeToHot = 0L
+
+var timeHotToNotify = 60 * 60 * 1000L * 2   // 2hours
+
+rule "Notifica Massa Temps Hot"
+when
+    Item Calentador_Termostat_UserDisplay received update
+then
+    val receivedEstat=Calentador_Termostat_UserDisplay.state.toString
+    logDebug("Calentador_notificacions.rules","Estat calentador updated: "+receivedEstat)
+    //If the state is 
+    if(receivedEstat == "HOT"){
+        var nowmill=(new Date()).time
+        logDebug("Calentador_notificacions.rules", "Current time is "+nowmill) 
+        //if last change to hot is not set, this is the first time it changes
+        if(lastChangeToHot == 0){
+            lastChangeToHot = nowmill
+            logInfo("Calentador_notificacions.rules", "Starting to count time HOT") 
+        }else{
+            //if the last notification was no longer ago than timeBetweenNotifications, don't notify
+            if(nowmill - lastChangeToHot > timeHotToNotify){
+                logInfo("Calentador_notificacions.rules", "Time HOT is not yet enough to send notification")
+            }else{
+                sendBroadcastNotification("Calentador està HOT durant molt de temps. Potser està el termostat tancat?") 
+                lastChangeToHot = nowmill  //reset it so the notification will be sent again
+            }
+            logDebug("temperatura_fv_perill.rules", "NO Enviant notificació de temperatura perillosa, ja que fa "+(nowmill - lastNotificationBat)+"ms") 
+        }
+    }else{
+        logDebug("Calentador_notificacions.rules", "State is not hot, resetting the timer") 
+        lastChangeToHot = 0
+    }
+end
