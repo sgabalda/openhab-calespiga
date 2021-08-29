@@ -2,7 +2,7 @@ import java.util.Date
 
 var lastChangeToHot = 0L
 
-var timeHotToNotify = 60 * 60 * 1000L * 2   // 2hours
+var timeHotToNotify = 60 * 1000L * 2 //60 * 60 * 1000L * 2   // 2hours
 
 rule "Notifica Massa Temps Hot"
 when
@@ -27,7 +27,6 @@ then
                 logInfo("HEATER - Calentador_notificacions.rules", "Send the notification") 
                 lastChangeToHot = nowmill  //reset it so the notification will be sent again
             }
-            logInfo("temperatura_fv_perill.rules", "HEATER - NO Enviant notificació de temperatura perillosa, ja que fa "+(nowmill - lastNotificationBat)+"ms") 
         }
     }else{
         logInfo("HEATER - Calentador_notificacions.rules", "State is not hot, resetting the timer") 
