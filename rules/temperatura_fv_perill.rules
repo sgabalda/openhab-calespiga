@@ -1,9 +1,9 @@
 import java.util.Date
 
-var upperlimitTempBat = 30.0
+var upperlimitTempBat = 35.0
 var lowerlimitTempBat = 2.0
 
-var upperlimitTempElec = 30.0
+var upperlimitTempElec = 50.0
 var lowerlimitTempElec = 0.0
 
 var lastNotificationBat = 0L
@@ -13,20 +13,20 @@ var timeBetweenNotifications = 30 * 60 * 1000L   //30 minutes
 
 rule "Notifica temperatura fora rang seguretat bateries"
 when
-    Item BateriesTemperatura received update
+    Item BateriesTemperaturaAdosada received update
 then
-    var temp=(BateriesTemperatura.state as Number).floatValue
+    var temp=(BateriesTemperaturaAdosada.state as Number).floatValue
     logDebug("temperatura_fv_perill.rules","Temperatura Bateries changed: "+temp)
     //if the temperature is out of the limits to be dangerous, should notify
     if(temp>upperlimitTempBat || temp<lowerlimitTempBat){
         logWarn("temperatura_fv_perill.rules", "Temperatura de bateries perillosa: "+
-        BateriesTemperatura.state) 
+        BateriesTemperaturaAdosada.state) 
         var nowmill=(new Date()).time
         logDebug("temperatura_fv_perill.rules", "Current time is "+nowmill) 
         //if the last notification was longer ago than timeBetweenNotifications, notify again
         if(nowmill - lastNotificationBat > timeBetweenNotifications){
             logInfo("temperatura_fv_perill.rules", "Enviant notificació de temperatura perillosa") 
-            sendBroadcastNotification("Temperatura de bateries perillosa: "+BateriesTemperatura.state)
+            sendBroadcastNotification("Temperatura de bateries perillosa: "+BateriesTemperaturaAdosada.state)
             lastNotificationBat = nowmill
         }else{
             //if the last notification was no longer ago than timeBetweenNotifications, don't notify
