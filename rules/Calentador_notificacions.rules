@@ -2,7 +2,7 @@ import java.util.Date
 
 var lastChangeToHot = 0L
 
-var timeHotToNotify = 60 * 1000L * 2 //60 * 60 * 1000L * 2   // 2hours
+var timeHotToNotify = 60 * 60 * 1000L * 2   // 2hours
 
 rule "Notifica Massa Temps Hot"
 when
@@ -23,7 +23,7 @@ then
             if(timeHotToNotify > nowmill - lastChangeToHot){
                 logInfo("Calentador_notificacions.rules", "Time HOT is not yet enough to send notification")
             }else{
-                //sendBroadcastNotification("Calentador està HOT durant molt de temps. Potser està el termostat tancat?") 
+                sendBroadcastNotification("Calentador està HOT durant molt de temps. Potser està el termostat tancat?") 
                 logInfo("Calentador_notificacions.rules", "Send the notification") 
                 lastChangeToHot = nowmill  //reset it so the notification will be sent again
             }
