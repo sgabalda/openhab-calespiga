@@ -10,6 +10,7 @@ sitemap default label="Ca l'espiga" {
             //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea2
             Text icon="time" item=SunnyBoy_Time_Attempt
             Text icon="time" item=SunnyBoy_Time_Read
+            Text icon="time" item=SunnyBoy_Time_Not_Zero
         }
         
         Frame{

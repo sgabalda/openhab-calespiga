@@ -39,7 +39,7 @@ then
     }
 end
 
-rule "Manage not used power"
+rule "manage not used power"
 when
     Time cron "0/30 * * ? * * *"     //"0/30 * 6-22 ? * * *"
 then
