@@ -12,7 +12,7 @@ then
 	val gestioAutoCotxe = GestioAutomaticaCotxe.state
 	var requiredPower = 0.0
 	if(gestioAutoCotxe == "auto"){
-		logInfo("Cotxe.rules", "Received new power available for Cotxe auto")
+		logDebug("Cotxe.rules", "Received new power available for Cotxe auto")
 	    val oldPowerState = Cotxe_AvailablePower.state
 	    var availablePower = 0.0
 	    if(oldPowerState != NULL){
@@ -34,24 +34,24 @@ then
         if(isCurrentlyOn){
             //then the current power is what we are going to use
             if(availablePower >= currentPower){
-                logInfo("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is enough available power ("+availablePower+")")
+                logDebug("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is enough available power ("+availablePower+")")
                 requiredPower = currentPower
                 chargingWithoutExtraPowerTimeStart = 0L               
             }else{
-                logInfo("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is NOT enough available power ("+availablePower+")")
+                logDebug("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is NOT enough available power ("+availablePower+")")
                 val now_millis = now.millis
                 if(chargingWithoutExtraPowerTimeStart == 0L){
                     //we used to be with enough extra power, this is the first time we have not enough
                     chargingWithoutExtraPowerTimeStart = now_millis
-                    logInfo("Cotxe.rules", "This is the first time without enough power")
+                    logDebug("Cotxe.rules", "This is the first time without enough power")
                 }
                 val long limitWithoutExtraPower = chargingWithoutExtraPowerTimeStart + maxChargingWithoutExtraPowerTime
                 if(now_millis >= limitWithoutExtraPower){
-                    logInfo("Cotxe.rules", "Reached the limit without extra power, turning off")
+                    logDebug("Cotxe.rules", "Reached the limit without extra power, turning off")
                     requiredPower = 0
                 }else{
                     val remainingTimeToLimit = limitWithoutExtraPower - now_millis
-                    logInfo("Cotxe.rules", "Not yet reached the limit without extra power(remaining "+ 
+                    logDebug("Cotxe.rules", "Not yet reached the limit without extra power(remaining "+ 
                             (remainingTimeToLimit) +"), keeping on")
                     requiredPower = currentPower
                 }
@@ -61,19 +61,19 @@ then
             //then the IDL_PWR is what we are going to use (or more, if the car is connected)
             //but we will only use it if there is enough available power for the connected car
              if(availablePower >= MAX_POWER){
-                 logInfo("Cotxe.rules", "The switch is currently OFF and there is enough available power ("+availablePower+"), so required is not 0")
+                 logDebug("Cotxe.rules", "The switch is currently OFF and there is enough available power ("+availablePower+"), so required is not 0")
                 requiredPower = IDLE_POWER
              }else{
                  //tehre is not enough available power, so there is no point in trying
-                 logInfo("Cotxe.rules", "The switch is currently OFF but there NOT is enough available power ("+availablePower+") so required is 0")
+                 logDebug("Cotxe.rules", "The switch is currently OFF but there NOT is enough available power ("+availablePower+") so required is 0")
                  requiredPower = 0.0
              }
 
         }
 
-        logInfo("Cotxe.rules", "The power that the Cotxe will use is "+requiredPower)
+        logDebug("Cotxe.rules", "The power that the Cotxe will use is "+requiredPower)
 	}else{
-		logInfo("Cotxe.rules", "Received unused power, but Cotxe is manual, so ignoring it")
+		logDebug("Cotxe.rules", "Received unused power, but Cotxe is manual, so ignoring it")
 	}
 	Cotxe_RequiredPower.sendCommand(requiredPower)
 end
@@ -82,7 +82,7 @@ rule "update cotxe required power"
 when
 	Item Cotxe_RequiredPower received command
 then
-    logInfo("Cotxe.rules", "Required power updated, notifying the DestinationDeviceUpdated")
+    logDebug("Cotxe.rules", "Required power updated, notifying the DestinationDeviceUpdated")
 	DestinationDeviceUpdated.sendCommand("Cotxe")
 end
 
@@ -91,25 +91,25 @@ when
 	Item Cotxe_ApplyChange received command
 then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
-    logInfo("Cotxe.rules", "Received command to apply the power")
+    logDebug("Cotxe.rules", "Received command to apply the power")
     if(gestioAutoCotxe == "auto"){
-        logInfo("Cotxe.rules", "Going to apply the required power")
+        logDebug("Cotxe.rules", "Going to apply the required power")
         val requiredPowerState = Cotxe_RequiredPower.state
         var powerToApply = 0.0
         if(requiredPowerState != NULL){
             powerToApply = (requiredPowerState as Number).intValue
         }
-        logInfo("Cotxe.rules", "The required power to apply is "+powerToApply)
+        logDebug("Cotxe.rules", "The required power to apply is "+powerToApply)
         if(powerToApply > 0.0){
-            logInfo("Cotxe.rules", "Turning ON the cotxe charger")
+            logDebug("Cotxe.rules", "Turning ON the cotxe charger")
             CotxeEncesa_Control_Proxy.sendCommand(ON)
         }else{
-            logInfo("Cotxe.rules", "Turning OFF the cotxe charger")
+            logDebug("Cotxe.rules", "Turning OFF the cotxe charger")
             CotxeEncesa_Control_Proxy.sendCommand(OFF)
         }
         DestinationDeviceApplied.sendCommand("Cotxe")
     }else{
-        logInfo("Cotxe.rules", "Gestio is not automatic, so not applying required power, but notifying as applied")
+        logDebug("Cotxe.rules", "Gestio is not automatic, so not applying required power, but notifying as applied")
         Cotxe_UsedPower.sendCommand(0)
         DestinationDeviceApplied.sendCommand("Cotxe")
     }
@@ -120,7 +120,7 @@ when
     Item Cotxe_Temps_Bateria changed
 then
     val minuts = (Cotxe_Temps_Bateria.state as DecimalType).intValue
-    logInfo("Cotxe.rules", "Changed the time without extra power to "+minuts+" minutes")
+    logDebug("Cotxe.rules", "Changed the time without extra power to "+minuts+" minutes")
     maxChargingWithoutExtraPowerTime = 1000L * 60 * minuts
 end
 
@@ -131,12 +131,12 @@ when
 then
     val gestioAutoCotxe = receivedCommand
     if(gestioAutoCotxe != "auto"){
-        logInfo("Cotxe.rules", "Gestio Cotxe changed to manual. Currently switched off")
+        logDebug("Cotxe.rules", "Gestio Cotxe changed to manual. Currently switched off")
         CotxeEncesa_Control_Proxy.sendCommand(OFF)
         //we are not using unused power, because all is manual.
         Cotxe_UsedPower.sendCommand(0)
     }else{
-        logInfo("Cotxe.rules", "Gestio Cotxe changed to auto, starting from current used power")
+        logDebug("Cotxe.rules", "Gestio Cotxe changed to auto, starting from current used power")
         CotxeEncesaManual.postUpdate(OFF)
         var currentPower = 0.0
         val currentPowerItem = Cotxe_Potencia_UserDisplay.state
@@ -153,7 +153,7 @@ when
 then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
     if(gestioAutoCotxe != "auto"){
-        logInfo("Cotxe.rules", "Gestio Cotxe is manual. Changing the cotxe charger to " + receivedCommand)
+        logDebug("Cotxe.rules", "Gestio Cotxe is manual. Changing the cotxe charger to " + receivedCommand)
         if (receivedCommand == ON) {
             CotxeEncesa_Control_Proxy.sendCommand(ON)  //turn it on or off
         }else{
@@ -162,7 +162,7 @@ then
         //we are not using unused power, because all is manual.
         Cotxe_UsedPower.sendCommand(0+"")
     }else{
-        logInfo("Cotxe.rules", "Gestio Cotxe is auto. Changing the power has no effects")
+        logDebug("Cotxe.rules", "Gestio Cotxe is auto. Changing the power has no effects")
         CotxeEncesaManual.postUpdate(OFF)
     }
 end
@@ -171,7 +171,7 @@ rule "Activar o desactivar carregador Cotxe"
 when
     Item CotxeEncesa_Control_Proxy received command
 then
-    logInfo("Cotxe.rules", "The cotxe plug will be set to "+ receivedCommand)
+    logDebug("Cotxe.rules", "The cotxe plug will be set to "+ receivedCommand)
     if(test){
         CotxeEncesa_Control_Fake.sendCommand(receivedCommand)
     }else{
@@ -187,7 +187,7 @@ rule "Canvi potencia cotxe"
 when
     Item Cotxe_Potencia_UserDisplay received command
 then
-    logInfo("Cotxe.rules", "The cotxe is now using "+ receivedCommand +", updating UsedPower")
+    logDebug("Cotxe.rules", "The cotxe is now using "+ receivedCommand +", updating UsedPower")
     Cotxe_UsedPower.sendCommand(receivedCommand)
 end
 
@@ -201,10 +201,10 @@ then
         potencia = (potenciaSensor as Number).doubleValue
     }
     if(!test){
-        logInfo("Cotxe.rules", "The cotxe power sensor received "+ potencia)
+        logDebug("Cotxe.rules", "The cotxe power sensor received "+ potencia)
         Cotxe_Potencia_UserDisplay.sendCommand(potencia)
     }else{
-        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ potencia)
+        logDebug("Cotxe.rules", "In test, but the cotxe power sensor received "+ potencia)
     }
 end
 
@@ -213,10 +213,10 @@ when
     Item Cotxe_Potencia_Sensor_Fake received command
 then
     if(test){
-        logInfo("Cotxe.rules", "The FAKE cotxe power sensor received "+ receivedCommand)
+        logDebug("Cotxe.rules", "The FAKE cotxe power sensor received "+ receivedCommand)
         Cotxe_Potencia_UserDisplay.sendCommand(receivedCommand)
     }else{
-        logInfo("Cotxe.rules", "In test, but the cotxe power sensor received "+ receivedCommand)
+        logDebug("Cotxe.rules", "In test, but the cotxe power sensor received "+ receivedCommand)
     }
 end
 
@@ -225,16 +225,35 @@ when
     Item Cotxe_Sensor_Lectura received update
 then
     var rawData = Cotxe_Sensor_Lectura.state.toString
-    logInfo("Cotxe.rules", "Received new info from sensor cotxe "+ rawData)
+    logDebug("Cotxe.rules", "Received new info from sensor cotxe "+ rawData)
     if(rawData !== null){
+        logDebug("Cotxe.rules", "Going to get power")
         var String data = transform("JSONPATH", "$.power", rawData)
-        val Float power=Float::parseFloat(data)
-        Cotxe_Potencia_Sensor.postUpdate(power)
+        if(data=== null || data.equals(rawData)){
+            logError("Cotxe.rules","No s'ha pogut obtenir la potencia: "+ rawData +", no s'ha actualitzat")
+        }else{
+            try {
+                val Float power=Float::parseFloat(data)
+                Cotxe_Potencia_Sensor.postUpdate(power)
+                logInfo("Cotxe.rules", "Updated power from sensor: Power = "+ power)
+            } catch (Exception e) {
+                logError("Cotxe.rules","La pot del cotxe no es pot convertir a numero: "+ data +", no s'ha actualitzat")
+            }
+        }
 
         data = transform("JSONPATH", "$.energy", rawData)
-        val Float energy=Float::parseFloat(data)
-        Cotxe_Energia_Sensor.postUpdate(energy)
-        logInfo("Cotxe.rules", "Updated info from sensor: Power = "+ power + ", energy = "+energy)
+        if(data=== null || data.equals(rawData)){
+            logError("Cotxe.rules","No s'ha pogut obtenir la energia: "+ rawData +", no s'ha actualitzat")
+        }else{
+            try {
+                val Float energy=Float::parseFloat(data)
+                Cotxe_Energia_Sensor.postUpdate(energy)
+                logInfo("Cotxe.rules", "Updated energy from sensor: energy = "+energy)
+            } catch (Exception e) {
+                logError("Cotxe.rules","La energia del cotxe no es pot convertir a numero: "+ data +", no s'ha actualitzat")
+            }
+        }
+        
     }
 end
 
