@@ -11,7 +11,7 @@ Number:Power Cotxe_Energia_Avui "Sensor energia (Wh)"  //what the cotxe has used
 Number Cotxe_Temps_Bateria "Temps consumint bateria (min)" //minutes without enough extra power to keep charging the car
 
 Switch CotxeEncesa_Control "Encesa del cotxe" {gpio="pin:3 activelow:no initialValue:low"} //this is the actual item tant turns on or off the charger
-Switch CotxeEncesa_Control_Proxy "Encesa del cotxe"      //proxy to turn on or off the cotxe, or test it
+Switch CotxeEncesa_Control_Proxy "Encesa del cotxe" <connect>   //proxy to turn on or off the cotxe, or test it
 
 //		<device>_AvailablePower -> that receives the power available for the device
 //		<device>_UsedPower		-> that exposes the power that is currently using the device

@@ -18,14 +18,14 @@ sitemap default label="Ca l'espiga" {
         }
     }
 
-    Text item=CalentadorTitle label="Calentador" icon="heating"
+    Text item=CalentadorTitle label="Calentador" icon="heater_display"
     {
         Frame label="Calentador" {
             Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
             Selection item=Calentador_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "500"="500W", "1000"="1000W", "2000"="2000W"]
             Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat Pot.: [%d W]" 
             
-            Text item=Calentador_Termostat_UserDisplay icon="water_heater" label="Estat Term.: [%s]" 
+            Text item=Calentador_Termostat_UserDisplay icon="heating" label="Estat Term.: [%s]" 
             Text item=Calentador_Hot_Date icon="time" label="Ultim cop calent: [%1$td/%1$tm/%1$tY %1$tT]" 
             
             Text item=Calentador_Energia_Avui icon="heater_display" label="Energia avui: [%.3f kWh]" 
@@ -76,15 +76,15 @@ sitemap default label="Ca l'espiga" {
             Webview height=16 url="http://calespiga.ddns.net:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
         }
     }
-    Text item=CotxeTitle label="Carregador cotxe" icon="energy"
+    Text item=CotxeTitle label="Carregador cotxe" icon="electric_car"
     {
         Frame label="Cotxe" {
-            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%.1f W]" icon="energy"
+            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%.1f W]" icon="gauge_indicator"
             Text item=Cotxe_Energia_Avui label="Energia avui [%.1f Wh]" icon="battery"
-            Text item=CotxeEncesa_Control_Proxy label="Encesa carregador [%s]" icon="energy"
+            Text item=CotxeEncesa_Control_Proxy label="Encesa carregador [%s]" icon="connect"
             Setpoint item=Cotxe_Temps_Bateria icon="stopwatch" label="Temps consumint bateria [%.1f min]" minValue=1 maxValue=60 step=1
-            Switch item=GestioAutomaticaCotxe icon="wallswitch" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
-            Switch item=CotxeEncesaManual icon="poweroutlet"
+            Switch item=GestioAutomaticaCotxe icon="remote_control" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
+            Switch item=CotxeEncesaManual icon="switch_on_off"
         }
     }
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"

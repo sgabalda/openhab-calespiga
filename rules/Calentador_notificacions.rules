@@ -1,35 +1,79 @@
 import java.util.Date
 
+// used to notify if the heater is hot for too much time
 var lastChangeToHot = 0L
-
 var timeHotToNotify = 60 * 60 * 1000L * 2   // 2hours
+
+// used to notify if the mqtt commands do not receive response
+var Timer responseNotReceivedTimer = null
+val timeForReceivingResponse = 45   //45 seconds
+var notificationSend = false    //to avoid spamming repeated notfications
 
 rule "Notifica Massa Temps Hot"
 when
     Item Calentador_Termostat_UserDisplay received update
 then
     val receivedEstat=Calentador_Termostat_UserDisplay.state.toString
-    logInfo("Calentador_notificacions.rules","Estat calentador updated: "+receivedEstat)
+    logDebug("Calentador_notificacions.rules","Estat calentador updated: "+receivedEstat)
     //If the state is 
     if(receivedEstat == "HOT"){
         var nowmill=(new Date()).time
-        logInfo("Calentador_notificacions.rules", "Current time is "+nowmill) 
+        logDebug("Calentador_notificacions.rules", "Current time is "+nowmill) 
         //if last change to hot is not set, this is the first time it changes
         if(lastChangeToHot == 0){
             lastChangeToHot = nowmill
-            logInfo("Calentador_notificacions.rules", "Starting to count time HOT") 
+            logDebug("Calentador_notificacions.rules", "Starting to count time HOT") 
         }else{
             //if the last notification was no longer ago than timeBetweenNotifications, don't notify
             if(timeHotToNotify > nowmill - lastChangeToHot){
-                logInfo("Calentador_notificacions.rules", "Time HOT is not yet enough to send notification")
+                logDebug("Calentador_notificacions.rules", "Time HOT is not yet enough to send notification")
             }else{
                 sendBroadcastNotification("Calentador està HOT durant molt de temps. Potser està el termostat tancat?") 
-                logInfo("Calentador_notificacions.rules", "Send the notification") 
+                logDebug("Calentador_notificacions.rules", "Send the notification") 
                 lastChangeToHot = nowmill  //reset it so the notification will be sent again
             }
         }
     }else{
-        logInfo("Calentador_notificacions.rules", "HEATER - State is not hot, resetting the timer") 
+        logDebug("Calentador_notificacions.rules", "HEATER - State is not hot, resetting the timer") 
         lastChangeToHot = 0
+    }
+end
+
+rule "Inicia timer alarma no comunicacio amb calentador"
+when
+    Item Calentador_Potencia_ProxyItem received command
+then
+    if(responseNotReceivedTimer!==null){
+        logDebug("Calentador_notificacions.rules", "The HEATER response alert is already set. Not setting another") 
+    }else if(notificationSend == true){
+        logDebug("Calentador_notificacions.rules", "The HEATER response alert is sent. Not setting another") 
+    }else{
+        logDebug("Calentador_notificacions.rules", "configuring HEATER response alert") 
+        responseNotReceivedTimer = createTimer(now.plusSeconds(timeForReceivingResponse), [|
+                logDebug("Calentador_notificacions.rules", "HEATER response timeout reached") 
+                responseNotReceivedTimer = null
+                if(notificationSend == false){
+                    logDebug("Calentador_notificacions.rules", "HEATER response timeout reached and notification still not sent. Sending it") 
+                    notificationSend = true
+                    sendBroadcastNotification("No s'ha rebut resposta del calentador al actualitzar la potencia despres de  " +
+                        timeForReceivingResponse + "s. Potser hi ha algun problema?")
+                }else{
+                    logDebug("Calentador_notificacions.rules", "HEATER response timeout reached and notification already sent. not senidng it again") 
+                }
+
+            ])
+    }
+
+end
+
+rule "Cancela timer alarma no comunicacio amb calentador"
+when
+    Item Calentador_Potencia_UserDisplay received update
+then
+    logDebug("Calentador_notificacions.rules", "Response received from the heater, canceling the timer")
+    notificationSend = false
+    if(responseNotReceivedTimer!==null){
+        responseNotReceivedTimer.cancel()
+        responseNotReceivedTimer=null
     }
 end
