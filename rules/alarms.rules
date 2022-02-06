@@ -1,0 +1,85 @@
+import org.eclipse.smarthome.model.script.ScriptServiceUtil
+
+rule "Alarmes inicialització"
+when   
+    System started
+then
+    Alarms.members.forEach[ i | i.postUpdate(OFF) ]
+    AlarmsTitle.sendCommand(OFF)
+end
+
+rule "Alarma canvia estat"
+when
+    Member of Alarms changed
+then
+    val alarmItem = triggeringItem
+    val alarmPreviousState = previousState
+    val alarmNextState = newState
+
+    if(alarmPreviousState == OFF && alarmNextState == ON){
+        AlarmsTitle.sendCommand(ON)
+        val alarmTimestampOn = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "TimeOn")
+        logDebug("Alarms", "Alarm "+alarmItem.name+" has been fired") 
+        if(alarmTimestampOn !== null ) {
+            alarmTimestampOn.postUpdate(now.toString)
+        }else{
+            logError("Alarms", "Alarm "+alarmItem.name+" has not timestamp for ON") 
+        }
+        val alarmNotificationItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "Notification")
+        if(alarmNotificationItem !== null ) {
+            if(alarmNotificationItem.state == ON){
+                val alarmTextItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "Text")
+                if(alarmTextItem !== null ) {
+                    var lastNotified = new DateTime(0L)
+                    val alarmLastNotifItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "LastNotificationTime")
+                    if(alarmLastNotifItem !== null ) {
+                        lastNotified = new DateTime(alarmLastNotifItem.state.toString)
+                    }else{
+                        logError("Alarms", "Alarm "+alarmItem.name+" has no LastNotification item. Can not filter notifications!")
+                    }
+                    var timeBetweenNotificationsMinutes = 10
+                    val alarmTimeNotifItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "TimeNotifications")
+                    if(alarmTimeNotifItem !== null ) {
+                        timeBetweenNotificationsMinutes = (alarmTimeNotifItem as Number).intValue
+                    }else{
+                        logError("Alarms", "Alarm "+alarmItem.name+" has no Time item. Using the default!")
+                    }
+                    val threshold = now.minusMinutes(timeBetweenNotificationsMinutes)
+                    if(lastNotified.isBefore(threshold)){
+                        if(alarmLastNotifItem !== null ) {
+                            alarmLastNotifItem.postUpdate(now.toString)
+                        }else{
+                            logError("Alarms", "Alarm "+alarmItem.name+" has no LastNotification item. Can not record last notification time!")
+                        }
+                        logDebug("Alarms", "Alarm "+alarmItem.name+" sending the notification, as it has not been sent since "+timeBetweenNotificationsMinutes+"m ago") 
+                        sendBroadcastNotification(alarmTextItem.label)
+                    }else{
+                        logDebug("Alarms", "Alarm "+alarmItem.name+" NOT sending the notification, as it was sent less than "+timeBetweenNotificationsMinutes+"m ago") 
+                    }
+                }else{
+                    logError("Alarms", "Alarm "+alarmItem.name+" has no Text item. Can not send broadcast!")
+                }
+            }else{
+                logDebug("Alarms", "Alarm "+alarmItem.name+" has notifications disabled, not sending") 
+            }
+        }else{
+            logError("Alarms", "Alarm "+alarmItem.name+" has no Notification item. Can check if have to send broadcast!")
+        }
+    }else if(alarmPreviousState == ON && alarmNextState == OFF){
+        var actuator = Alarms.members.findFirst[state == ON]
+        if (actuator!==null){
+            AlarmsTitle.sendCommand(ON)
+        } else {
+            AlarmsTitle.sendCommand(OFF)
+        }
+        val alarmTimestampOff = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "TimeOff")
+        if(alarmTimestampOff !== null ) {
+            alarmTimestampOff.postUpdate(now.toString)
+        }else{
+            logError("Alarms", "Alarm "+alarmItem.name+" has not timestamp for OFF") 
+        }
+        logDebug("Alarms", "Alarm "+alarmItem.name+" has been stopped") 
+    }else{
+        logDebug("Alarms", "Alarm "+alarmItem.name+" has been updated but not changed") 
+    }
+end

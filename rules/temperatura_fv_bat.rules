@@ -1,4 +1,3 @@
-import java.util.Date
 
 var equalTreshold = 0.25  //dont take into account differences of more than 0.25ºC
                             //if need a strict number, use 0
@@ -36,7 +35,6 @@ rule "Encesa auto ventilador bateries histeresi"
 when
     Item VentiladorBateriesNomesTemp received command
 then
-    var ventilador = VentiladorBateriesProxy  //replace with (VentiladorBateriesProxy/VentiladorBateries) to test/real
     var ventiladorNomesTemp = VentiladorBateriesNomesTemp
     var ventiladorControlPotencia = VentiladorBateriesControlPotencia
     var temp = (BateriesTemperatura.state as Number).floatValue

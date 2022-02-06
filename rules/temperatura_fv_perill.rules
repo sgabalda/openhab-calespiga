@@ -1,12 +1,11 @@
 import java.util.Date
 
-var upperlimitTempBat = 35.0
-var lowerlimitTempBat = 2.0
+val defaultUpperlimitTempBat = 35.0
+val defaultLowerlimitTempBat = 0.0
 
 var upperlimitTempElec = 50.0
 var lowerlimitTempElec = 0.0
 
-var lastNotificationBat = 0L
 var lastNotificationElec = 0L
 
 var timeBetweenNotifications = 30 * 60 * 1000L   //30 minutes
@@ -17,22 +16,34 @@ when
 then
     var temp=(BateriesTemperaturaAdosada.state as Number).floatValue
     logDebug("temperatura_fv_perill.rules","Temperatura Bateries changed: "+temp)
+
+    val upperlimitTempBatItem = AlarmTempBateries_GrausSup.state
+    var upperlimitTempBat = defaultUpperlimitTempBat
+    if(upperlimitTempBatItem != NULL){
+        upperlimitTempBat = (upperlimitTempBatItem as Number).intValue
+        logDebug("Calentador_notificacions.rules", "setting the Upper BAT temp limit alert to "+upperlimitTempBat+"s") 
+    }else{
+        AlarmTempBateries_GrausSup.sendCommand(upperlimitTempBat)
+        logDebug("Calentador_notificacions.rules", "setting the Upper BAT temp limit alert to the default "+upperlimitTempBat+"s") 
+    }
+
+    val lowerlimitTempBatItem = AlarmTempBateries_GrausInf.state
+    var lowerlimitTempBat = defaultLowerlimitTempBat
+    if(lowerlimitTempBatItem != NULL){
+        lowerlimitTempBat = (lowerlimitTempBatItem as Number).intValue
+        logDebug("Calentador_notificacions.rules", "setting the Lower BAT temp limit alert to "+lowerlimitTempBat+"s") 
+    }else{
+        AlarmTempBateries_GrausInf.sendCommand(lowerlimitTempBat)
+        logDebug("Calentador_notificacions.rules", "setting the Lower BAT temp limit alert to the default "+lowerlimitTempBat+"s") 
+    }
+
     //if the temperature is out of the limits to be dangerous, should notify
     if(temp>upperlimitTempBat || temp<lowerlimitTempBat){
         logWarn("temperatura_fv_perill.rules", "Temperatura de bateries perillosa: "+
         BateriesTemperaturaAdosada.state) 
-        var nowmill=(new Date()).time
-        logDebug("temperatura_fv_perill.rules", "Current time is "+nowmill) 
-        //if the last notification was longer ago than timeBetweenNotifications, notify again
-        if(nowmill - lastNotificationBat > timeBetweenNotifications){
-            logInfo("temperatura_fv_perill.rules", "Enviant notificació de temperatura perillosa") 
-            sendBroadcastNotification("Temperatura de bateries perillosa: "+BateriesTemperaturaAdosada.state)
-            lastNotificationBat = nowmill
-        }else{
-            //if the last notification was no longer ago than timeBetweenNotifications, don't notify
-            logDebug("temperatura_fv_perill.rules", "NO Enviant notificació de temperatura perillosa, ja que fa "+(nowmill - lastNotificationBat)+"ms") 
-        }
+        AlarmTempBateries.postUpdate(ON)
     }else{
+        AlarmTempBateries.postUpdate(OFF)
         logDebug("temperatura_fv_perill.rules","Temperatura Bateries no perillosa: "+temp+"<"+upperlimitTempBat+
             " & "+temp+">"+lowerlimitTempBat)
     }

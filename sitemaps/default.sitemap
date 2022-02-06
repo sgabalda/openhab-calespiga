@@ -67,9 +67,6 @@ sitemap default label="Ca l'espiga" {
 
             Switch item=VentiladorBateriesManual icon="fan"
             Switch item=VentiladorElectronicaManual icon="fan"
-
-            Text item=MinutesBatFanFromBatteries label="Min. vent. bat. amb bat.: [%s]" icon="time"
-            Text item=MinutesElecFanFromBatteries label="Min. vent. elec. amb bat.: [%s]" icon="time"
         }
 
         Frame{
@@ -85,6 +82,26 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=Cotxe_Temps_Bateria icon="stopwatch" label="Temps consumint bateria [%.1f min]" minValue=1 maxValue=60 step=1
             Switch item=GestioAutomaticaCotxe icon="remote_control" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
             Switch item=CotxeEncesaManual icon="switch_on_off"
+        }
+    }
+    Text item=AlarmsTitle label="Alertes" icon="alert"
+    {
+        Frame label="Comunicació calentador" {
+            Text item=AlarmCalentadorCommunication label="Estat [%s]" icon="alert"
+            Text icon="time" item=AlarmCalentadorCommunicationTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=AlarmCalentadorCommunicationTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=AlarmCalentadorCommunicationNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
+            Setpoint item=AlarmCalentadorCommunicationTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
+            Setpoint item=AlarmCalentadorCommunication_Seconds icon="stopwatch" label="Temps limit [%.1f s]" minValue=30 maxValue=120 step=10
+        }
+        Frame label="Temp. bateries" {
+            Text item=AlarmTempBateries label="Estat [%s]" icon="alert"
+            Text icon="time" item=AlarmTempBateriesTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=AlarmTempBateriesTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=AlarmTempBateriesNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
+            Setpoint item=AlarmTempBateriesTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
+            Setpoint item=AlarmTempBateries_GrausInf icon="temperature_cold" label="Graus min. [%.1f C]" minValue=-2 maxValue=10 step=1
+            Setpoint item=AlarmTempBateries_GrausSup icon="temperature_hot" label="Graus max. [%.1f C]" minValue=25 maxValue=45 step=1
         }
     }
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"

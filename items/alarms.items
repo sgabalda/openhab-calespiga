@@ -1,0 +1,22 @@
+Group Alarms "Alarmes"
+
+Switch AlarmsTitle "Alertes"
+
+Switch AlarmCalentadorCommunication "Com. calentador" (Alarms)
+DateTime AlarmCalentadorCommunicationTimeOn "Com. calentador activada"
+DateTime AlarmCalentadorCommunicationTimeOff "Com. calentador desact."
+Switch AlarmCalentadorCommunicationNotification "Notificacio Com. calent."
+DateTime AlarmCalentadorCommunicationLastNotificationTime "Darrera notif."
+Number AlarmCalentadorCommunicationTimeNotifications "Min. entre notif."
+String AlarmCalentadorCommunicationText "La comunicació amb el calentador s'ha perdut. Potser hi ha algun problema?"
+Number AlarmCalentadorCommunication_Seconds "Segons limit"
+
+Switch AlarmTempBateries "Temp. bateries" (Alarms)
+DateTime AlarmTempBateriesTimeOn "Temp. bateries activada"
+DateTime AlarmTempBateriesTimeOff "Temp. bateries desact."
+Switch AlarmTempBateriesNotification "Notificacio Temp. bateries"
+DateTime AlarmTempBateriesLastNotificationTime "Darrera notif."
+Number AlarmTempBateriesTimeNotifications "Min. entre notif."
+String AlarmTempBateriesText "Temperatura de bateries fora del rang de seguretat."
+Number AlarmTempBateries_GrausInf "Graus limit inf."
+Number AlarmTempBateries_GrausSup "Graus limit sup."
