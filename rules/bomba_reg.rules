@@ -9,10 +9,13 @@ then
         apagarBombaTimer.cancel()
         apagarBombaTimer=null
     }
-    var minutesToRun=(Durada_Encesa_Manual.state as DecimalType).intValue
-    if(minutesToRun===null){
-        minutesToRun=0;
-    }else{
+
+    val minutesToRunState = Durada_Encesa_Manual.state
+    var minutesToRun = 0
+    if(minutesToRunState != NULL){
+        minutesToRun = (minutesToRunState as Number).intValue
+    }
+    if(minutesToRun > 0){
         Encesa_Bomba.sendCommand(ON)
         apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 apagarBombaTimer = null
@@ -41,10 +44,12 @@ then
             apagarBombaTimer.cancel()
             apagarBombaTimer=null
         }
-        var minutesToRun=(Durada_Encesa_Auto_Mati.state as DecimalType).intValue
-        if(minutesToRun===null){
-            minutesToRun=0;
-        }else{
+        val minutesToRunState = Durada_Encesa_Auto_Mati.state
+        var minutesToRun = 0
+        if(minutesToRunState != NULL){
+            minutesToRun = (minutesToRunState as Number).intValue
+        }
+        if(minutesToRun > 0){
             Encesa_Bomba.sendCommand(ON)
             apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
                     apagarBombaTimer = null
@@ -62,10 +67,12 @@ then
             apagarBombaTimer.cancel()
             apagarBombaTimer=null
         }
-        var minutesToRun=(Durada_Encesa_Auto_Migdia.state as DecimalType).intValue
-        if(minutesToRun===null){
-            minutesToRun=0;
-        }else{
+        val minutesToRunState = Durada_Encesa_Auto_Migdia.state
+        var minutesToRun = 0
+        if(minutesToRunState != NULL){
+            minutesToRun = (minutesToRunState as Number).intValue
+        }
+        if(minutesToRun > 0){
             Encesa_Bomba.sendCommand(ON)
             apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
                     apagarBombaTimer = null
@@ -83,11 +90,12 @@ then
             apagarBombaTimer.cancel()
             apagarBombaTimer=null
         }
-        
-        var minutesToRun=(Durada_Encesa_Auto_Tarda.state as DecimalType).intValue
-        if(minutesToRun===null){
-            minutesToRun=0;
-        }else{
+        val minutesToRunState = Durada_Encesa_Auto_Tarda.state
+        var minutesToRun = 0
+        if(minutesToRunState != NULL){
+            minutesToRun = (minutesToRunState as Number).intValue
+        }
+        if(minutesToRun > 0){
             Encesa_Bomba.sendCommand(ON)
             apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
                     apagarBombaTimer = null
