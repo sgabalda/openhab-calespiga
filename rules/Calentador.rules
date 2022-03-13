@@ -18,7 +18,7 @@ then
             logInfo("Calentador.rules", "The calentador is hot, so required power set to 0")
             requiredPower = 0
         }else{
-            val oldPowerState = Calentador_AvailablePower.state
+            val oldPowerState = receivedCommand
             var availablePower = 0.0
             if(oldPowerState != NULL){
                 availablePower = (oldPowerState as Number).doubleValue
@@ -78,7 +78,7 @@ rule "Canvi gestio calentador"
 when
     Item GestioAutomaticaCalentador received command
 then
-    val gestioAutoCalentador = GestioAutomaticaCalentador.state
+    val gestioAutoCalentador = receivedCommand
     if(gestioAutoCalentador != "auto"){
         val currentPowerSelection = Calentador_Potencia_UserSelection.state
         logInfo("Calentador.rules", "Gestio Calentador changed to manual. Refreshed status to "+currentPowerSelection)
@@ -98,7 +98,7 @@ when
 then
     val gestioAutoCalentador = GestioAutomaticaCalentador.state
     if(gestioAutoCalentador != "auto"){
-        val currentPowerSelection = Calentador_Potencia_UserSelection.state
+        val currentPowerSelection = receivedCommand
         logInfo("Calentador.rules", "Gestio Calentador is manual. Refreshed status to "+currentPowerSelection)
         Calentador_Potencia_ProxyItem.sendCommand(currentPowerSelection+"")
         //we are not using unused power, because all is manual.
@@ -122,7 +122,7 @@ when
     Item Calentador_Estat_Fake  received command
 then
     if(test){
-        Calentador_Estat_ProxyItem.postUpdate(Calentador_Estat_Fake.state.toString)
+        Calentador_Estat_ProxyItem.postUpdate(receivedCommand.toString)
     }
 end
 

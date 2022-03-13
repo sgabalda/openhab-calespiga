@@ -22,25 +22,43 @@ then
         logDebug("Alarms", "Alarm "+alarmItem.name+" has been fired") 
         if(alarmTimestampOn !== null ) {
             alarmTimestampOn.postUpdate(now.toString)
+            logDebug("Alarms", "Alarm timestamp updated to now") 
         }else{
             logError("Alarms", "Alarm "+alarmItem.name+" has not timestamp for ON") 
         }
         val alarmNotificationItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "Notification")
         if(alarmNotificationItem !== null ) {
+            logDebug("Alarms", "Found alarm notification item for "+alarmItem.name)
             if(alarmNotificationItem.state == ON){
+                logDebug("Alarms", "Alarm notification item is ON for "+alarmItem.name) 
                 val alarmTextItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "Text")
                 if(alarmTextItem !== null ) {
+                    logDebug("Alarms", "Found alarm text for "+alarmItem.name) 
                     var lastNotified = new DateTime(0L)
                     val alarmLastNotifItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "LastNotificationTime")
+                    logDebug("Alarms", "Got last notified item for alarm "+alarmItem.name) 
                     if(alarmLastNotifItem !== null ) {
-                        lastNotified = new DateTime(alarmLastNotifItem.state.toString)
+                        val alarmLastNotifItemState = alarmLastNotifItem.state
+                        logDebug("Alarms", "Last notified item state is "+alarmLastNotifItemState+" for alarm "+alarmItem.name)
+                        if(alarmLastNotifItemState != NULL){
+                            lastNotified = new DateTime(alarmLastNotifItemState.toString)
+                            logDebug("Alarms", "Last notified time is "+lastNotified+" for alarm "+alarmItem.name)
+                        }else{
+                            logWarn("Alarms", "Last notified time is NULL, if it is not the first time maybe it is not properly updating for alarm "+alarmItem.name)
+                        }
                     }else{
                         logError("Alarms", "Alarm "+alarmItem.name+" has no LastNotification item. Can not filter notifications!")
                     }
                     var timeBetweenNotificationsMinutes = 10
                     val alarmTimeNotifItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "TimeNotifications")
                     if(alarmTimeNotifItem !== null ) {
-                        timeBetweenNotificationsMinutes = (alarmTimeNotifItem as Number).intValue
+                        val alarmTimeNotifItemState = alarmTimeNotifItem.state
+                        if(alarmTimeNotifItemState != NULL){
+                            timeBetweenNotificationsMinutes = (alarmTimeNotifItemState as Number).intValue
+                            logDebug("Alarms", "Time between notifications is "+timeBetweenNotificationsMinutes+" for alarm "+alarmItem.name) 
+                        }else{
+                            logWarn("Alarms", "Time between notifications is NULL, using the default 10 min but something is misconfigured for alarm "+alarmItem.name)
+                        } 
                     }else{
                         logError("Alarms", "Alarm "+alarmItem.name+" has no Time item. Using the default!")
                     }
@@ -48,10 +66,11 @@ then
                     if(lastNotified.isBefore(threshold)){
                         if(alarmLastNotifItem !== null ) {
                             alarmLastNotifItem.postUpdate(now.toString)
+                            logDebug("Alarms", "Alarm last notified updated for alarm "+alarmItem.name)
                         }else{
                             logError("Alarms", "Alarm "+alarmItem.name+" has no LastNotification item. Can not record last notification time!")
                         }
-                        logDebug("Alarms", "Alarm "+alarmItem.name+" sending the notification, as it has not been sent since "+timeBetweenNotificationsMinutes+"m ago") 
+                        logInfo("Alarms", "Alarm "+alarmItem.name+" sending the notification, as it has not been sent since "+timeBetweenNotificationsMinutes+"m ago") 
                         sendBroadcastNotification(alarmTextItem.label)
                     }else{
                         logDebug("Alarms", "Alarm "+alarmItem.name+" NOT sending the notification, as it was sent less than "+timeBetweenNotificationsMinutes+"m ago") 
@@ -66,14 +85,18 @@ then
             logError("Alarms", "Alarm "+alarmItem.name+" has no Notification item. Can check if have to send broadcast!")
         }
     }else if(alarmPreviousState == ON && alarmNextState == OFF){
+        logDebug("Alarms", "Alarm "+alarmItem.name+" has stopped") 
         var actuator = Alarms.members.findFirst[state == ON]
         if (actuator!==null){
+            logDebug("Alarms", "There is still some alarm on, leaving the general state alarm as ON") 
             AlarmsTitle.sendCommand(ON)
         } else {
+            logDebug("Alarms", "There is still some alarm on, leaving the general state alarm as ON") 
             AlarmsTitle.sendCommand(OFF)
         }
         val alarmTimestampOff = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "TimeOff")
         if(alarmTimestampOff !== null ) {
+            logDebug("Alarms", "Updating the OFF timestamp for alarm "+alarmItem.name) 
             alarmTimestampOff.postUpdate(now.toString)
         }else{
             logError("Alarms", "Alarm "+alarmItem.name+" has not timestamp for OFF") 
