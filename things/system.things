@@ -1,0 +1,2 @@
+Thing exec:command:diskPercentage [command="df | grep root | awk '{ print $5 }' | sed 's/.$//'", interval=120, timeout=20]
+Thing exec:command:diskInodesPercentage [command="df -i | grep root | awk '{ print $5 }' | sed 's/.$//'", interval=120, timeout=20]

@@ -1,3 +1,4 @@
+import java.time.ZonedDateTime
 
 val username = "usr"
 val pass = "sergi00xp"
@@ -12,10 +13,10 @@ var String token = null
 val Integer refreshInterval = 60
 var Integer currentInterval = 0
 
-val minutesWithoutPowerMeasurementBeforSettingZero = 5
+val minutesWithoutPowerMeasurementBeforSettingZero = 5L
 
 var Timer refreshTokenOnError = null
-val secondsRefreshTokenOnError = 60
+val secondsRefreshTokenOnError = 60L
 
 var alarmNotUpdated = false
 
@@ -23,6 +24,7 @@ rule "Refresh sunny boy token"
 when
     Item SunnyBoy_Token_Refresh received command
 then
+    val now = ZonedDateTime::now
     if(refreshTokenOnError!==null){
         refreshTokenOnError.cancel()
         refreshTokenOnError=null
@@ -70,8 +72,9 @@ when
     Time cron "0/10 * 6-21 ? * * *" //if you change this, check the schedule for the alerting rules below
 then
     if(token !== null){
-
-        SunnyBoy_Time_Attempt.postUpdate(now.toString)
+        val now = ZonedDateTime::now
+        val nowDateType = new DateTimeType(now) 
+        SunnyBoy_Time_Attempt.postUpdate(nowDateType)
         val notification_json = '{"destDev":[],"keys":["' 
             + total_power_code + '","'
             + freq_code + '","'
@@ -147,10 +150,10 @@ then
             logDebug("SunnyBoy","les potencies son: Tot: "+tot_power+", reb:"+potRebutjada)
             SunnyBoy_Pot_Rebutjada.postUpdate(potRebutjada)
             SunnyBoy_Pot_Actual.postUpdate(tot_power)
-            SunnyBoy_Time_Read.postUpdate(now.toString)
+            SunnyBoy_Time_Read.postUpdate(nowDateType)
             if(tot_power>0){
                 logDebug("SunnyBoy","Donat que la potencia no es 0, actualitzem la data de la ultima no 0")
-                SunnyBoy_Time_Not_Zero.postUpdate(now.toString)
+                SunnyBoy_Time_Not_Zero.postUpdate(nowDateType)
             }
 
         }else if(error!==null && error.equals("401")){
@@ -179,6 +182,7 @@ rule "Assegura lectures"
 when
     Time cron "0 5-55/10 6-21 ? * * *"
 then
+    val now = ZonedDateTime::now
     logDebug("SunnyBoy","Obtenint darrera lectura i temps actual")
     val lastRead = new DateTime(SunnyBoy_Time_Read.state.toString)
     val threshold = now.minusMinutes(minutesWithoutPowerMeasurementBeforSettingZero)

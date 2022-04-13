@@ -1,2 +1,4 @@
 python /home/openhabian/repo/openhab-calespiga/shell-scripts/diposit.py
 python /home/openhabian/repo/openhab-calespiga/shell-scripts/cotxe-sensor.py
+df | grep root | awk '{ print $5 }' | sed 's/.$//'
+df -i | grep root | awk '{ print $5 }' | sed 's/.$//'

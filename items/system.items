@@ -1,0 +1,5 @@
+String DiskPercent "[%s]" (ConverToNumber) {channel="exec:command:diskPercentage:output"}
+Number DiskPercentNumber
+
+String DiskInodesPercent "[%s]" (ConverToNumber) {channel="exec:command:diskInodesPercentage:output"}
+Number DiskInodesPercentNumber

@@ -1,6 +1,0 @@
-rule "diposit percent to number"
-when
-    Item DipositPercent changed
-then
-    DipositPercentNumber.postUpdate(DipositPercent.state.toString)
-end

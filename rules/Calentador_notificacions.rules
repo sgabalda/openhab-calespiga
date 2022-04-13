@@ -1,4 +1,5 @@
 import java.util.Date
+import java.time.ZonedDateTime
 
 // used to notify if the heater is hot for too much time
 var lastChangeToHot = 0L
@@ -46,7 +47,7 @@ then
     }else{
         logDebug("Calentador_notificacions.rules", "configuring HEATER response alert") 
         val secondsItem = AlarmCalentadorCommunication_Seconds.state
-        var timeForReceivingResponse = 60
+        var timeForReceivingResponse = 60L
         if(secondsItem != NULL){
            timeForReceivingResponse = (secondsItem as Number).intValue
            logDebug("Calentador_notificacions.rules", "setting the time for HEATER response alert to "+timeForReceivingResponse+"s") 
@@ -54,6 +55,7 @@ then
             AlarmCalentadorCommunication_Seconds.sendCommand(60)
             logDebug("Calentador_notificacions.rules", "setting the time for HEATER response alert to the default "+timeForReceivingResponse+"s") 
         }
+        val now = ZonedDateTime::now
         responseNotReceivedTimer = createTimer(now.plusSeconds(timeForReceivingResponse), [|
                 logDebug("Calentador_notificacions.rules", "HEATER response timeout reached") 
                 responseNotReceivedTimer = null

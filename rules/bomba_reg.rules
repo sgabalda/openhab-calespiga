@@ -1,26 +1,45 @@
 
 var Timer apagarBombaTimer = null
 
+rule "Apagar bomba per defecte"
+when
+   System started
+then
+    Encesa_Bomba.sendCommand(ON)
+    createTimer(now.plusSeconds(1), [|
+            logDebug("BombaReg","Setting it off at the beginning")
+            Encesa_Bomba.sendCommand(OFF)
+        ])
+end
+
 rule "Encesa manual bomba reg"
 when
     Item Encesa_Bomba_Manual received command ON
 then
     if(apagarBombaTimer!==null){
+        logDebug("BombaReg","timer not null, cancelling it")
         apagarBombaTimer.cancel()
         apagarBombaTimer=null
     }
-
+    logInfo("BombaReg","Manually turning on bomba reg")
+    logDebug("BombaReg","Getting the minutes to run")
     val minutesToRunState = Durada_Encesa_Manual.state
     var minutesToRun = 0
     if(minutesToRunState != NULL){
         minutesToRun = (minutesToRunState as Number).intValue
     }
+    
     if(minutesToRun > 0){
+        logInfo("BombaReg","Manually turning on bomba reg for "+minutesToRun+" minutes")
         Encesa_Bomba.sendCommand(ON)
+        logDebug("BombaReg","Setting timer")
         apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                logDebug("BombaReg","Timer reached, turning off bomba")
                 apagarBombaTimer = null
                 Encesa_Bomba_Manual.sendCommand(OFF)
             ])
+    }else{
+        logDebug("BombaReg","Not turning on bomba reg because mintues is 0")
     }
 end
 
@@ -28,11 +47,14 @@ rule "Apagada manual bomba reg"
 when
     Item Encesa_Bomba_Manual received command OFF
 then
+    logInfo("BombaReg","Bomba manually turned off")
     if(apagarBombaTimer!==null){
+        logDebug("BombaReg","timer not null, cancelling it")
         apagarBombaTimer.cancel()
         apagarBombaTimer=null
     }
     Encesa_Bomba.sendCommand(OFF)
+    logDebug("BombaReg","Done turning off")
 end
 
 rule "Encesa auto mati bomba reg"
@@ -40,22 +62,32 @@ when
     Time cron "0 0 8 * * ? *"
 then
     if(Encesa_Bomba_Auto_Mati.state==ON){
+        logDebug("BombaReg","Going to apply matí schedule")
         if(apagarBombaTimer!==null){
+            logDebug("BombaReg","timer not null, cancelling it")
             apagarBombaTimer.cancel()
             apagarBombaTimer=null
         }
         val minutesToRunState = Durada_Encesa_Auto_Mati.state
+        logDebug("BombaReg","Going to get minutes for migdia")
         var minutesToRun = 0
         if(minutesToRunState != NULL){
             minutesToRun = (minutesToRunState as Number).intValue
         }
         if(minutesToRun > 0){
+            logInfo("BombaReg","Manually turning on bomba reg for "+minutesToRun+" minutes")
             Encesa_Bomba.sendCommand(ON)
+            logDebug("BombaReg","Setting timer")
             apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                    logDebug("BombaReg","Timer reached, turning off bomba")
                     apagarBombaTimer = null
                     Encesa_Bomba_Manual.sendCommand(OFF)
                 ])
+        }else{
+            logDebug("BombaReg","Not turning on bomba reg because mintues is 0")
         }
+    }else{
+        logDebug("BombaReg","Bomba not turned on in matí schedule")
     }
 end
 rule "Encesa auto migdia bomba reg"
@@ -63,22 +95,32 @@ when
     Time cron "0 0 14 * * ? *"
 then
     if(Encesa_Bomba_Auto_Migdia.state==ON){
+        logDebug("BombaReg","Going to apply migdia schedule")
         if(apagarBombaTimer!==null){
+            logDebug("BombaReg","timer not null, cancelling it")
             apagarBombaTimer.cancel()
             apagarBombaTimer=null
         }
         val minutesToRunState = Durada_Encesa_Auto_Migdia.state
         var minutesToRun = 0
+        logDebug("BombaReg","Going to get minutes for tarda")
         if(minutesToRunState != NULL){
             minutesToRun = (minutesToRunState as Number).intValue
         }
         if(minutesToRun > 0){
+            logInfo("BombaReg","Manually turning on bomba reg for "+minutesToRun+" minutes")
             Encesa_Bomba.sendCommand(ON)
+            logDebug("BombaReg","Setting timer")
             apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                    logDebug("BombaReg","Timer reached, turning off bomba")
                     apagarBombaTimer = null
                     Encesa_Bomba_Manual.sendCommand(OFF)
                 ])
+        }else{
+            logDebug("BombaReg","Not turning on bomba reg because mintues is 0")
         }
+    }else{
+        logDebug("BombaReg","Bomba not turned on in migdia schedule")
     }
 end
 rule "Encesa auto tarda bomba reg"
@@ -86,22 +128,32 @@ when
     Time cron "0 0 20 * * ? *"
 then
     if(Encesa_Bomba_Auto_Tarda.state==ON){
+        logDebug("BombaReg","Going to apply tarda schedule")
         if(apagarBombaTimer!==null){
+            logDebug("BombaReg","timer not null, cancelling it")
             apagarBombaTimer.cancel()
             apagarBombaTimer=null
         }
         val minutesToRunState = Durada_Encesa_Auto_Tarda.state
         var minutesToRun = 0
+        logDebug("BombaReg","Going to get minutes for tarda")
         if(minutesToRunState != NULL){
-            minutesToRun = (minutesToRunState as Number).intValue
+            minutesToRun = (minutesToRunState as Number).longValue
         }
         if(minutesToRun > 0){
+            logInfo("BombaReg","Manually turning on bomba reg for "+minutesToRun+" minutes")
             Encesa_Bomba.sendCommand(ON)
+            logDebug("BombaReg","Setting timer")
             apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                    logDebug("BombaReg","Timer reached, turning off bomba")
                     apagarBombaTimer = null
                     Encesa_Bomba_Manual.sendCommand(OFF)
                 ])
+        }else{
+            logDebug("BombaReg","Not turning on bomba reg because mintues is 0")
         }
+    }else{
+        logDebug("BombaReg","Bomba not turned on in tarda schedule")
     }
 end
 

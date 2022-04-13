@@ -1,0 +1,18 @@
+import org.openhab.core.model.script.ScriptServiceUtil
+
+rule "Text to number conversion"
+when
+    Member of ConverToNumber changed
+then
+    logDebug("NumberConversion", "Starting number conversion")
+    val textItem = triggeringItem
+    val textItemState = newState
+    val numberItem = ScriptServiceUtil.getItemRegistry.getItem(textItem.name + "Number")
+    logDebug("NumberConversion", "Going to perform number conversion of "+newState) 
+    if(numberItem !== null ) {
+        numberItem.postUpdate(textItemState.toString)
+        logDebug("NumberConversion", textItem.name + " converted to number") 
+    }else{
+        logError("NumberConversion", "Could not conver to number "+textItem.name + " because Number item does not exist") 
+    }
+end

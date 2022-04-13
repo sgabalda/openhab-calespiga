@@ -1,3 +1,6 @@
+import java.util.Date
+import java.time.ZonedDateTime
+
 var long lastChangePower = -1
 var test = false     //set to true to enable testing
                     //(actual commands will not be sent to the calentador, and the last
@@ -142,11 +145,13 @@ rule "update termostat state from MQTT calentador"
 when
     Item Calentador_Estat_ProxyItem  received update
 then
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
     val receivedEstat = Calentador_Estat_ProxyItem.state.toString
     logInfo("Calentador.rules", "Calentador termostat changed to "+receivedEstat)
     if(receivedEstat == "HOT"){
         logInfo("Calentador.rules", "Calentador is HOT, changing last HOT date and turning off")
-        Calentador_Hot_Date_Proxy.postUpdate(now.toString)
+        Calentador_Hot_Date_Proxy.postUpdate(nowDateType)
 
         //we are not using unused power, because it is hot.
         Calentador_UsedPower.sendCommand(0)
@@ -183,7 +188,7 @@ then
         oldPower = (oldPowerState as Number).doubleValue
     }
 
-    val now_millis = now.millis
+    val now_millis = (new Date()).time
     logInfo("Calentador.rules", "Going to update energy from "+lastChangePower+" with "+oldPower)
     if(lastChangePower>0 ){
 		val termostat = Calentador_Termostat_UserDisplay.state
@@ -192,7 +197,12 @@ then
 	    	val timeHours = (timeMillis/1000.0)/3600
 	    	val energyToAdd = oldPower*timeHours/1000
 
-	    	val energyCurrent = (Calentador_Energia_Avui.state as Number).doubleValue
+            var energyCurrent = 0.0
+
+            val calentadorEnergiaState = Calentador_Energia_Avui.state
+            if(calentadorEnergiaState != NULL){
+                energyCurrent = ( calentadorEnergiaState as Number).doubleValue
+            }
 
 	    	logInfo("Calentador.rules", "Adding energy calentador "+energyToAdd+" to "+energyCurrent)
 

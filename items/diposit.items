@@ -1,2 +1,2 @@
-String DipositPercent "[%s]" {channel="exec:command:diposit:output"}
+String DipositPercent "[%s]" (ConverToNumber) {channel="exec:command:diposit:output"}
 Number DipositPercentNumber

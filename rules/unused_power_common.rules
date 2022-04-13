@@ -1,4 +1,4 @@
-import org.eclipse.smarthome.model.script.ScriptServiceUtil
+import org.openhab.core.model.script.ScriptServiceUtil
 
 var test = false     //set to true to use test mode (unused power will not be read from Sunny boy
 

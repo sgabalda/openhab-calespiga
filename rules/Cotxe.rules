@@ -1,3 +1,5 @@
+import java.util.Date
+
 //rules to manage unused power
 var test = false     //set to true to use the test items instead of the real ones
 val MAX_POWER = 2000.0
@@ -39,7 +41,7 @@ then
                 chargingWithoutExtraPowerTimeStart = 0L               
             }else{
                 logDebug("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is NOT enough available power ("+availablePower+")")
-                val now_millis = now.millis
+                val now_millis = (new Date()).time
                 if(chargingWithoutExtraPowerTimeStart == 0L){
                     //we used to be with enough extra power, this is the first time we have not enough
                     chargingWithoutExtraPowerTimeStart = now_millis

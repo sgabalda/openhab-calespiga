@@ -104,21 +104,11 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmTempBateries_GrausSup icon="temperature_hot" label="Graus max. [%.1f C]" minValue=25 maxValue=45 step=1
         }
     }
-    Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
+    Text item=PotenciaSobrantTitle label="Sistema" icon="energy"
     {
-        Frame label="Energia sobrant" {
-            Text item=AvailablePower icon="energy" label="Potencia disponible [%d W]"
-            Text item=AvailablePowerProcessStatus icon="settings" label="Status [%s]"
-        }
-        Frame label="Testing energia sobrant" {
-            Setpoint item=NotUsedPower label="Força potencia extra [%d W]" minValue=0 maxValue=3000 step=200
-            Text item=Calentador_UsedPower label="Potencia extra usada calent. [%d W]"
-            Text item=Calentador_RequiredPower label="Potencia extra futura calent.[%d W]"
-            Text item=Calentador_Potencia_ProxyItem label="Potencia enviada calentador [%d W]"
-            Text item=Calentador_Hot_Date_Fake icon="time" label="Ultim cop calent (Fake): [%1$td/%1$tm/%1$tY %1$tT]"
-            Switch item=Calentador_Estat_Fake icon="wallswitch" label="Estat fake calentador" mappings=["HOT"="HOT", "COLD"="COLD"]
-            Text item=CotxeEncesa_Control_Fake icon="wallswitch" label="Estat fake calentador"
-            Setpoint item=Cotxe_Potencia_Sensor_Fake label="Potencia enviada cotxe fake [%d W]" minValue=0 maxValue=3000 step=200
+        Frame label="Sistema operatiu" {
+            Text item=DiskPercent icon="receiver" label="Ús disc [%s %%]"
+            Text item=DiskInodesPercent icon="receiver" label="Ús inodes [%s %%]"
         }
     }
 }

@@ -1,4 +1,4 @@
-Switch Encesa_Bomba "Encesa bomba reg" {gpio="pin:2 activelow:yes initialValue:high"}
+Switch Encesa_Bomba "Encesa bomba reg" {channel="gpio:pigpio-remote:local-pigpio:gpioControlBombaReg"}
 
 Switch Encesa_Bomba_Manual "Encesa manual bomba reg"
 Number Durada_Encesa_Manual "Durada encesa manual (minuts)"
