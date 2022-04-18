@@ -32,12 +32,29 @@ then
     val notification_json = '{"right":"' + username + '","pass":"' + pass + '"}'
     val String rawToken = sendHttpPostRequest(login_url, "application/json", notification_json)
     logDebug("SunnyBoy","Obtingut resposta del post: "+rawToken)
-    var String error = transform("JSONPATH", "$.err", rawToken)
+    var tokenObtanined = false
+    val String error = transform("JSONPATH", "$.err", rawToken)
     if(error!==null && error.equals(rawToken)){
-        token = transform("JSONPATH", "$.result.sid", rawToken)
-        logDebug("SunnyBoy","El token es: "+token)
-        SunnyBoy_Token.postUpdate(token)
+        logDebug("SunnyBoy","No hi ha error al token")
+        val filteredToken = transform("JSONPATH", "$.result.sid", rawToken)
+        if(rawToken!==null){
+            logDebug("SunnyBoy","el JSON de la resposta no es null")
+            if(rawToken.equals(filteredToken)){
+                logError("SunnyBoy","no es pot treure el $.result.sid del token")
+            }else{
+                tokenObtanined = true
+                token = filteredToken
+                logDebug("SunnyBoy","El token es: "+token)
+                SunnyBoy_Token.postUpdate(token)
+            }  
+        }else{
+            logError("SunnyBoy","La request HTTP al Sunny Boy ha donat null")
+        }
     }else{
+        logError("SunnyBoy","Error fent login: "+error)
+    }
+
+    if(!tokenObtanined){
         logError("SunnyBoy", "No s'ha pogut obtenir el token: "+rawToken+", obtenint-lo en uns segons")
         refreshTokenOnError = createTimer(now.plusSeconds(secondsRefreshTokenOnError), [|
             refreshTokenOnError = null
