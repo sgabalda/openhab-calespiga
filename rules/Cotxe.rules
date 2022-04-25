@@ -140,6 +140,7 @@ then
     }else{
         logDebug("Cotxe.rules", "Gestio Cotxe changed to auto, starting from current used power")
         CotxeEncesaManual.postUpdate(OFF)
+        chargingWithoutExtraPowerTimeStart = 0L //this restarts the counter for keeping the switch ON without unused power
         var currentPower = 0.0
         val currentPowerItem = Cotxe_Potencia_UserDisplay.state
         if(currentPowerItem != NULL){
