@@ -6,6 +6,9 @@ Number:Power AvailablePower "Potència disponible"
 String AvailablePowerProcessStatus "Estat del processat"      
 //what is the status of the processing. May be "start", "processing" or "finished"
 
+Number FinishedRetries "Cicles encallats"
+//number of times the engine was not finished but should be since las succesfull cycle
+
 String DestinationDevices "Dispositius per enviar la potència disponible"      
 //comma separated list of the devices where to send the availiable power, in order of priority
 

@@ -104,7 +104,16 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmTempBateries_GrausSup icon="temperature_hot" label="Graus max. [%.1f C]" minValue=25 maxValue=45 step=1
         }
     }
-    Text item=PotenciaSobrantTitle label="Sistema" icon="energy"
+    Text item=PotenciaSobrantTitle label="Potència sobrant" icon="energy"
+    {
+        Frame label="Potecia sobrant" {
+            Text item=AvailablePowerProcessStatus icon="settings" label="Estat gestor [%s]"
+            Text item=FinishedRetries icon="cycle" label="Cicles encallats [%s]"
+            Setpoint item=Cotxe_Priority icon="sorting" label="Cotxe prio. [%d]" minValue=1 maxValue=2 step=1
+            Setpoint item=Calentador_Priority icon="sorting" label="Calentador prio. [%d]" minValue=1 maxValue=2 step=1
+        }
+    }
+    Text item=SystemTitle label="Sistema" icon="settings"
     {
         Frame label="Sistema operatiu" {
             Text item=DiskPercent icon="receiver" label="Ús disc [%s %%]"

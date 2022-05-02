@@ -15,6 +15,7 @@ then
 	AvailablePower.sendCommand(0)
 	AvailablePowerProcessStatus.postUpdate("finished")
 	NotUsedPower.postUpdate(0)
+    FinishedRetries.postUpdate(finishedRetries)
 	var destinationsString = ""
 	var i = 0
     while(i<availableDevices.length()){
@@ -26,6 +27,23 @@ then
     }
     logInfo("UnusedPower","The starting destination devices are "+destinationsString)
 	DestinationDevices.sendCommand(destinationsString)
+end
+
+rule "Set devices priority"
+when
+    Member of PriorityUnusedPower changed
+then
+    logDebug("UnusedPower","Changed some priority, recalculating priorities")
+    val changedItem = triggeringItem
+    var previousPriority = -1
+    if(previousState != NULL){
+        previousPriority = (previousState as Number).intValue
+    }
+    val newPriority = (newState as Number).intValue
+    logDebug("UnusedPower","Changed priority for item "+changedItem.name+" from "+ previousPriority+" to "+newPriority)
+
+    // TODO loop through all members and set the order with that change
+
 end
 
 rule "update extra power"
@@ -47,7 +65,12 @@ then
     logInfo("UnusedPower","The current destination devices are "+ DestinationDevices.state)
     devices = DestinationDevices.state.toString.split(',')
 	if(engineStatus == "finished"){
-		logInfo("UnusedPower","Not used power engine is currently finished, starting a new one")
+        logInfo("UnusedPower","Not used power engine is currently finished, starting a new one")
+        if(finishedRetries>0){
+            logDebug("UnusedPower","As there were finished retries, setting them to 0 to start over")
+            finishedRetries = 0
+            FinishedRetries.postUpdate(finishedRetries)
+        }
 	    val unusedPower = (NotUsedPower.state as Number).intValue
 		if(devices.length() > 0){
 			logInfo("UnusedPower","There are devices, starting")
@@ -93,12 +116,13 @@ then
 			logWarn("UnusedPower","There are no devices?! ")
 		}
     }else{
-
+        AvailablePowerProcessStatus.postUpdate("retrying")
     	finishedRetries = finishedRetries + 1
+        FinishedRetries.postUpdate(finishedRetries)
     	logWarn("UnusedPower","Going to manage the unused power,but the engine is not finished. For "+finishedRetries+ " times")
     	if(finishedRetries > MAX_FINISHED_RETRIES){
     		sendBroadcastNotification("La gestió de la potencia sobrant s'ha encallat. Intentarem resetejar però potser alguna cosa no funciona")
-
+            logError("UnusedPower","Finished retries reached the threshold of "+MAX_FINISHED_RETRIES+", restarting the engine")
     		var i = 0
     		while(i<devices.length()){
     			val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_RequiredPower")

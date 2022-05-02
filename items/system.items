@@ -3,3 +3,5 @@ Number DiskPercentNumber
 
 String DiskInodesPercent "[%s]" (ConverToNumber) {channel="exec:command:diskInodesPercentage:output"}
 Number DiskInodesPercentNumber
+
+String SystemTitle "Sistema"
