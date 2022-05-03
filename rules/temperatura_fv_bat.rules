@@ -35,7 +35,6 @@ rule "Encesa auto ventilador bateries histeresi"
 when
     Item VentiladorBateriesNomesTemp received command
 then
-    var ventiladorNomesTemp = VentiladorBateriesNomesTemp
     var ventiladorControlPotencia = VentiladorBateriesControlPotencia
     var temp = (BateriesTemperatura.state as Number).floatValue
     var tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
@@ -43,7 +42,7 @@ then
     var tempHist = tempBatHisteresi
 
     var fanOn = VentiladorBateriesProxy.state==ON
-    logDebug("temperatura_fv_bat.rules", "ventiladorNomesTemp received command, checking histeresi: hist:"+tempHist+", fanOn: "+fanOn+", commandOn: "+(ventiladorNomesTemp.state==ON) ) 
+    logDebug("temperatura_fv_bat.rules", "ventiladorNomesTemp received command, checking histeresi: hist:"+tempHist+", fanOn: "+fanOn+", commandOn: "+(receivedCommand==ON) ) 
 
     //if the fan is currently on
     //  and the command is to switch on, forward the on command, to check for power consumption
@@ -51,7 +50,7 @@ then
     //if the fan is off and the command is off, forward the off command, though is not necessary
     //if the fan is off, and the command is on, check that the diff 
     //  temps are greater than histeresis
-    if(!fanOn && ventiladorNomesTemp.state==ON){
+    if(!fanOn && receivedCommand==ON){
         var tempDiff = temp - tempObj
         var tempDiffExt = temp - tempExt
         logInfo("temperatura_fv_elect.rules", "the difference is toObj: "+tempDiff+
@@ -76,7 +75,7 @@ then
 
     }else{
         logDebug("temperatura_fv_bat.rules", "Histeresis does not apply now, forwarding command")
-        if(ventiladorNomesTemp.state==ON){
+        if(receivedCommand==ON){
             ventiladorControlPotencia.sendCommand(ON)
         }else{
             ventiladorControlPotencia.sendCommand(OFF)
@@ -91,10 +90,9 @@ when
     Item VentiladorBateriesControlPotencia received command
 then
     var ventilador = VentiladorBateriesProxy
-    var ventiladorControlPotencia = VentiladorBateriesControlPotencia
     val gestioVentilador = VentiladorGestioElect.state
 
-    if(ventiladorControlPotencia.state==ON) {
+    if(receivedCommand==ON) {
         if(gestioVentilador=="autotemp"){
             ventilador.sendCommand(ON)
             logInfo("temperatura_fv_bat.rules", "turning the Ventilador Bateries ON, as the mode is nto save batteries: ")

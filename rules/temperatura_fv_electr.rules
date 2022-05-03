@@ -125,7 +125,6 @@ when
     Item VentiladorElectControlPotencia received command
 then
     var ventilador = VentiladorElectronicaProxy
-    var ventiladorControlPotencia = VentiladorElectControlPotencia
     val gestioVentilador = VentiladorGestioElect.state
 
     if(receivedCommand==ON) {
