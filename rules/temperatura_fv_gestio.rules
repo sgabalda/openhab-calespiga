@@ -16,7 +16,6 @@ when
     Item VentiladorBateriesProxy received command
 then
     logDebug("temperatura_fv_bat.rules", "VentiladorBateriesProxy received "+receivedCommand)
-    val ventiladorTest = VentiladorBateriesProxy  
     val ventilador = VentiladorBateries   
 
     val gestioVentilador = VentiladorGestioElect.state
