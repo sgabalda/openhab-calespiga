@@ -1,7 +1,7 @@
 
 rule "Encesa auto ventilador bateries auto final"
 when
-    Item VentiladorBateriesProxy received command
+    Item VentiladorBateriesProxy changed
 then
     logDebug("temperatura_fv_bat.rules", "VentiladorBateriesProxy received "+VentiladorBateriesProxy.state)
     val ventiladorTest = VentiladorBateriesProxy  
@@ -22,7 +22,7 @@ end
 
 rule "Encesa manual ventilador bateries"
 when
-    Item VentiladorBateriesManual received command
+    Item VentiladorBateriesManual changed
 then
     logInfo("temperatura_fv_bat.rules", "VentiladorBateriesManual received "+VentiladorBateriesManual.state)
     val ventiladorTest = VentiladorBateriesManual  
@@ -42,7 +42,7 @@ end
 
 rule "Encesa auto ventilador electr final"
 when
-    Item VentiladorElectronicaProxy received command
+    Item VentiladorElectronicaProxy changed
 then
     logDebug("temperatura_fv_elect.rules", "VentiladorElectronicaProxy received "+VentiladorElectronicaProxy.state) 
     var ventiladorTest = VentiladorElectronicaProxy  
@@ -64,7 +64,7 @@ end
 
 rule "Encesa manual ventilador elect"
 when
-    Item VentiladorElectronicaManual received command
+    Item VentiladorElectronicaManual changed
 then
     logInfo("temperatura_fv_elect.rules", "VentiladorBateriesManual received "+VentiladorElectronicaManual.state)
     var ventiladorTest = VentiladorElectronicaManual  
@@ -84,7 +84,7 @@ end
 
 rule "Canvi a manual"
 when
-    Item VentiladorGestioElect received command
+    Item VentiladorGestioElect changed
 then
     logInfo("temperatura_fv_elect.rules", "VentiladorGestioElect received "+VentiladorGestioElect.state)
     logInfo("temperatura_fv_bat.rules", "VentiladorGestioElect received "+VentiladorGestioElect.state)

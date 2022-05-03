@@ -1,20 +1,7 @@
 
-var Timer apagarBombaTimer = null
-
-rule "Apagar bomba per defecte"
-when
-   System started
-then
-    Encesa_Bomba.sendCommand(ON)
-    createTimer(now.plusSeconds(1), [|
-            logDebug("BombaReg","Setting it off at the beginning")
-            Encesa_Bomba.sendCommand(OFF)
-        ])
-end
-
 rule "Encesa manual bomba reg"
 when
-    Item Encesa_Bomba_Manual received command ON
+    Item Encesa_Bomba_Manual changed to ON
 then
     if(apagarBombaTimer!==null){
         logDebug("BombaReg","timer not null, cancelling it")
@@ -45,7 +32,7 @@ end
 
 rule "Apagada manual bomba reg"
 when
-    Item Encesa_Bomba_Manual received command OFF
+    Item Encesa_Bomba_Manual changed to OFF
 then
     logInfo("BombaReg","Bomba manually turned off")
     if(apagarBombaTimer!==null){
