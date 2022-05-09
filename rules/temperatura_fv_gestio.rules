@@ -1,3 +1,15 @@
+rule "Apagar ventiladors per defecte"
+when
+   System started
+then
+    VentiladorBateries.sendCommand(ON)
+    VentiladorElectronica.sendCommand(ON)
+    createTimer(now.plusSeconds(1), [|
+            logDebug("temperatura_fv_bat.rules","Setting it off at the beginning")
+            VentiladorBateries.sendCommand(OFF)
+            VentiladorElectronica.sendCommand(OFF)
+        ])
+end
 
 rule "Encesa auto ventilador bateries auto final"
 when
