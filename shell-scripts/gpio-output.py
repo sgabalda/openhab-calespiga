@@ -1,6 +1,8 @@
 #Libraries
 import RPi.GPIO as GPIO
 import sys
+import time
+from time import sleep
  
 total = len(sys.argv)
 
@@ -31,6 +33,13 @@ else:
     GPIO.setup(gpioNum, GPIO.OUT)           # set GPIO as an output
     if status == "ON":
         GPIO.output(gpioNum, GPIO.HIGH)
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.LOW) 
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.HIGH)
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.LOW)
+        time.sleep(4)
     else:
         GPIO.output(gpioNum, GPIO.LOW)  
 
