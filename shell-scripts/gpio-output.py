@@ -33,3 +33,5 @@ else:
         GPIO.output(gpioNum, GPIO.HIGH)
     else:
         GPIO.output(gpioNum, GPIO.LOW)  
+
+    GPIO.cleanup()
