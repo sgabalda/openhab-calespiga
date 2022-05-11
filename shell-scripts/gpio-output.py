@@ -30,6 +30,6 @@ else:
     GPIO.setmode(GPIO.BCM)                  # choose BCM or BOARD  
     GPIO.setup(gpioNum, GPIO.OUT)           # set GPIO as an output
     if status == "ON":
-        GPIO.output(gpioNum, 1)
+        GPIO.output(gpioNum, GPIO.HIGH)
     else:
-        GPIO.output(gpioNum, 0)  
+        GPIO.output(gpioNum, GPIO.LOW)  
