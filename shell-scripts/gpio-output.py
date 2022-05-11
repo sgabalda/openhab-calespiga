@@ -30,6 +30,25 @@ else:
     status = getStatus()
     GPIO.setmode(GPIO.BCM)                  # choose BCM or BOARD  
     GPIO.setup(gpioNum, GPIO.OUT)           # set GPIO as an output
-    GPIO.output(gpioNum, status)
+    if status == 1:
+        print("turning it ON")
+        GPIO.output(gpioNum, GPIO.HIGH)
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.LOW) 
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.HIGH)
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.LOW)
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.HIGH)
+        print("turned it ON")
+    else:
+        print("turning it OFF")
+        GPIO.output(gpioNum, GPIO.LOW)  
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.HIGH)
+        time.sleep(4)
+        GPIO.output(gpioNum, GPIO.LOW)
+        print("turned it OFF")
 
     GPIO.cleanup()
