@@ -33,8 +33,8 @@ if total != 3 :
     print(f"Not valid arguments. Arguments are <GPIO_NUM> <ON|OFF>")
     sys.exit(1)
 else: 
-    gpioNum = getGPIONum
-    status = getStatus
+    gpioNum = getGPIONum()
+    status = getStatus()
     GPIO.setmode(GPIO.BCM)                  # choose BCM or BOARD  
     GPIO.setup(gpioNum, GPIO.OUT)           # set GPIO as an output
     if status == "ON":
