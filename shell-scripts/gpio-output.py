@@ -15,9 +15,9 @@ def getGPIONum():
 def getStatus():
     status = sys.argv[2]
     if status == "ON":
-        return 1
-    elif status == "OFF":
         return 0
+    elif status == "OFF":
+        return 1
     else:
         print(f"Not valid argument for <ON|OFF>: {sys.argv[2]}")
         sys.exit(1)
@@ -50,5 +50,3 @@ else:
         time.sleep(4)
         GPIO.output(gpioNum, GPIO.LOW)
         print("turned it OFF")
-
-    GPIO.cleanup()
