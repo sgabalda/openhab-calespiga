@@ -1,0 +1,3 @@
+String GPIOScript_Args {channel="exec:command:gpiooutputscript:input"}
+
+Switch GPIO_Test "Test relé GPIO 19"

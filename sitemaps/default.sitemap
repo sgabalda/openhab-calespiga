@@ -110,5 +110,8 @@ sitemap default label="Ca l'espiga" {
             Text item=DiskPercent icon="receiver" label="Ús disc [%s %%]"
             Text item=DiskInodesPercent icon="receiver" label="Ús inodes [%s %%]"
         }
+        Frame label="Test" {
+            Switch item=GPIO_Test icon="switch" label="Test GPIO 19"
+        }
     }
 }
