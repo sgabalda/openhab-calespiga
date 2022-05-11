@@ -7,3 +7,4 @@ then
     val cmd = "19 "+receivedCommand
     scriptItem.sendCommand(cmd)
     logDebug("GPIO_test", "Sent to the script channel "+cmd)
+end
