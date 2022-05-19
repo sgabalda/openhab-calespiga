@@ -15,7 +15,17 @@ then
             try {
                 val number = Integer::parseInt(numberItemState)
                 logDebug("GPIO_output", "The number of GPIO is "+number)
-                val cmd = number+" "+receivedCommand
+                var commandToSend = receivedCommand
+                if(switchItem.getGroupNames.contains("GPIOOutputInverted")){
+                    logDebug("GPIO_output", "The GPIO is "+switchItem.name+" is inverted")
+                    if(receivedCommand == OFF){
+                        commandToSend = ON
+                    }else{
+                        commandToSend = OFF
+                    }
+                }
+
+                val cmd = number+" "+commandToSend
                 scriptItem.sendCommand(cmd)
                 logDebug("GPIO_output", "Sent to the script channel "+cmd)
 
