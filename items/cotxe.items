@@ -10,7 +10,9 @@ Number:Power Cotxe_Energia_Ahir "Sensor energia (Wh)"  //what the cotxe has used
 Number:Power Cotxe_Energia_Avui "Sensor energia (Wh)"  //what the cotxe has used today
 Number Cotxe_Temps_Bateria "Temps consumint bateria (min)" //minutes without enough extra power to keep charging the car
 
-Switch CotxeEncesa_Control "Encesa del cotxe" {channel="gpio:pigpio-remote:local-pigpio:gpioOutputCarregadorCotxe"} //this is the actual item tant turns on or off the charger
+Switch CotxeEncesa_Control "Encesa del cotxe" (GPIOOutput, GPIOOutputInverted) //this is the actual item tant turns on or off the charger
+String CotxeEncesa_ControlNumber "3" // Item required with the GPIO number
+//Switch CotxeEncesa_Control "Encesa del cotxe" {channel="gpio:pigpio-remote:local-pigpio:gpioOutputCarregadorCotxe"} //this is the actual item tant turns on or off the charger
 Switch CotxeEncesa_Control_Proxy "Encesa del cotxe" <connect>   //proxy to turn on or off the cotxe, or test it
 
 //		<device>_AvailablePower -> that receives the power available for the device
