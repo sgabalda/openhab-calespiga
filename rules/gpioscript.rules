@@ -13,8 +13,8 @@ then
         val numberItemState = numberItem.state
         if(numberItemState != NULL){
             try {
-                val number = (numberItemState as Number).intValue
-
+                val number = Integer::parseInt(numberItemState)
+                logDebug("GPIO_output", "The number of GPIO is "+number)
                 val cmd = number+" "+receivedCommand
                 scriptItem.sendCommand(cmd)
                 logDebug("GPIO_output", "Sent to the script channel "+cmd)
