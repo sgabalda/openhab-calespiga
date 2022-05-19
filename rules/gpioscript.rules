@@ -11,7 +11,7 @@ then
     if(numberItem !== null ) {
         logDebug("GPIO_output", "Found number item for GPIOOutput "+switchItem.name)
         val numberItemState = numberItem.name
-        if(numberItemState != null){
+        if(numberItemState !== null){
             try {
                 val number = Integer::parseInt(numberItemState)
                 logDebug("GPIO_output", "The number of GPIO is "+number)
