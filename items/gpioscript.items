@@ -1,3 +1,5 @@
 String GPIOScript_Args {channel="exec:command:gpiooutputscript:input"}
 
-Switch GPIO_Test "Test relé GPIO 19"
+Switch GPIO_Test "Test relé GPIO 19" (GPIOOutput)
+
+Switch GPIO_Test_Inverted "Test relé GPIO 18 Inverted" (GPIOOutput)
