@@ -10,8 +10,8 @@ then
     val numberItem = ScriptServiceUtil.getItemRegistry.getItem(switchItem.name + "Number")
     if(numberItem !== null ) {
         logDebug("GPIO_output", "Found number item for GPIOOutput "+switchItem.name)
-        val numberItemState = numberItem.state
-        if(numberItemState != NULL){
+        val numberItemState = numberItem.name
+        if(numberItemState != null){
             try {
                 val number = Integer::parseInt(numberItemState)
                 logDebug("GPIO_output", "The number of GPIO is "+number)
@@ -28,7 +28,4 @@ then
     }else{
         logError("GPIO_output", "GPIOOutput "+switchItem.name+" has no Number item!")   
     }
-    val cmd = "19 "+receivedCommand
-    scriptItem.sendCommand(cmd)
-    logDebug("GPIO_output", "Sent to the script channel "+cmd)
 end
