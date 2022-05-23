@@ -1,0 +1,1 @@
+Thing exec:command:gpiooutputscript [command="python3 /home/openhabian/repo/openhab-calespiga/shell-scripts/gpio-output.py %2$s", interval=0, timeout=10, autorun=true]

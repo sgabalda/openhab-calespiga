@@ -1,16 +1,14 @@
-
 rule "Encesa auto ventilador bateries auto final"
 when
     Item VentiladorBateriesProxy received command
 then
-    logDebug("temperatura_fv_bat.rules", "VentiladorBateriesProxy received "+VentiladorBateriesProxy.state)
-    val ventiladorTest = VentiladorBateriesProxy  
+    logDebug("temperatura_fv_bat.rules", "VentiladorBateriesProxy received "+receivedCommand)
     val ventilador = VentiladorBateries   
 
     val gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_bat.rules", "Auto switch of bat. Gestio is "+gestioVentilador)
     if(gestioVentilador!="manual"){
-        if(ventiladorTest.state==ON) {
+        if(receivedCommand==ON) {
             ventilador.sendCommand(ON)
         }else{
             ventilador.sendCommand(OFF)
@@ -24,13 +22,12 @@ rule "Encesa manual ventilador bateries"
 when
     Item VentiladorBateriesManual received command
 then
-    logInfo("temperatura_fv_bat.rules", "VentiladorBateriesManual received "+VentiladorBateriesManual.state)
-    val ventiladorTest = VentiladorBateriesManual  
+    logInfo("temperatura_fv_bat.rules", "VentiladorBateriesManual received "+receivedCommand) 
     val ventilador = VentiladorBateries   
     val gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_bat.rules", "Manual switch of bat. Gestio is "+gestioVentilador)
     if(gestioVentilador=="manual"){ 
-        if(ventiladorTest.state==ON) {
+        if(receivedCommand==ON) {
             ventilador.sendCommand(ON)
         }else{
             ventilador.sendCommand(OFF)
@@ -44,14 +41,13 @@ rule "Encesa auto ventilador electr final"
 when
     Item VentiladorElectronicaProxy received command
 then
-    logDebug("temperatura_fv_elect.rules", "VentiladorElectronicaProxy received "+VentiladorElectronicaProxy.state) 
-    var ventiladorTest = VentiladorElectronicaProxy  
+    logDebug("temperatura_fv_elect.rules", "VentiladorElectronicaProxy received "+receivedCommand) 
     var ventilador = VentiladorElectronica    
 
     var gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_elect.rules", "Auto switch of elect. Gestio is "+gestioVentilador)
     if(gestioVentilador!="manual"){
-        if(ventiladorTest.state==ON) {
+        if(receivedCommand==ON) {
             ventilador.sendCommand(ON)
         }else{
             ventilador.sendCommand(OFF)
@@ -66,13 +62,12 @@ rule "Encesa manual ventilador elect"
 when
     Item VentiladorElectronicaManual received command
 then
-    logInfo("temperatura_fv_elect.rules", "VentiladorBateriesManual received "+VentiladorElectronicaManual.state)
-    var ventiladorTest = VentiladorElectronicaManual  
+    logInfo("temperatura_fv_elect.rules", "VentiladorBateriesManual received "+receivedCommand)
     var ventilador = VentiladorElectronica   
     var gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_elect.rules", "Manual switch of elec. Gestio is "+gestioVentilador)
     if(gestioVentilador=="manual"){ 
-        if(ventiladorTest.state==ON) {
+        if(receivedCommand==ON) {
             ventilador.sendCommand(ON)
         }else{
             ventilador.sendCommand(OFF)

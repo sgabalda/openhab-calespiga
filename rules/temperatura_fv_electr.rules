@@ -72,7 +72,7 @@ then
     var tempHist = tempElecHisteresi
 
     var fanOn = VentiladorElectronicaProxy.state==ON
-    var commandOn = VentiladorElectNomesTemp.state==ON
+    var commandOn = receivedCommand==ON
     logDebug("temperatura_fv_elect.rules", "ventiladorNomesTemp received command, checking "+
         "histeresi: hist:"+tempHist+", fanOn: "+fanOn+", commandOn: "+commandOn ) 
 
@@ -125,10 +125,9 @@ when
     Item VentiladorElectControlPotencia received command
 then
     var ventilador = VentiladorElectronicaProxy
-    var ventiladorControlPotencia = VentiladorElectControlPotencia
     val gestioVentilador = VentiladorGestioElect.state
 
-    if(ventiladorControlPotencia.state==ON) {
+    if(receivedCommand==ON) {
         if(gestioVentilador=="autotemp"){
             ventilador.sendCommand(ON)
             logInfo("temperatura_fv_bat.rules", "turning the Ventilador Bateries ON, as the mode is nto save batteries: ")

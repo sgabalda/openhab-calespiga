@@ -1,0 +1,8 @@
+String GPIOScript_Args {channel="exec:command:gpiooutputscript:input"}
+
+Switch GPIO_Test "Test relé GPIO 19" (GPIOOutput)
+String GPIO_TestNumber "19" // Item required with the GPIO number
+
+//if the input is inverted, add this other group
+Switch GPIO_Test_Inverted "Test relé GPIO 18 Inverted" (GPIOOutput, GPIOOutputInverted)
+String GPIO_Test_InvertedNumber "18"

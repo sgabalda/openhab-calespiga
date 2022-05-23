@@ -1,4 +1,6 @@
-Switch Encesa_Bomba "Encesa bomba reg" {channel="gpio:pigpio-remote:local-pigpio:gpioControlBombaReg"}
+//Switch Encesa_Bomba "Encesa bomba reg" {channel="gpio:pigpio-remote:local-pigpio:gpioControlBombaReg"}
+Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput) //this is the actual item tant turns on or off the pump
+String Encesa_BombaNumber "2" // Item required with the GPIO number
 
 Switch Encesa_Bomba_Manual "Encesa manual bomba reg"
 Number Durada_Encesa_Manual "Durada encesa manual (minuts)"

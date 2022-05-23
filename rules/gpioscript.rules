@@ -1,0 +1,41 @@
+import org.openhab.core.model.script.ScriptServiceUtil
+
+rule "Generic GPIO output"
+when
+    Member of GPIOOutput received command
+then
+    val switchItem = triggeringItem
+    logDebug("GPIO_output", "GPIOOutput member "+ switchItem.name +" received "+receivedCommand)
+    val scriptItem = GPIOScript_Args
+    val numberItem = ScriptServiceUtil.getItemRegistry.getItem(switchItem.name + "Number")
+    if(numberItem !== null ) {
+        logDebug("GPIO_output", "Found number item for GPIOOutput "+switchItem.name)
+        val numberItemState = numberItem.label
+        if(numberItemState !== null){
+            try {
+                val number = Integer::parseInt(numberItemState)
+                logDebug("GPIO_output", "The number of GPIO is "+number)
+                var commandToSend = receivedCommand
+                if(switchItem.getGroupNames.contains("GPIOOutputInverted")){
+                    logDebug("GPIO_output", "The GPIO is "+switchItem.name+" is inverted")
+                    if(receivedCommand == OFF){
+                        commandToSend = ON
+                    }else{
+                        commandToSend = OFF
+                    }
+                }
+
+                val cmd = number+" "+commandToSend
+                scriptItem.sendCommand(cmd)
+                logDebug("GPIO_output", "Sent to the script channel "+cmd)
+
+            } catch (Exception e) {
+                logError("GPIO_output","number item for GPIOOutput "+switchItem.name+" can not be converted: "+e.getMessage())
+            }
+        }else{
+            logError("GPIO_output", "GPIOOutput "+switchItem.name+" Number is NULL!")   
+        }  
+    }else{
+        logError("GPIO_output", "GPIOOutput "+switchItem.name+" has no Number item!")   
+    }
+end

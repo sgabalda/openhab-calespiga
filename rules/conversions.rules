@@ -13,6 +13,6 @@ then
         numberItem.postUpdate(textItemState.toString)
         logDebug("NumberConversion", textItem.name + " converted to number") 
     }else{
-        logError("NumberConversion", "Could not conver to number "+textItem.name + " because Number item does not exist") 
+        logError("NumberConversion", "Could not convert to number "+textItem.name + " because Number item does not exist") 
     }
 end
