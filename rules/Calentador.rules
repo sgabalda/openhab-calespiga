@@ -216,6 +216,28 @@ then
 
 end 
 
+rule "update calentador title state"
+when
+    Item Calentador_Potencia_UserDisplay changed
+then
+    val termostat = Calentador_Termostat_UserDisplay.state
+	if(termostat == "HOT"){
+        CalentadorTitle.sendCommand("HOT")
+    }else{
+        val powerState = Calentador_Potencia_UserDisplay.state
+        if(powerState != NULL){
+            val power = (powerState as Number).intValue
+            if(power == 0){
+                CalentadorTitle.sendCommand("OFF")
+            }else{
+                CalentadorTitle.sendCommand("ON"+power)
+            }
+        }else{
+            CalentadorTitle.sendCommand("UNK")
+        }
+    }
+end
+
 rule "Reset energy today calentador"
 when
     Time cron "0 0 0 ? * * *"
