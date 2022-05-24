@@ -203,8 +203,8 @@ then
     val potenciaSensor = Cotxe_Potencia_Sensor.state
     var potencia = 0
     if(potenciaSensor != NULL){
-        potencia = (potenciaSensor as Number).doubleValue
-        if(potencia > 200.0){
+        potencia = (potenciaSensor as Number).intValue
+        if(potencia >= 200.0){
             CotxeTitle.sendCommand("CHARGING")
         }
     }
