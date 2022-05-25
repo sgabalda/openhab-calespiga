@@ -204,17 +204,23 @@ when
 then
     val termostat = Calentador_Termostat_UserDisplay.state
 	if(termostat == "HOT"){
+        logInfo("Calentador.rules", "Updating title status to HOT")
         CalentadorTitle.sendCommand("HOT")
     }else{
+        logInfo("Calentador.rules", "Updating title status to something different than HOT")
         val powerState = Calentador_Potencia_UserDisplay.state
         if(powerState != NULL){
+            logInfo("Calentador.rules", "Updating title status depnding on the power")
             val power = (powerState as Number).intValue
             if(power == 0){
+                logInfo("Calentador.rules", "Updating title status to 0 as there is no power")
                 CalentadorTitle.sendCommand("OFF")
             }else{
+                logInfo("Calentador.rules", "Updating title status to ON"+power)
                 CalentadorTitle.sendCommand("ON"+power)
             }
         }else{
+            logInfo("Calentador.rules", "Updating title status to UNK, as power state is null")
             CalentadorTitle.sendCommand("UNK")
         }
     }
