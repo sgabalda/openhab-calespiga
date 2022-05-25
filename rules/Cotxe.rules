@@ -180,11 +180,11 @@ then
     }else{
         if (receivedCommand == ON) {
             logDebug("Cotxe.rules", "The cotxe title changed to ON as it has been turned on")
-            CotxeTitle.sendCommand(ON)
+            CotxeTitle.sendCommand("ON")
             CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
         }else{
             logDebug("Cotxe.rules", "The cotxe title changed to OFF as it has been turned off")
-            CotxeTitle.sendCommand(OFF)
+            CotxeTitle.sendCommand("OFF")
             CotxeEncesa_Control.sendCommand(OFF) 
         }
     }
