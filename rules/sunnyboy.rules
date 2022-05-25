@@ -224,3 +224,10 @@ then
         alarmNotUpdated = false
     }
 end
+
+rule "update FV title"
+when
+    Item SunnyBoy_Pot_Actual changed
+then
+    FotovoltaicaTitle.sendCommand(SunnyBoy_Pot_Actual.state.toString)
+end

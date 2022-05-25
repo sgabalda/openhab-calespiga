@@ -1,6 +1,6 @@
 sitemap default label="Ca l'espiga" {
 
-    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solarplant"
+    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solar_panel"
     {
         Frame label="Fotovoltaica" {
             Text icon="light" item=SunnyBoy_Pot_Usada
