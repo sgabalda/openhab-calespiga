@@ -201,6 +201,7 @@ end
 rule "update calentador title state"
 when
     Item Calentador_Potencia_UserDisplay received update
+    or Item Calentador_Termostat_UserDisplay received update
 then
     logInfo("Calentador.rules", "Going to update calentador title")
     val termostat = Calentador_Termostat_UserDisplay.state
