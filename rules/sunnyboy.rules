@@ -229,5 +229,6 @@ rule "update FV title"
 when
     Item SunnyBoy_Pot_Actual changed
 then
+    logDebug("SunnyBoy","changing title icon to "+SunnyBoy_Pot_Actual.state.toString)   
     FotovoltaicaTitle.sendCommand(SunnyBoy_Pot_Actual.state.toString)
 end
