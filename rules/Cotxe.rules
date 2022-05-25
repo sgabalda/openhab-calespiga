@@ -203,9 +203,9 @@ when
     Item Cotxe_Potencia_Sensor changed
 then
     val potenciaSensor = Cotxe_Potencia_Sensor.state
-    var potencia = 0
+    var potencia = 0.0
     if(potenciaSensor != NULL){
-        potencia = (potenciaSensor as Number).intValue
+        potencia = (potenciaSensor as Number).doubleValue
         if(potencia >= 200.0){
             logDebug("Cotxe.rules", "The cotxe title changed to CHARGING as there is potencia : "+potencia)
             CotxeTitle.sendCommand("CHARGING")

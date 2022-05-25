@@ -22,7 +22,7 @@
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"><metadata
    id="metadata68"><rdf:RDF><cc:Work
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
    id="defs66"><linearGradient
      id="linearGradient4580"
      osb:paint="solid"><stop
@@ -47,8 +47,8 @@
    guidetolerance="10"
    inkscape:pageopacity="0"
    inkscape:pageshadow="2"
-   inkscape:window-width="3368"
-   inkscape:window-height="1369"
+   inkscape:window-width="1848"
+   inkscape:window-height="1009"
    id="namedview64"
    showgrid="false"
    inkscape:zoom="0.4609375"
@@ -167,7 +167,7 @@
 </g>
 <g
    id="g61"
-   style="fill:#37c837;opacity:0.667;stroke:url(#radialGradient4586);stroke-width:10.89999962;stroke-miterlimit:4;stroke-dasharray:10.89999962, 21.79999923999999822;stroke-linecap:round;stroke-dashoffset:0">
+   style="fill:#44aa00;opacity:1;stroke:url(#radialGradient4586);stroke-width:10.89999962;stroke-miterlimit:4;stroke-dasharray:10.89999962, 21.79999923999999822;stroke-linecap:round;stroke-dashoffset:0">
   <path
    stroke="#007300"
    id="svg_1"
@@ -175,6 +175,6 @@
    fill-opacity="0.8"
    fill="#35ff35"
    d="m51,43.29412c13.74545,5.82353 68.72727,54.35294 77.89091,75.70588c18.32727,-13.58823 18.32727,-36.88235 174.10909,-99c-64.14545,11.64706 -132.87273,36.88235 -178.69091,54.35294c-9.16364,-5.82353 -32.07273,-19.41176 -73.30909,-31.05882"
-   style="fill:#37c837;stroke:url(#radialGradient4586);stroke-width:10.89999962;stroke-miterlimit:4;stroke-dasharray:10.89999962, 21.79999923999999822;stroke-linecap:round;stroke-dashoffset:0" />
+   style="fill:#44aa00;stroke:url(#radialGradient4586);stroke-width:10.89999962;stroke-miterlimit:4;stroke-dasharray:10.89999962, 21.79999923999999822;stroke-linecap:round;stroke-dashoffset:0" />
 </g>
 </svg>
