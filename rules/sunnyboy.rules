@@ -229,6 +229,15 @@ rule "update FV title"
 when
     Item SunnyBoy_Pot_Actual changed
 then
-    logDebug("SunnyBoy","changing title icon to "+SunnyBoy_Pot_Actual.state.toString)   
-    FotovoltaicaTitle.sendCommand(SunnyBoy_Pot_Actual.state.toString)
+    val power = (SunnyBoy_Pot_Actual.state as Number).intValue
+    var iconState = "0"
+    if(power > 0 && power <= 1000){
+        iconState = "500"
+    }else if(power > 1000 && power <= 2000){
+        iconState = "1500"
+    }else if(power > 2000){
+        iconState = "2500"
+    }
+    logDebug("SunnyBoy","changing title icon to "+iconState)   
+    FotovoltaicaTitle.sendCommand(iconState)
 end
