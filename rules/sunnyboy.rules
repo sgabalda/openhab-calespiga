@@ -68,6 +68,7 @@ when
     Time cron "0 0/15 6-21 ? * * *"
     or System started
 then
+    logInfo("SunnyBoy","Checking automatic token refresh")
     var refreshToken = true
     if(token!==null){
         if(currentInterval < refreshInterval){
@@ -80,6 +81,7 @@ then
         }
     }
     if(refreshToken){
+        logInfo("SunnyBoy","Sending command to refreshing token")
         SunnyBoy_Token_Refresh.sendCommand("ToRefresh")
     }
 end
