@@ -1,3 +1,5 @@
+String SystemTitle "Sistema"
+
 String DiskPercent "[%s]" (ConverToNumber) {channel="exec:command:diskPercentage:output"}
 Number DiskPercentNumber
 

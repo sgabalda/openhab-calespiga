@@ -19,8 +19,6 @@ Number:Power Calentador_UsedPower "Potencia sobrant disponible pel calentador"
 Number:Power Calentador_RequiredPower "Potencia sobrant disponible pel calentador"
 String Calentador_ApplyChange "Dispara el càlcul de potència"
 
-String CalentadorTitle "Calentador"
+String CalentadorTitle "Calentador" <heater_display>
 
 String Calentador_Estat_ProxyItem "Proxy Item estat calentador"    //for testing, will be used to forward estat from MQTT
-DateTime Calentador_Hot_Date_Fake "Ultim moment calent (test mode)" <time>  //for testing, will be used to display the last fake HOT date
-String Calentador_Estat_Fake "Estat de test del calentador"

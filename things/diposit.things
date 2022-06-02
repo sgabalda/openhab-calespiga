@@ -1,1 +1,1 @@
-Thing exec:command:diposit [command="python /home/openhabian/repo/openhab-calespiga/shell-scripts/diposit.py", interval=120, timeout=20, autorun=false]
+//Thing exec:command:diposit [command="python /home/openhabian/repo/openhab-calespiga/shell-scripts/diposit.py", interval=120, timeout=20, autorun=false]

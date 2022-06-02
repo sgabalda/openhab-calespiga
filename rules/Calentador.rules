@@ -2,9 +2,6 @@ import java.util.Date
 import java.time.ZonedDateTime
 
 var long lastChangePower = -1
-var test = false     //set to true to enable testing
-                    //(actual commands will not be sent to the calentador, and the last
-                    //hot date will not be changed
 
 //rules to manage unused power
 
@@ -115,18 +112,8 @@ rule "Forward termostat state from MQTT calentador"
 when
     Item ArduinoCalentadorThing_CalentadorTermostatStatus  received update
 then
-    if(!test){
-        Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
-    }
-end
+    Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
 
-rule "Forward termostat state from MQTT Fake calentador"
-when
-    Item Calentador_Estat_Fake  received command
-then
-    if(test){
-        Calentador_Estat_ProxyItem.postUpdate(receivedCommand.toString)
-    }
 end
 
 rule "forward last hot date calentador"
@@ -134,11 +121,7 @@ when
     Item Calentador_Hot_Date_Proxy  received update
 then
     val value = Calentador_Hot_Date_Proxy.state
-    if(test){
-        Calentador_Hot_Date_Fake.postUpdate(value.toString)
-    }else{
-        Calentador_Hot_Date.postUpdate(value.toString)
-    }
+    Calentador_Hot_Date.postUpdate(value.toString)
 end
 
 rule "update termostat state from MQTT calentador"
@@ -166,9 +149,8 @@ rule "Turn On Calentador"
 when
     Item Calentador_Potencia_ProxyItem received command
 then
-    if(!test){
-        ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
-    }
+    ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
+    
     logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
 end
 
@@ -215,6 +197,36 @@ then
     Calentador_Potencia_UserDisplay.postUpdate(newPower)
 
 end 
+
+rule "update calentador title state"
+when
+    Item Calentador_Potencia_UserDisplay received update
+    or Item Calentador_Termostat_UserDisplay received update
+then
+    logInfo("Calentador.rules", "Going to update calentador title")
+    val termostat = Calentador_Termostat_UserDisplay.state
+	if(termostat == "HOT"){
+        logInfo("Calentador.rules", "Updating title status to HOT")
+        CalentadorTitle.sendCommand("HOT")
+    }else{
+        logInfo("Calentador.rules", "Updating title status to something different than HOT")
+        val powerState = Calentador_Potencia_UserDisplay.state
+        if(powerState != NULL){
+            logInfo("Calentador.rules", "Updating title status depnding on the power")
+            val power = (powerState as Number).intValue
+            if(power == 0){
+                logInfo("Calentador.rules", "Updating title status to 0 as there is no power")
+                CalentadorTitle.sendCommand("OFF")
+            }else{
+                logInfo("Calentador.rules", "Updating title status to ON"+power)
+                CalentadorTitle.sendCommand("ON"+power)
+            }
+        }else{
+            logInfo("Calentador.rules", "Updating title status to UNK, as power state is null")
+            CalentadorTitle.sendCommand("UNK")
+        }
+    }
+end
 
 rule "Reset energy today calentador"
 when

@@ -179,8 +179,12 @@ then
         CotxeEncesa_Control_Fake.sendCommand(receivedCommand)
     }else{
         if (receivedCommand == ON) {
+            logDebug("Cotxe.rules", "The cotxe title changed to ON as it has been turned on")
+            CotxeTitle.sendCommand("ON")
             CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
         }else{
+            logDebug("Cotxe.rules", "The cotxe title changed to OFF as it has been turned off")
+            CotxeTitle.sendCommand("OFF")
             CotxeEncesa_Control.sendCommand(OFF) 
         }
     }
@@ -199,9 +203,15 @@ when
     Item Cotxe_Potencia_Sensor changed
 then
     val potenciaSensor = Cotxe_Potencia_Sensor.state
-    var potencia = 0
+    var potencia = 0.0
     if(potenciaSensor != NULL){
         potencia = (potenciaSensor as Number).doubleValue
+        if(potencia >= 200.0){
+            logDebug("Cotxe.rules", "The cotxe title changed to CHARGING as there is potencia : "+potencia)
+            CotxeTitle.sendCommand("CHARGING")
+        }else{
+            logDebug("Cotxe.rules", "The cotxe title NOT changed to CHARGING as there is NOT potencia : "+potencia)
+        }
     }
     if(!test){
         logDebug("Cotxe.rules", "The cotxe power sensor received "+ potencia)

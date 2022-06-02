@@ -1,6 +1,6 @@
 sitemap default label="Ca l'espiga" {
 
-    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solarplant"
+    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solar_panel"
     {
         Frame label="Fotovoltaica" {
             Text icon="light" item=SunnyBoy_Pot_Usada
@@ -104,7 +104,7 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmTempBateries_GrausSup icon="temperature_hot" label="Graus max. [%.1f C]" minValue=25 maxValue=45 step=1
         }
     }
-    Text item=PotenciaSobrantTitle label="Sistema" icon="energy"
+    Text item=SystemTitle label="Sistema" icon="settings"
     {
         Frame label="Sistema operatiu" {
             Text item=DiskPercent icon="receiver" label="Ús disc [%s %%]"

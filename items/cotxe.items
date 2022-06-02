@@ -25,7 +25,7 @@ Number:Power Cotxe_UsedPower "Potencia actualment usada pel Cotxe"
 Number:Power Cotxe_RequiredPower "Potencia que serà usada pel Cotxe"
 String Cotxe_ApplyChange "Dispara el càlcul de potència"
 
-String CotxeTitle "Carregador cotxe"
+String CotxeTitle "Carregador cotxe" <electric_car>
 
 String CotxeEncesa_Control_Fake "Encesa del cotxe fake"
 Number:Power Cotxe_Potencia_Sensor_Fake "Potencia fake usada pel Cotxe"

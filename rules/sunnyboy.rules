@@ -24,6 +24,7 @@ rule "Refresh sunny boy token"
 when
     Item SunnyBoy_Token_Refresh received command
 then
+    logInfo("SunnyBoy","Going to refresh as command received ")
     val now = ZonedDateTime::now
     if(refreshTokenOnError!==null){
         refreshTokenOnError.cancel()
@@ -31,20 +32,20 @@ then
     }
     val notification_json = '{"right":"' + username + '","pass":"' + pass + '"}'
     val String rawToken = sendHttpPostRequest(login_url, "application/json", notification_json)
-    logDebug("SunnyBoy","Obtingut resposta del post: "+rawToken)
+    logInfo("SunnyBoy","Obtingut resposta del post: "+rawToken)
     var tokenObtanined = false
     val String error = transform("JSONPATH", "$.err", rawToken)
     if(error!==null && error.equals(rawToken)){
-        logDebug("SunnyBoy","No hi ha error al token")
+        logInfo("SunnyBoy","No hi ha error al token")
         val filteredToken = transform("JSONPATH", "$.result.sid", rawToken)
         if(rawToken!==null){
-            logDebug("SunnyBoy","el JSON de la resposta no es null")
+            logInfo("SunnyBoy","el JSON de la resposta no es null")
             if(rawToken.equals(filteredToken)){
                 logError("SunnyBoy","no es pot treure el $.result.sid del token")
             }else{
                 tokenObtanined = true
                 token = filteredToken
-                logDebug("SunnyBoy","El token es: "+token)
+                logInfo("SunnyBoy","El token es: "+token)
                 SunnyBoy_Token.postUpdate(token)
             }  
         }else{
@@ -68,18 +69,20 @@ when
     Time cron "0 0/15 6-21 ? * * *"
     or System started
 then
+    logInfo("SunnyBoy","Checking automatic token refresh")
     var refreshToken = true
     if(token!==null){
         if(currentInterval < refreshInterval){
             currentInterval ++
             refreshToken = false
-            logDebug("SunnyBoy","token still valid, not refreshing it: "+currentInterval)
+            logInfo("SunnyBoy","token still valid, not refreshing it: "+currentInterval)
         }else{
             currentInterval = 0
             logInfo("SunnyBoy","token not yet valid, refreshing it ")
         }
     }
     if(refreshToken){
+        logInfo("SunnyBoy","Sending command to refreshing token")
         SunnyBoy_Token_Refresh.sendCommand("ToRefresh")
     }
 end
@@ -96,21 +99,21 @@ then
             + total_power_code + '","'
             + freq_code + '","'
             + lines_power + '"]}'
-        logDebug("SunnyBoy","Enviant peticio: "+notification_json)
+        logInfo("SunnyBoy","Enviant peticio: "+notification_json)
         val String rawData = sendHttpPostRequest(data_url+"?sid=" + token, "application/json", notification_json)
-        logDebug("SunnyBoy","Obtingut resposta del post: "+rawData)
+        logInfo("SunnyBoy","Obtingut resposta del post: "+rawData)
         var String error = transform("JSONPATH", "$.err", rawData)
-        logDebug("SunnyBoy","el possible error es " + error)
+        logInfo("SunnyBoy","el possible error es " + error)
         if(error!==null && error.equals(rawData)){ 
             var String data = transform("JSONPATH", "$.result.0156-76BCE994."+ total_power_code +".1[0].val", rawData)
-            logDebug("SunnyBoy","les dades obtingudes son: " + error)
+            logInfo("SunnyBoy","les dades obtingudes son: " + error)
             var Float potUsada=0.0
             try {
                 potUsada = Float::parseFloat(data)
             } catch (Exception e) {
                 logInfo("SunnyBoy","La pot usada es null, posant-la a 0")
             }
-            logDebug("SunnyBoy","La pot usada es: "+potUsada)
+            logInfo("SunnyBoy","La pot usada es: "+potUsada)
             SunnyBoy_Pot_Usada.postUpdate(potUsada.intValue)
             
             data = transform("JSONPATH", "$.result.0156-76BCE994."+lines_power+".1[0].val", rawData)
@@ -120,7 +123,7 @@ then
             } catch (Exception e) {
                 logInfo("SunnyBoy","La pot linea 1 es null, posant-la a 0")
             }
-            logDebug("SunnyBoy","La pot linea 1 es: "+potLinea1)
+            logInfo("SunnyBoy","La pot linea 1 es: "+potLinea1)
             SunnyBoy_Pot_Actual_Linea1.postUpdate(potLinea1.intValue)
 
             data = transform("JSONPATH", "$.result.0156-76BCE994."+lines_power+".1[1].val", rawData)
@@ -130,7 +133,7 @@ then
             } catch (Exception e) {
                 logInfo("SunnyBoy","La pot linea 2 es null, posant-la a 0")
             }
-            logDebug("SunnyBoy","La pot linea 2 es: "+potLinea2)
+            logInfo("SunnyBoy","La pot linea 2 es: "+potLinea2)
             SunnyBoy_Pot_Actual_Linea2.postUpdate(potLinea2.intValue)
             
             data = transform("JSONPATH", "$.result.0156-76BCE994."+freq_code+".1[0].val", rawData)
@@ -140,23 +143,23 @@ then
             } catch (Exception e) {
                 logInfo("SunnyBoy","freq es null, posant-la a 50")
             }
-            logDebug("SunnyBoy","La freq es: "+freq)
+            logInfo("SunnyBoy","La freq es: "+freq)
             SunnyBoy_Freq.postUpdate(freq)
             
             var Float tot_power = 0.0
             var Float potRebutjada = 0.0
             if(freq<=51.0){ 
-                logDebug("SunnyBoy","No pot rebutjada!")
+                logInfo("SunnyBoy","No pot rebutjada!")
                 potRebutjada = 0 
                 tot_power = potUsada
             }
             else if(freq>=52.0){
-                logDebug("SunnyBoy","Tota rebutjada!")
+                logInfo("SunnyBoy","Tota rebutjada!")
                 tot_power=3000
                 potRebutjada = tot_power - potUsada
             }
             else {
-                logDebug("SunnyBoy","Some rebutjada, some used")
+                logInfo("SunnyBoy","Some rebutjada, some used")
                 tot_power = potUsada / (52-freq)
                 if(tot_power>3000){
                     tot_power = 3000
@@ -164,12 +167,12 @@ then
                 potRebutjada = tot_power - potUsada
             }
 
-            logDebug("SunnyBoy","les potencies son: Tot: "+tot_power+", reb:"+potRebutjada)
+            logInfo("SunnyBoy","les potencies son: Tot: "+tot_power+", reb:"+potRebutjada)
             SunnyBoy_Pot_Rebutjada.postUpdate(potRebutjada)
             SunnyBoy_Pot_Actual.postUpdate(tot_power)
             SunnyBoy_Time_Read.postUpdate(nowDateType)
             if(tot_power>0){
-                logDebug("SunnyBoy","Donat que la potencia no es 0, actualitzem la data de la ultima no 0")
+                logInfo("SunnyBoy","Donat que la potencia no es 0, actualitzem la data de la ultima no 0")
                 SunnyBoy_Time_Not_Zero.postUpdate(nowDateType)
             }
 
@@ -200,14 +203,14 @@ when
     Time cron "0 5-55/10 6-21 ? * * *"
 then
     val now = ZonedDateTime::now
-    logDebug("SunnyBoy","Obtenint darrera lectura i temps actual")
+    logInfo("SunnyBoy","Obtenint darrera lectura i temps actual")
     val lastRead = new DateTime(SunnyBoy_Time_Read.state.toString)
     val threshold = now.minusMinutes(minutesWithoutPowerMeasurementBeforSettingZero)
 
-    logDebug("SunnyBoy","Comprovant darrea actualitzacio: Ultima lectura: "+ lastRead +
+    logInfo("SunnyBoy","Comprovant darrea actualitzacio: Ultima lectura: "+ lastRead +
         ", limit: " + threshold)
     if (lastRead.isBefore(threshold)){
-        logDebug("SunnyBoy","La darrera lectura es anterior al limit! Comprovant si l'alarma ja ha estat enviada")
+        logInfo("SunnyBoy","La darrera lectura es anterior al limit! Comprovant si l'alarma ja ha estat enviada")
         if(!alarmNotUpdated){
             logError("SunnyBoy", "Deteccio de potencia no actualitzada! Posant a 0 les potencies")
             SunnyBoy_Pot_Rebutjada.postUpdate(0)
@@ -217,10 +220,27 @@ then
                  minutesWithoutPowerMeasurementBeforSettingZero + "min. Potser hi ha algun problema?")
             alarmNotUpdated = true
         }else{
-            logDebug("SunnyBoy","No enviant alarma perque ja ho ha estat abans")
+            logInfo("SunnyBoy","No enviant alarma perque ja ho ha estat abans")
         }
 	}else{
-        logDebug("SunnyBoy","La darrera lectura es posterior al limit. Resetejant el xivato de l'alarma")
+        logInfo("SunnyBoy","La darrera lectura es posterior al limit. Resetejant el xivato de l'alarma")
         alarmNotUpdated = false
     }
+end
+
+rule "update FV title"
+when
+    Item SunnyBoy_Pot_Actual changed
+then
+    val power = (SunnyBoy_Pot_Actual.state as Number).intValue
+    var iconState = "0"
+    if(power > 0 && power <= 1000){
+        iconState = "500"
+    }else if(power > 1000 && power <= 2000){
+        iconState = "1500"
+    }else if(power > 2000){
+        iconState = "2500"
+    }
+    logInfo("SunnyBoy","changing title icon to "+iconState)   
+    FotovoltaicaTitle.sendCommand(iconState)
 end
