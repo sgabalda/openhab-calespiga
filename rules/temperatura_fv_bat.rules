@@ -1,9 +1,9 @@
 
-var equalTreshold = 0.25  //dont take into account differences of more than 0.25ºC
+val equalTreshold = 0.25  //dont take into account differences of more than 0.25ºC
                             //if need a strict number, use 0
 
-var tempBatObjectiu = 20.0
-var tempBatHisteresi = 1.5
+val tempBatObjectiu = 20.0  //default in case there is no setting in BateriesTemperaturaObjectiu
+val tempBatHisteresi = 1.5
 
 rule "Encesa auto ventilador bateries temperatura"
 when
@@ -11,16 +11,23 @@ when
     Item BateriesTemperatura received update 
     //Item BateriesTemperatura received command
 then
-    var ventiladorNomesTemp = VentiladorBateriesNomesTemp
-    var temp=(BateriesTemperatura.state as Number).floatValue
-    var tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
+    val ventiladorNomesTemp = VentiladorBateriesNomesTemp
+    val temp=(BateriesTemperatura.state as Number).floatValue
+    val tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
     var tempObj = tempBatObjectiu
+    val tempObjItemState = BateriesTemperaturaObjectiu.state
+    if(tempObjItemState != NULL){
+        tempObj = (tempObjItemState as Number).floatValue
+        logDebug("temperatura_fv_bat.rules", "Setting temp objective from item to "+tempObj)
+    }else{
+        logWarn("temperatura_fv_bat.rules", "Not found item for temp objective. Setting temp objective to default: "+tempObj)
+    }
 
     logDebug("temperatura_fv_bat.rules", "Encesa auto vent. bat. temp: "+
         temp+" vs tempExt: "+tempExt+" vs tempObj: "+tempObj) 
 
-    var diffExt = temp - tempExt
-    var diffObj = temp - tempObj
+    val diffExt = temp - tempExt
+    val diffObj = temp - tempObj
     if(diffExt * diffObj > 0 && diffExt>equalTreshold && diffObj>equalTreshold){
         logDebug("temperatura_fv_bat.rules", "Should switch on the fan, as the diff is in the same direction")
         ventiladorNomesTemp.sendCommand(ON)
@@ -35,13 +42,20 @@ rule "Encesa auto ventilador bateries histeresi"
 when
     Item VentiladorBateriesNomesTemp received command
 then
-    var ventiladorControlPotencia = VentiladorBateriesControlPotencia
-    var temp = (BateriesTemperatura.state as Number).floatValue
-    var tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
+    val ventiladorControlPotencia = VentiladorBateriesControlPotencia
+    val temp = (BateriesTemperatura.state as Number).floatValue
+    val tempExt=(ExteriorArmarisTemperatura.state as Number).floatValue
     var tempObj = tempBatObjectiu
-    var tempHist = tempBatHisteresi
+    val tempObjItemState = BateriesTemperaturaObjectiu.state
+    if(tempObjItemState != NULL){
+        tempObj = (tempObjItemState as Number).floatValue
+        logDebug("temperatura_fv_bat.rules", "Setting temp objective from item to "+tempObj)
+    }else{
+        logWarn("temperatura_fv_bat.rules", "Not found item for temp objective. Setting temp objective to default: "+tempObj)
+    }
+    val tempHist = tempBatHisteresi
 
-    var fanOn = VentiladorBateriesProxy.state==ON
+    val fanOn = VentiladorBateriesProxy.state==ON
     logDebug("temperatura_fv_bat.rules", "ventiladorNomesTemp received command, checking histeresi: hist:"+tempHist+", fanOn: "+fanOn+", commandOn: "+(receivedCommand==ON) ) 
 
     //if the fan is currently on
@@ -89,7 +103,7 @@ rule "Encesa auto ventilador bateries potencia"
 when
     Item VentiladorBateriesControlPotencia received command
 then
-    var ventilador = VentiladorBateriesProxy
+    val ventilador = VentiladorBateriesProxy
     val gestioVentilador = VentiladorGestioElect.state
 
     if(receivedCommand==ON) {

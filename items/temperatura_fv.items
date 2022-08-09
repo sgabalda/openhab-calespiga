@@ -4,6 +4,8 @@ Number:Temperature BateriesTemperatura      "T. arm. bateries: [%.2f %unit%]" <t
 Number:Temperature ExteriorArmarisTemperatura      "T. fora: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:armarielectronicafora:temperature" }
 Number:Temperature BateriesTemperaturaAdosada      "T. bateries: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:tempbateria:temperature" }
 
+Number:Temperature BateriesTemperaturaObjectiu      "T. objectiu bat."
+
 Switch VentiladorBateries "Ventilador bat." (GPIOOutput) //this is the actual item tant turns on or off the fan
 String VentiladorBateriesNumber "20" // Item required with the GPIO number
 Switch VentiladorElectronica "Ventilador electr." (GPIOOutput) //this is the actual item tant turns on or off the fan
