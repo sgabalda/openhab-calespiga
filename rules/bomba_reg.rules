@@ -92,7 +92,8 @@ then
         val lastRegItemState = Darrera_Encesa_Bomba.state
         logDebug("BombaReg", "Last reg item state is "+lastRegItemState)
         if(lastRegItemState != NULL){
-            val lastReg = new DateTime(lastRegItemState.toString).getZonedDateTime()
+            logDebug("BombaReg", "Going to convert last reg time")
+            val lastReg = (lastRegItemState as DateTimeType).getZonedDateTime()
             logDebug("BombaReg", "Last reg time is "+lastReg)
             daysAgo = ChronoUnit.DAYS.between(lastReg, now);
         }
