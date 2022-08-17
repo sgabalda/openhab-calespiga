@@ -18,6 +18,7 @@ then
         logInfo("BombaReg","Turning on bomba reg for "+minutesToRun+" minutes")
         Encesa_Bomba.sendCommand(ON)
         logDebug("BombaReg","Setting timer")
+        val now = ZonedDateTime::now
         apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("BombaReg","Timer reached, turning off bomba")
                 apagarBombaTimer = null
