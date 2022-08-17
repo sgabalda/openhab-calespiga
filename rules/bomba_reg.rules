@@ -54,12 +54,12 @@ end
 
 rule "Encesa auto bomba reg"
 when
-    Time cron "0 2 * * * ?" //every hour (when 2 minutes have passed)
+    Time cron "0 * * * * ?" //every hour (when 2 minutes have passed)
 then
     var minutesToRun = 0
     val minutesToRunState = Durada_Encesa_Auto.state
     if(minutesToRunState != NULL){
-        minutesToRun = (minutesToRunState as Numbeimpor).intValue
+        minutesToRun = (minutesToRunState as Number).intValue
     }
     logDebug("BombaReg","Got minutes as "+minutesToRun)
 
