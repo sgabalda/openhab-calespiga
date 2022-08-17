@@ -8,7 +8,7 @@ rule "Encesa proxy bomba reg"
 when
     Item Encesa_Bomba_Proxy received command
 then
-    val minutesToRun = receivedCommand.longValue
+    val minutesToRun = (receivedCommand as Number).longValue
     if(apagarBombaTimer!==null){
         logDebug("BombaReg","timer not null, cancelling it")
         apagarBombaTimer.cancel()
