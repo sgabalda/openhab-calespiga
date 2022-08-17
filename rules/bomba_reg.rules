@@ -50,7 +50,7 @@ then
     logInfo("BombaReg","Bomba manually turned off")
     Encesa_Bomba_Proxy.sendCommand(0)
     logDebug("BombaReg","Done turning off")
-endimport java.time.temporal.ChronoUnit;
+end
 
 rule "Encesa auto bomba reg"
 when
