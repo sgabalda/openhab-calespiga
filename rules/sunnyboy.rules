@@ -204,9 +204,12 @@ when
 then
     val now = ZonedDateTime::now
     logInfo("SunnyBoy","Obtenint darrera lectura i temps actual")
-    val lastRead = new DateTime(SunnyBoy_Time_Read.state.toString)
     val threshold = now.minusMinutes(minutesWithoutPowerMeasurementBeforSettingZero)
-
+    var lastRead = threshold.minusMinutes(1L)
+    val lastRegItemState = SunnyBoy_Time_Read.state
+    if(lastRegItemState != NULL){
+        lastRead =  (lastRegItemState as DateTimeType).getZonedDateTime()
+    }
     logInfo("SunnyBoy","Comprovant darrea actualitzacio: Ultima lectura: "+ lastRead +
         ", limit: " + threshold)
     if (lastRead.isBefore(threshold)){

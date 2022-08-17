@@ -55,7 +55,9 @@ end
 
 rule "Encesa auto bomba reg"
 when
-    Time cron "0 * * * * ?" //every hour (when 2 minutes have passed)
+    Time cron "0 2 * * * ?" //every hour (when 2 minutes have passed)
+    //the code below does water more than once if the rule is triggered more than one in
+    //the same hour, so be careful whan changing the cron pattern
 then
     var minutesToRun = 0
     val minutesToRunState = Durada_Encesa_Auto.state
