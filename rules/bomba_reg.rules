@@ -23,7 +23,7 @@ then
                 logDebug("BombaReg","Timer reached, turning off bomba")
                 apagarBombaTimer = null
                 Encesa_Bomba_Manual.sendCommand(OFF)
-            ])impo
+            ])
     }else{
         logInfo("BombaReg","Turning off bomba reg")
         Encesa_Bomba.sendCommand(OFF)
