@@ -30,8 +30,11 @@ when
 then
     logDebug("UnusedPower","Changed priorities of unused power")
     val priorityItem = triggeringItem
+    logDebug("UnusedPower","Item obtained")
     val priorityPreviousState = previousState
+    logDebug("UnusedPower","Previous state obtained")
     val priorityNextState = newState
+    logDebug("UnusedPower","New state obtained")
 
     logDebug("UnusedPower","Priority item "+priorityItem.name+" changed from "+priorityPreviousState+" to "+priorityNextState)
 
