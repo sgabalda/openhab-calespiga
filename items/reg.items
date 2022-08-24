@@ -1,17 +1,15 @@
-//Switch Encesa_Bomba "Encesa bomba reg" {channel="gpio:pigpio-remote:local-pigpio:gpioControlBombaReg"}
 Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput) //this is the actual item tant turns on or off the pump
 String Encesa_BombaNumber "2" // Item required with the GPIO number
+
+Number Encesa_Bomba_Proxy "Proxy encesa bomba reg"
+DateTime Darrera_Encesa_Bomba "Instant darrera encesa"
 
 Switch Encesa_Bomba_Manual "Encesa manual bomba reg"
 Number Durada_Encesa_Manual "Durada encesa manual (minuts)"
 
-Switch Encesa_Bomba_Auto_Mati "Encesa auto bomba reg matí"
-Number Durada_Encesa_Auto_Mati "Durada matí (minuts)"
-
-Switch Encesa_Bomba_Auto_Migdia "Encesa auto bomba reg migdia"
-Number Durada_Encesa_Auto_Migdia "Durada migdia (minuts)"
-
-Switch Encesa_Bomba_Auto_Tarda "Encesa auto bomba reg tarda"
-Number Durada_Encesa_Auto_Tarda "Durada tarda (minuts)"
+Switch Encesa_Bomba_Auto "Encesa auto bomba reg"
+Number Durada_Encesa_Auto "Durada encesa auto (minuts)"
+Number Hora_Encesa_Auto "Hora encesa auto"
+Number Periode_Encesa_Auto "Periode encesa auto (h)"
 
 String RegTitle "Reg i aigua"

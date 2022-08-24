@@ -42,12 +42,11 @@ sitemap default label="Ca l'espiga" {
             Text icon="water" item=DipositPercent label="Nivell diposit: [%s %%]"
             Switch item=Encesa_Bomba_Manual icon="sprinkler"
             Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
-            Switch item=Encesa_Bomba_Auto_Mati icon="sprinkler"
-            Setpoint item=Durada_Encesa_Auto_Mati icon="stopwatch" label="Durada mati [%.1f min]" minValue=1 maxValue=30 step=1
-            Switch item=Encesa_Bomba_Auto_Migdia icon="sprinkler"
-            Setpoint item=Durada_Encesa_Auto_Migdia icon="stopwatch" label="Durada migdia [%.1f min]" minValue=1 maxValue=30 step=1
-            Switch item=Encesa_Bomba_Auto_Tarda icon="sprinkler"
-            Setpoint item=Durada_Encesa_Auto_Tarda icon="stopwatch" label="Durada tarda [%.1f min]" minValue=1 maxValue=30 step=1
+            Switch item=Encesa_Bomba_Auto icon="sprinkler"
+            Setpoint item=Durada_Encesa_Auto icon="stopwatch" label="Durada [%.1f min]" minValue=1 maxValue=30 step=1
+            Setpoint item=Hora_Encesa_Auto icon="time" label="Hora [%.1f h]" minValue=0 maxValue=24 step=1
+            Setpoint item=Periode_Encesa_Auto icon="stopwatch" label="Cada [%.1f h]" minValue=2 maxValue=72 step=1
+            Text icon="time" item=Darrera_Encesa_Bomba label="Darrer reg [%1$td/%1$tm/%1$tY %1$tT]"
         }
     }
 
