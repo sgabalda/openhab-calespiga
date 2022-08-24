@@ -111,8 +111,8 @@ sitemap default label="Ca l'espiga" {
             Text item=NotUsedPower icon="receiver" label="Potencia no usada [%d W]"
         }
         Frame label="Dispositius" {
-            Setpoint item=UnusedPowerDevicePriority_Cotxe icon="electric_car" label="Prioritat cotxe [%d]" minValue=1 maxValue=2 step=1
-            Setpoint item=UnusedPowerDevicePriority_Calentador icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=2 step=1
+            Setpoint item=Cotxe_Priority icon="electric_car" label="Prioritat cotxe [%d]" minValue=1 maxValue=2 step=1
+            Setpoint item=Calentador_Priority icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=2 step=1
         }
     }
     Text item=SystemTitle label="Sistema" icon="settings"
