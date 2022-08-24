@@ -1,6 +1,5 @@
 import org.openhab.core.model.script.ScriptServiceUtil
 import java.util.HashMap
-import java.util.ArrayList
 import java.util.List
 
 var test = false     //set to true to use test mode (unused power will not be read from Sunny boy
@@ -29,7 +28,7 @@ rule "Change priorities"
 when
     Member of UnusedPowerPriority received command
 then
-
+    logDebug("UnusedPower","Changed priorities of unused power")
     val priorityItem = triggeringItem
     val priorityPreviousState = previousState
     val priorityNextState = newState
