@@ -49,6 +49,7 @@ then
                 logDebug("UnusedPower","Device found in position "+ (i+1))
                 priorityPreviousState = i + 1
             }
+            i = i+1
         }
     }
 
