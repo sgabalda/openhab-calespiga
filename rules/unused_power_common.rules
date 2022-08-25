@@ -70,7 +70,10 @@ then
                 logDebug("UnusedPower","Item has not null state "+item.name)
                 val priorityItemNumber = (state as Number).intValue
                 logDebug("UnusedPower","Item priority is "+priorityItemNumber)
-                if(priorityItemNumber == priorityNumberNext){
+                if((""+item.name) == itemName){
+                   logDebug("UnusedPower","Found the same item, ignoring") 
+                }
+                else if(priorityItemNumber == priorityNumberNext){
                     logDebug("UnusedPower","Item priority is the same! Changing to old value ")
                     if(priorityPreviousState ==0){
                         logDebug("UnusedPower","As there was no previous state, stting it to NULL ")
@@ -88,12 +91,12 @@ then
             }
         }]
     }
-    UnusedPowerPriorityRefreshProxy.sendCommand("go")
+    UnusedPowerPriorityRefreshProxy.postUpdate("go")
 end
 
 rule "Refresh destination devices"
 when
-    Item UnusedPowerPriorityRefreshProxy received command
+    Item UnusedPowerPriorityRefreshProxy received update
 then
     logDebug("UnusedPower","Starting values get")
 
