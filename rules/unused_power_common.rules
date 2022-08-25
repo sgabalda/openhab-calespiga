@@ -30,10 +30,30 @@ when
 then
     logDebug("UnusedPower","Changed priorities of unused power")
     val priorityItem = triggeringItem
-    logDebug("UnusedPower","Item obtained")
-    val priorityPreviousState = previousState
+    
+    logDebug("UnusedPower","Going to get current priority")
+    var priorityPreviousState = 0
+    val itemName = ""+priorityItem.name
+    val splitted = itemName.split("_")
+    if(splitted.length < 2){
+        logError("UnusedPower","item of UnusedPowerPriority has not valid prority item name: "+itemName)
+    }else{
+        val deviceName = splitted.get(0)
+        logDebug("UnusedPower","Device name is "+deviceName)
+        val devices = DestinationDevices.state.toString.split(',')
+        var i = devices.length() - 1
+        while(i >= 0){
+            val currentDevice = devices.get(i)
+            logDebug("UnusedPower","In position "+i+" is device "+currentDevice)
+            if(currentDevice == deviceName){
+                logDebug("UnusedPower","Device found in position "+ (i+1))
+                priorityPreviousState = i + 1
+            }
+        }
+    }
+
     logDebug("UnusedPower","Previous state obtained")
-    val priorityNextState = newState
+    val priorityNextState = receivedCommand
     logDebug("UnusedPower","New state obtained")
 
     logDebug("UnusedPower","Priority item "+priorityItem.name+" changed from "+priorityPreviousState+" to "+priorityNextState)
@@ -51,7 +71,14 @@ then
                 logDebug("UnusedPower","Item priority is "+priorityItemNumber)
                 if(priorityItemNumber == priorityNumberNext){
                     logDebug("UnusedPower","Item priority is the same! Changing to old value ")
-                    item.postUpdate(priorityPreviousState)
+                    if(priorityPreviousState ==0){
+                        logDebug("UnusedPower","As there was no previous state, stting it to NULL ")
+                        item.postUpdate(NULL)
+                    }else{
+                        logDebug("UnusedPower","Setting it to previous state "+priorityPreviousState)
+                        item.postUpdate(priorityPreviousState)
+                    }
+                    
                 }else{
                     logDebug("UnusedPower","Item priority is NOT the same")
                 }
