@@ -1,4 +1,6 @@
 import org.openhab.core.model.script.ScriptServiceUtil
+import java.util.HashMap
+import java.util.List
 
 var test = false     //set to true to use test mode (unused power will not be read from Sunny boy
 
@@ -15,16 +17,154 @@ then
 	AvailablePower.sendCommand(0)
 	AvailablePowerProcessStatus.postUpdate("finished")
 	NotUsedPower.postUpdate(0)
-	var destinationsString = ""
-	var i = 0
-    while(i<availableDevices.length()){
-        if(i != 0){
+    
+    logDebug("UnusedPower","Starting boot values")
+
+    UnusedPowerPriorityRefreshProxy.sendCommand("go")
+    
+end
+
+rule "Change priorities"
+when
+    Member of UnusedPowerPriority received command
+then
+    logDebug("UnusedPower","Changed priorities of unused power")
+    val priorityItem = triggeringItem
+    
+    logDebug("UnusedPower","Going to get current priority")
+    var priorityPreviousState = 0
+    val itemName = ""+priorityItem.name
+    val splitted = itemName.split("_")
+    if(splitted.length < 2){
+        logError("UnusedPower","item of UnusedPowerPriority has not valid prority item name: "+itemName)
+    }else{
+        val deviceName = splitted.get(0)
+        logDebug("UnusedPower","Device name is "+deviceName)
+        val devices = DestinationDevices.state.toString.split(',')
+        var i = devices.length() - 1
+        while(i >= 0){
+            val currentDevice = devices.get(i)
+            logDebug("UnusedPower","In position "+i+" is device "+currentDevice)
+            if(currentDevice == deviceName){
+                logDebug("UnusedPower","Device found in position "+ (i+1))
+                priorityPreviousState = i + 1
+            }
+            i = i-1
+        }
+    }
+
+    logDebug("UnusedPower","Previous state obtained")
+    val priorityNextState = receivedCommand
+    logDebug("UnusedPower","New state obtained")
+
+    logDebug("UnusedPower","Priority item "+priorityItem.name+" changed from "+priorityPreviousState+" to "+priorityNextState)
+
+    if(priorityNextState != NULL){
+        logDebug("UnusedPower","Next state is not null")
+        val priorityNumberNext = (priorityNextState as Number).intValue
+        logDebug("UnusedPower","Getting item with current priority "+priorityNumberNext)
+        UnusedPowerPriority.members.forEach[ item | {
+            logDebug("UnusedPower","Checking item "+item.name)
+            val state = item.state
+            if(state != NULL){
+                logDebug("UnusedPower","Item has not null state "+item.name)
+                val priorityItemNumber = (state as Number).intValue
+                logDebug("UnusedPower","Item priority is "+priorityItemNumber)
+                if((""+item.name) == itemName){
+                   logDebug("UnusedPower","Found the same item, ignoring") 
+                }
+                else if(priorityItemNumber == priorityNumberNext){
+                    logDebug("UnusedPower","Item priority is the same! Changing to old value ")
+                    if(priorityPreviousState ==0){
+                        logDebug("UnusedPower","As there was no previous state, stting it to NULL ")
+                        item.postUpdate(NULL)
+                    }else{
+                        logDebug("UnusedPower","Setting it to previous state "+priorityPreviousState)
+                        item.postUpdate(priorityPreviousState)
+                    }
+                    
+                }else{
+                    logDebug("UnusedPower","Item priority is NOT the same")
+                }
+            }else{
+                logDebug("UnusedPower","Item priority is NULL")
+            }
+        }]
+    }
+    UnusedPowerPriorityRefreshProxy.postUpdate("go")
+end
+
+rule "Refresh destination devices"
+when
+    Item UnusedPowerPriorityRefreshProxy received update
+then
+    logDebug("UnusedPower","Starting values get")
+
+    var validItemNames = 0
+    val HashMap<Integer,String> configuredPriorities= newHashMap()
+    val List<String> nonConfiguredPriorities = newArrayList()
+    var destinationsString = ""
+
+    UnusedPowerPriority.members.forEach[ item | {
+        val itemName = ""+item.name
+        val splitted = itemName.split("_")
+        if(splitted.length < 2){
+            logError("UnusedPower","items of UnusedPowerPriority has not valid prority item name: "+itemName)
+        }else{
+            validItemNames = validItemNames + 1
+        }
+    }]
+    logDebug("UnusedPower","Looping all items of UnusedPowerPriority")
+    //get all items in the group for priority
+    UnusedPowerPriority.members.forEach[ item | {
+        val state = item.state
+        val itemName = ""+item.name
+        val splitted = itemName.split("_")
+        if(splitted.length < 2){
+            logError("UnusedPower","items of UnusedPowerPriority has not valid prority item name: "+itemName)
+        }else{
+            val deviceName = splitted.get(0)
+            if(state == NULL){
+                logWarn("UnusedPower","Device "+deviceName+" has not configured priority")
+                nonConfiguredPriorities.add(deviceName)
+            }else{
+                val priorityNumber = (state as Number).intValue
+                if(priorityNumber > validItemNames || priorityNumber < 1){
+                    logError("UnusedPower","Invalid item priority: "+priorityNumber+" because there are "+validItemNames+" valid items for devices")
+                    nonConfiguredPriorities.add(deviceName)
+                }else if(configuredPriorities.containsKey(priorityNumber)){
+                    logError("UnusedPower","Duplicated item priority: "+priorityNumber+" for device "+deviceName+", has the same as "+configuredPriorities.get(priorityNumber))
+                    nonConfiguredPriorities.add(deviceName)
+                }else{
+                    logDebug("UnusedPower","Device "+deviceName+" intially has set priority "+priorityNumber)
+                    configuredPriorities.put(priorityNumber,deviceName)
+                }
+            }
+        }
+    } ]
+
+	logDebug("UnusedPower","Going to calcuate destination string")
+
+	var listIndex = 0
+    var loopIndex = 0
+    while(loopIndex<validItemNames){
+        if(loopIndex != 0){
             destinationsString = destinationsString + ","
         }
-        destinationsString = destinationsString + availableDevices.get(i)
-        i = i + 1
+        val currentPriority = loopIndex+1
+        if(configuredPriorities.containsKey(currentPriority)){
+            val deviceForPriority = configuredPriorities.get(currentPriority)
+            logDebug("UnusedPower","device for priority "+currentPriority+ " configured is "+deviceForPriority)
+            destinationsString = destinationsString + deviceForPriority
+        }else{
+            val deviceForPriority = nonConfiguredPriorities.get(listIndex)
+            logWarn("UnusedPower","device for priority "+currentPriority+ "is not configured. Taking "+deviceForPriority)
+            destinationsString = destinationsString + deviceForPriority
+            listIndex = listIndex + 1
+        }
+        loopIndex = loopIndex + 1
     }
-    logInfo("UnusedPower","The starting destination devices are "+destinationsString)
+    logDebug("UnusedPower","The starting destination devices are "+destinationsString)
 	DestinationDevices.sendCommand(destinationsString)
 end
 
