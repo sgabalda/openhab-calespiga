@@ -83,6 +83,9 @@ sitemap default label="Ca l'espiga" {
             Switch item=GestioAutomaticaCotxe icon="remote_control" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
             Switch item=CotxeEncesaManual icon="switch_on_off"
         }
+        Frame{
+            Webview height=14 url="http://calespiga.ddns.net:3000/d/euckLcRRz/cotxe?orgId=1"
+        }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"
     {
