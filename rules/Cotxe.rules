@@ -284,8 +284,16 @@ then
     if(energiaAhirSensor != NULL){
         energiaAhir = (energiaAhirSensor as Number).doubleValue
     }
-    logInfo("Cotxe.rules", "Calculating energia avui: total = "+ energiaTotal + ", ahir = "+ energiaAhir)
-    Cotxe_Energia_Avui.postUpdate(energiaTotal - energiaAhir)
+    
+    val energiaAvui = energiaTotal - energiaAhir
+    //dirty temporal hack to identify why sometimes the energia avui contains the energia total
+    if(energiaAvui > 100000){
+        logError("Cotxe.rules", "Too big Energia avui "+energiaAvui+": total = "+ energiaTotal + ", ahir = "+ energiaAhir)
+    }else{
+        logInfo("Cotxe.rules", "Calculated energia avui "+energiaAvui+": total = "+ energiaTotal + ", ahir = "+ energiaAhir)
+        Cotxe_Energia_Avui.postUpdate(energiaAvui)
+    }
+    
 
 end
 
