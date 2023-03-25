@@ -1,2 +1,2 @@
-Number DipositPercentNumber {channel="mqtt:topic:diposit1:percent"}
-Number DipositLitres {channel="mqtt:topic:diposit1:litres"}
+Number DipositPercentNumber {channel="mqtt:topic:diposit1:Percentatge"}
+Number DipositLitres {channel="mqtt:topic:diposit1:Litres"}
