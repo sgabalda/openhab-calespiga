@@ -4,8 +4,8 @@
 #include <NeoSWSerial.h>
 
 #define ARDUINO_CLIENT_ID "arduino_diposit1"
-#define TOPIC_MEASUREMENTS_TANK_PERCENT "arduino_diposit1/percentage"
-#define TOPIC_MEASUREMENTS_TANK_LITERS "arduino_diposit1/liters"
+#define TOPIC_MEASUREMENTS_TANK_PERCENT "diposit1/percentage"
+#define TOPIC_MEASUREMENTS_TANK_LITERS "diposit1/liters"
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);

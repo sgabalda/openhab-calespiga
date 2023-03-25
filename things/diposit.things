@@ -1,8 +1,8 @@
 Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
 
-    Thing mqtt:topic:diposit1 "diposit1" (mqtt:broker:defaultBroker) {
+    Thing topic diposit1 (mqtt:broker:defaultBroker) {
         Channels:
             Type number : Percentatge [ stateTopic="diposit1/percentage" ]
-            Type number : Litres [ stateTopic="diposit1/percentage" ]
+            Type number : Litres [ stateTopic="diposit1/liters" ]
     }
 }
