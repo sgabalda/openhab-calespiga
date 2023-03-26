@@ -49,6 +49,10 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=Periode_Encesa_Auto icon="stopwatch" label="Cada [%.1f h]" minValue=2 maxValue=72 step=1
             Text icon="time" item=Darrera_Encesa_Bomba label="Darrer reg [%1$td/%1$tm/%1$tY %1$tT]"
         }
+        Frame{
+            Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
+        }
+        
     }
 
     Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
