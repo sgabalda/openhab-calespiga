@@ -12,7 +12,7 @@ from modbus_tk import modbus_rtu
 
 # Connect to the slave
 serial = serial.Serial(
-                       port='/dev/ttyUSB1',
+                       port='/dev/ttyUSB0',
                        baudrate=9600,
                        bytesize=8,
                        parity='N',
