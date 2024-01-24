@@ -3,7 +3,8 @@ import java.util.Date
 //rules to manage unused power
 var test = false     //set to true to use the test items instead of the real ones
 val MAX_POWER = 2000.0
-val IDLE_POWER = 1
+val IDLE_POWER = 10 //an estimation of what it uses if the car is not connected, in W
+val TURN_OFF_POWER = 4.0 //below this power, the plug is considered not to be working, and therefore is switched off. Has to be less than IDLE_POWER
 var long chargingWithoutExtraPowerTimeStart = 0
 var long maxChargingWithoutExtraPowerTime = 10L * 60 * 1000
 
@@ -50,7 +51,7 @@ then
                 val long limitWithoutExtraPower = chargingWithoutExtraPowerTimeStart + maxChargingWithoutExtraPowerTime
                 if(now_millis >= limitWithoutExtraPower){
                     logDebug("Cotxe.rules", "Reached the limit without extra power, turning off")
-                    requiredPower = 0
+                    requiredPower = 0.0
                 }else{
                     val remainingTimeToLimit = limitWithoutExtraPower - now_millis
                     logDebug("Cotxe.rules", "Not yet reached the limit without extra power(remaining "+ 
@@ -60,14 +61,14 @@ then
                 
             }
         }else{
-            //then the IDL_PWR is what we are going to use (or more, if the car is connected)
+            //then the IDLE_POWER is what we are going to use (or more, if the car is connected)
             //but we will only use it if there is enough available power for the connected car
              if(availablePower >= MAX_POWER){
                  logDebug("Cotxe.rules", "The switch is currently OFF and there is enough available power ("+availablePower+"), so required is not 0")
                 requiredPower = IDLE_POWER
              }else{
                  //tehre is not enough available power, so there is no point in trying
-                 logDebug("Cotxe.rules", "The switch is currently OFF but there NOT is enough available power ("+availablePower+") so required is 0")
+                 logDebug("Cotxe.rules", "The switch is currently OFF but there is NOT enough available power ("+availablePower+") so required is 0")
                  requiredPower = 0.0
              }
 
@@ -102,11 +103,11 @@ then
             powerToApply = (requiredPowerState as Number).intValue
         }
         logDebug("Cotxe.rules", "The required power to apply is "+powerToApply)
-        if(powerToApply > 0.0){
+        if(powerToApply > TURN_OFF_POWER){
             logDebug("Cotxe.rules", "Turning ON the cotxe charger")
             CotxeEncesa_Control_Proxy.sendCommand(ON)
         }else{
-            logDebug("Cotxe.rules", "Turning OFF the cotxe charger")
+            logDebug("Cotxe.rules", "Turning OFF the cotxe charger, as power to apply is below TURN_OFF_POWER: "+TURN_OFF_POWER)
             CotxeEncesa_Control_Proxy.sendCommand(OFF)
         }
         DestinationDeviceApplied.sendCommand("Cotxe")

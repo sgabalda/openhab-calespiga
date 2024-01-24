@@ -39,7 +39,8 @@ sitemap default label="Ca l'espiga" {
     {
         Frame label="Reg de l'hort" {
             Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
-            Text icon="water" item=DipositPercent label="Nivell diposit: [%s %%]"
+            Text icon="water" item=DipositPercentNumber label="Nivell diposit: [%d %%]"
+            Text icon="water" item=DipositLitres label="Litres diposit: [%d L]"
             Switch item=Encesa_Bomba_Manual icon="sprinkler"
             Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
             Switch item=Encesa_Bomba_Auto icon="sprinkler"
@@ -48,6 +49,10 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=Periode_Encesa_Auto icon="stopwatch" label="Cada [%.1f h]" minValue=2 maxValue=72 step=1
             Text icon="time" item=Darrera_Encesa_Bomba label="Darrer reg [%1$td/%1$tm/%1$tY %1$tT]"
         }
+        Frame{
+            Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
+        }
+        
     }
 
     Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"

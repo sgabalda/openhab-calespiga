@@ -1,1 +1,8 @@
-//Thing exec:command:diposit [command="python /home/openhabian/repo/openhab-calespiga/shell-scripts/diposit.py", interval=120, timeout=20, autorun=false]
+Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
+
+    Thing mqtt:topic:diposit1 (mqtt:broker:defaultBroker) {
+        Channels:
+            Type number : Percentatge [ stateTopic="diposit1/percentage" ]
+            Type number : Litres [ stateTopic="diposit1/liters" ]
+    }
+}

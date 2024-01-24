@@ -1,2 +1,2 @@
-String DipositPercent "[%s]" (ConverToNumber) //{channel="exec:command:diposit:output"}
-Number DipositPercentNumber
+Number DipositPercentNumber {channel="mqtt:topic:diposit1:Percentatge"}
+Number DipositLitres {channel="mqtt:topic:diposit1:Litres"}
