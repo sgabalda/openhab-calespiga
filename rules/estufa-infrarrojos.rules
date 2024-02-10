@@ -10,10 +10,10 @@ var long lastChangePower = -1
 
 rule "Potencia disponible estufa"
 when 
-	Item EstufaInrarrojos_AvailablePower received command
+	Item EstufaInfrarrojos_AvailablePower received command
 then
-	val gestioAutoEstufaInfrarrojos = EstufaInrarrojos_GestioAutomatica.state
-    val estatEstufaInfrarrojos = EstufaInrarrojos_Potencia_Estat.state
+	val gestioAutoEstufaInfrarrojos = EstufaInfrarrojos_GestioAutomatica.state
+    val estatEstufaInfrarrojos = EstufaInfrarrojos_Potencia_Estat.state
 	var requiredPower = 0
 	if(gestioAutoEstufaInfrarrojos == "auto"){
         if(estatEstufaInfrarrojos != "offline"){
@@ -54,10 +54,10 @@ rule "Apply power EstufaInfrarrojos"
 when
 	Item EstufaInfrarrojos_ApplyChange received command
 then
-    val gestioAutoEstufaInfrarrojos = EstufaInrarrojos_GestioAutomatica.state
+    val gestioAutoEstufaInfrarrojos = EstufaInfrarrojos_GestioAutomatica.state
     logInfo("EstufaInfrarrojos.rules", "Received command to apply the power")
     if(gestioAutoEstufaInfrarrojos == "auto"){
-        val estatEstufaInfrarrojos = EstufaInrarrojos_Potencia_Estat.state
+        val estatEstufaInfrarrojos = EstufaInfrarrojos_Potencia_Estat.state
         if(estatEstufaInfrarrojos != "offline"){
             logInfo("EstufaInfrarrojos.rules", "Going to apply the required power")
             val requiredPowerState = EstufaInfrarrojos_RequiredPower.state
@@ -66,17 +66,17 @@ then
                 powerToApply = (requiredPowerState as Number).intValue
             }
             logInfo("EstufaInfrarrojos.rules", "The required power to apply is "+powerToApply)
-            EstufaInrarrojos_UsedPower.sendCommand(powerToApply)
-            EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand(powerToApply+"")
+            EstufaInfrarrojos_UsedPower.sendCommand(powerToApply)
+            EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(powerToApply+"")
             DestinationDeviceApplied.sendCommand("EstufaInfrarrojos")
         }else{
             logInfo("EstufaInfrarrojos.rules", "Estufa is offline, so not applying required power, but notifying as applied")
-            EstufaInrarrojos_UsedPower.sendCommand(0)
+            EstufaInfrarrojos_UsedPower.sendCommand(0)
             DestinationDeviceApplied.sendCommand("estufa-infrarrojos")
         }
     }else{
         logInfo("EstufaInfrarrojos.rules", "Gestio is not automatic, so not applying required power, but notifying as applied")
-        EstufaInrarrojos_UsedPower.sendCommand(0)
+        EstufaInfrarrojos_UsedPower.sendCommand(0)
         DestinationDeviceApplied.sendCommand("estufa-infrarrojos")
     }
 end
@@ -84,13 +84,13 @@ end
 //rules not to manage unused power
 rule "Canvi gestio EstufaInfrarrojos"
 when
-    Item EstufaInrarrojos_GestioAutomatica received command
+    Item EstufaInfrarrojos_GestioAutomatica received command
 then
     val gestioAutoEstufaInfrarrojos = receivedCommand
     if(gestioAutoEstufaInfrarrojos != "auto"){
         val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to manual. Refreshed status to "+currentPowerSelection)
-        EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
+        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
         //we are not using unused power, because all is manual.
         EstufaInfrarrojos_UsedPower.sendCommand(0)
 
@@ -107,7 +107,7 @@ then
         if(currentManualPower == 0.0){
             energyTimer = null
         }else{
-            val duradaEncesaItemValue = EstufaInrarrojos_Durada_Encesa_Auto.state
+            val duradaEncesaItemValue = EstufaInfrarrojos_Durada_Encesa_Auto.state
             var minutesToRun = 1
             if(duradaEncesaItemValue != NULL){
                 minutesToRun = (duradaEncesaItemValue as Number).longValue
@@ -115,14 +115,14 @@ then
             energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
-                EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
             ])
         }
         EstufaInfrarrojos_UsedPower.sendCommand(0)
     }else{
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to auto, starting from 0 used power")
         EstufaInfrarrojos_UsedPower.sendCommand(0)
-        EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
         //cancel energy timer
         if(energyTimer!==null){
             logDebug("EstufaInfrarrojos.rules","Energy timer not null, cancelling it as mode set to auto")
@@ -139,7 +139,7 @@ then
     if(gestioAutoEstufaInfrarrojos != "auto"){
         val currentPowerSelection = receivedCommand
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is manual. Refreshed status to "+currentPowerSelection)
-        EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
+        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
 
         //start energy timer if power > 0
         var currentManualPower = 0.0
@@ -153,7 +153,7 @@ then
         if(currentManualPower == 0.0){
             energyTimer = null
         }else{
-            val duradaEncesaItemValue = EstufaInrarrojos_Durada_Encesa_Auto.state
+            val duradaEncesaItemValue = EstufaInfrarrojos_Durada_Encesa_Auto.state
             var minutesToRun = 1
             if(duradaEncesaItemValue != NULL){
                 minutesToRun = (duradaEncesaItemValue as Number).longValue
@@ -161,7 +161,7 @@ then
             energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
-                EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
             ])
         }
         //we are not using unused power, because all is manual.
@@ -173,14 +173,14 @@ end
 
 rule "update state from MQTT EstufaInfrarrojos"
 when
-    Item EstufaInrarrojos_Potencia_ProxyRecepcio received update
+    Item EstufaInfrarrojos_Potencia_ProxyRecepcio received update
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
-    val receivedEstat = EstufaInrarrojos_Potencia_ProxyRecepcio.state.toString
+    val receivedEstat = EstufaInfrarrojos_Potencia_ProxyRecepcio.state.toString
     logInfo("EstufaInfrarrojos.rules", "EstufaInfrarrojos estat changed to "+receivedEstat)
     //update last connection
-    EstufaInrarrojos_Ultima_Connexio.postUpdate(nowDateType)
+    EstufaInfrarrojos_Ultima_Connexio.postUpdate(nowDateType)
 
     //reset comms timer
     if(commsTimer!==null){
@@ -190,19 +190,19 @@ then
     commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, changing state to offline")
                 commsTimer = null
-                EstufaInrarrojos_Potencia_Estat.sendCommand("offline")
-                EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+                EstufaInfrarrojos_Potencia_Estat.sendCommand("offline")
+                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
             ])
 
     //update Estat item
     if(receivedEstat == "0"){
-        EstufaInrarrojos_Potencia_Estat.sendCommand("off")
+        EstufaInfrarrojos_Potencia_Estat.sendCommand("off")
     }else if(receivedEstat == "600"){
-        EstufaInrarrojos_Potencia_Estat.sendCommand("600")
+        EstufaInfrarrojos_Potencia_Estat.sendCommand("600")
     }else if(receivedEstat == "1200"){
-        EstufaInrarrojos_Potencia_Estat.sendCommand("1200")
+        EstufaInfrarrojos_Potencia_Estat.sendCommand("1200")
     }else{
-        EstufaInrarrojos_Potencia_Estat.sendCommand("error")
+        EstufaInfrarrojos_Potencia_Estat.sendCommand("error")
     }
       
 end
