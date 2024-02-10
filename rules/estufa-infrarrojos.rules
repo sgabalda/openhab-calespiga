@@ -256,10 +256,10 @@ rule "Proxy emissio debug log"
 when
     Item EstufaInfrarrojos_Potencia_ProxyEmissio changed
 then
-    val received = EstufaInfrarrojos_Potencia_ProxyEmissio.state.toString
+    val receivedValue = EstufaInfrarrojos_Potencia_ProxyEmissio.state.toString
     val mqttActions = getActions("mqtt", "mqtt:broker:defaultBroker")
-    mqttActions.publishMQTT("estufa1/set", received, true)
-    logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+received)
+    mqttActions.publishMQTT("estufa1/set", receivedValue, true)
+    logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedValue)
 end
 
 rule "Reset energy today EstufaInfrarrojos"
