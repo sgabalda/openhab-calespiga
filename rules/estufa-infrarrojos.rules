@@ -92,7 +92,13 @@ then
     if(gestioAutoEstufaInfrarrojos != "auto"){
         val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to manual. Refreshed status to "+currentPowerSelection)
-        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
+        var currentManualPower = 0.0
+        if(currentPowerSelection != NULL){
+            currentManualPower = Double::parseDouble(currentPowerSelection.toString)
+        }
+        logDebug("EstufaInfrarrojos.rules", "As gestio changed, going to set value to proxy item: "+currentManualPower)
+        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentManualPower.intValue)
+
         //we are not using unused power, because all is manual.
         EstufaInfrarrojos_UsedPower.sendCommand(0)
 
@@ -258,13 +264,13 @@ end
 
 rule "Proxy emissio debug log"
 when
-    Item EstufaInfrarrojos_Potencia_ProxyEmissio changed
+    Item EstufaInfrarrojos_Potencia_ProxyEmissio received command
 then
     if(periodicUpdateTimer!==null){
         logDebug("EstufaInfrarrojos.rules","Periodic update timer not null, cancelling it")
         periodicUpdateTimer.cancel()
     }
-    val receivedValue = EstufaInfrarrojos_Potencia_ProxyEmissio.state
+    val receivedValue = receivedCommand
     logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedValue.toString)
     periodicUpdateTimer = createTimer(now.plusMinutes(PERIODIC_UPDATE_MINUTES.longValue), [|
                 logDebug("EstufaInfrarrojos.rules","Sending periodic update")
