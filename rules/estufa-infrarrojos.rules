@@ -135,11 +135,11 @@ end
 
 rule "Canvi manual EstufaInfrarrojos"
 when 
-    Item EstufaInfrarrojos_Potencia_UserSelection received command
+    Item EstufaInfrarrojos_Potencia_UserSelection changed
 then
     val gestioAutoEstufaInfrarrojos = EstufaInfrarrojos_GestioAutomatica.state
     if(gestioAutoEstufaInfrarrojos != "auto"){
-        val currentPowerSelection = receivedCommand
+        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is manual. Refreshed status to "+currentPowerSelection)
 
         //start energy timer if power > 0
@@ -180,11 +180,11 @@ end
 
 rule "update state from MQTT EstufaInfrarrojos"
 when
-    Item EstufaInfrarrojos_Potencia_ProxyRecepcio received command
+    Item EstufaInfrarrojos_Potencia_ProxyRecepcio changed
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
-    val receivedEstat = receivedCommand.toString
+    val receivedEstat = EstufaInfrarrojos_Potencia_ProxyRecepcio.state.toString
     logInfo("EstufaInfrarrojos.rules", "EstufaInfrarrojos estat changed to "+receivedEstat)
     //update last connection
     EstufaInfrarrojos_Ultima_Connexio.postUpdate(nowDateType)
@@ -217,7 +217,7 @@ end
 
 rule "update display energy for EstufaInfrarrojos"
 when
-    Item EstufaInfrarrojos_Potencia_Estat received command
+    Item EstufaInfrarrojos_Potencia_Estat changed
 then
     val previousState = previousState.toString
     var previousPower = 0.0
@@ -254,11 +254,12 @@ end
 
 rule "Proxy emissio debug log"
 when
-    Item EstufaInfrarrojos_Potencia_ProxyEmissio received command
+    Item EstufaInfrarrojos_Potencia_ProxyEmissio changed
 then
+    val received = EstufaInfrarrojos_Potencia_ProxyEmissio.state.toString
     val mqttActions = getActions("mqtt", "mqtt:broker:defaultBroker")
-    mqttActions.publishMQTT("estufa1/set", receivedCommand.toString, true)
-    logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedCommand)
+    mqttActions.publishMQTT("estufa1/set", received, true)
+    logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+received)
 end
 
 rule "Reset energy today EstufaInfrarrojos"
