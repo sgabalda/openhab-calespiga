@@ -3,7 +3,8 @@ import java.time.ZonedDateTime
 
 val long COMMS_TIMEOUT_MINUTES = 2 
 var Timer commsTimer = null
-var Timer energyTimer = null
+var Timer energyTimer = 
+val long PERIODIC_UPDATE_MINUTES = 1 
 var Timer periodicUpdateTimer = null
 var long lastChangePower = -1
 
@@ -259,10 +260,17 @@ rule "Proxy emissio debug log"
 when
     Item EstufaInfrarrojos_Potencia_ProxyEmissio changed
 then
-    val receivedValue = EstufaInfrarrojos_Potencia_ProxyEmissio.state.toString
- //   val mqttActions = getActions("mqtt", "mqtt:broker:defaultBroker")
- //   mqttActions.publishMQTT("estufa1/set", receivedValue, true)
-    logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedValue)
+    if(periodicUpdateTimer!==null){
+        logDebug("EstufaInfrarrojos.rules","Periodic update timer not null, cancelling it")
+        periodicUpdateTimer.cancel()
+    }
+    val receivedValue = EstufaInfrarrojos_Potencia_ProxyEmissio.state
+    logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedValue.toString)
+    periodicUpdateTimer = createTimer(now.plusMinutes(PERIODIC_UPDATE_MINUTES.longValue), [|
+                logDebug("EstufaInfrarrojos.rules","Sending periodic update")
+                periodicUpdateTimer = null
+                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(( receivedValue as Number).intValue)
+            ])
 end
 
 rule "Reset energy today EstufaInfrarrojos"
