@@ -3,7 +3,7 @@ import java.time.ZonedDateTime
 
 val long COMMS_TIMEOUT_MINUTES = 2 
 var Timer commsTimer = null
-var Timer energyTimer = 
+var Timer energyTimer = null
 val long PERIODIC_UPDATE_MINUTES = 1 
 var Timer periodicUpdateTimer = null
 var long lastChangePower = -1
