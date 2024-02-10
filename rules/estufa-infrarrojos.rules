@@ -140,7 +140,7 @@ then
         val currentPowerSelection = receivedCommand
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is manual. Refreshed status to "+currentPowerSelection)
         EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
-        
+
         //start energy timer if power > 0
         val currentManualPower = 0.0
         if(currentPowerSelection != NULL){
@@ -211,7 +211,7 @@ rule "update display energy for EstufaInfrarrojos"
 when
     Item EstufaInfrarrojos_Potencia_Estat received command
 then
-    val previousState = Item.previousState().toString
+    val previousState = previousState.toString
     val receivedEstat = receivedCommand.toString
     var previousPower = 0.0
 

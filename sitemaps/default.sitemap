@@ -95,12 +95,12 @@ sitemap default label="Ca l'espiga" {
     Text item=EstufaInrarrojos_Title label="Estufes" icon="radiator"
     {
         Frame label="Estufa infrarrojos" {
-            Text item=EstufaInrarrojos_Potencia_Estat icon="heating" label="Estat [%s]" mappings=["offline"="No connectada", "off"="Connectada, OFF", "600"="660W", "1200"="1200W", "error"="ERROR!"]
+            Text item=EstufaInrarrojos_Potencia_Estat icon="heating" label="Estat [%s]"
             Text item=EstufaInrarrojos_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
             Switch item=EstufaInrarrojos_GestioAutomatica icon="remote_control" label="Gestió estufa" mappings=["auto"="Automatic", "manual"="Manual"]
             Selection item=EstufaInrarrojos_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=[0="OFF", 600="600W", 1200="1200W"]
             Setpoint item=EstufaInrarrojos_Durada_Encesa_Auto icon="stopwatch" label="Durada [%.1f min]" minValue=1 maxValue=120 step=1
-            Text item=EstufaInrarrojos_Energia_Avui icon="heater_display" label="Energia avui: [%.3f kWh]" 
+            Text item=EstufaInrarrojos_Energia_Avui icon="heater_display" label="Energi avui: [%.3f kWh]" 
         }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"
