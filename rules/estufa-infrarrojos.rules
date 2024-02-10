@@ -253,6 +253,8 @@ rule "Proxy emissio debug log"
 when
     Item EstufaInfrarrojos_Potencia_ProxyEmissio received command
 then
+    val mqttActions = getActions("mqtt", "mqtt:broker:defaultBroker")
+    mqttActions.publishMQTT("estufa1/set", receivedCommand)
     logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedCommand)
 end
 
