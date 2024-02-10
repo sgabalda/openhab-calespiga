@@ -1,8 +1,8 @@
 String EstufaInfrarrojos_GestioAutomatica "Gestio automàtica de l'estufa infrarrojos"
 
-Number EstufaInfrarrojos_Potencia_UserSelection "Pot. seleccionada (W)"  <dial_heater>   //what the user selects as current power to use
-String EstufaInfrarrojos_Potencia_ProxyRecepcio "Recepcio" {channel="mqtt:topic:estufa1:Status"}
-String EstufaInfrarrojos_Potencia_ProxyEmissio "Emissio" {channel="mqtt:topic:estufa1:Set"}
+String EstufaInfrarrojos_Potencia_UserSelection "Pot. seleccionada (W)"  <dial_heater>   //what the user selects as current power to use
+Number EstufaInfrarrojos_Potencia_ProxyRecepcio "Recepcio" {channel="mqtt:topic:estufa1:Status"}
+Number EstufaInfrarrojos_Potencia_ProxyEmissio "Emissio" {channel="mqtt:topic:estufa1:Set"}
 String EstufaInfrarrojos_Potencia_Estat "Estat"      //offline, OFF or the power used if not OFF
 Number:Energy EstufaInfrarrojos_Energia_Avui "Energia " <heater_display> //what the user sees as today used energy for the heater
 DateTime EstufaInfrarrojos_Ultima_Connexio "Instant darrera connexio"

@@ -67,7 +67,7 @@ then
             }
             logInfo("EstufaInfrarrojos.rules", "The required power to apply is "+powerToApply)
             EstufaInfrarrojos_UsedPower.sendCommand(powerToApply)
-            EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(powerToApply+"")
+            EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(powerToApply)
             DestinationDeviceApplied.sendCommand("EstufaInfrarrojos")
         }else{
             logInfo("EstufaInfrarrojos.rules", "Estufa is offline, so not applying required power, but notifying as applied")
@@ -96,7 +96,7 @@ then
 
         var currentManualPower = 0.0
         if(currentPowerSelection != NULL){
-            currentManualPower = (currentPowerSelection as Number).doubleValue
+            currentManualPower = Double::parseDouble(currentPowerSelection)
         }
         
         //set or reset energy timer
@@ -117,14 +117,14 @@ then
             energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
-                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
             ])
         }
         EstufaInfrarrojos_UsedPower.sendCommand(0)
     }else{
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to auto, starting from 0 used power")
         EstufaInfrarrojos_UsedPower.sendCommand(0)
-        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
         //cancel energy timer
         if(energyTimer!==null){
             logDebug("EstufaInfrarrojos.rules","Energy timer not null, cancelling it as mode set to auto")
@@ -141,13 +141,16 @@ then
     if(gestioAutoEstufaInfrarrojos != "auto"){
         val currentPowerSelection = receivedCommand
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is manual. Refreshed status to "+currentPowerSelection)
-        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
 
         //start energy timer if power > 0
         var currentManualPower = 0.0
         if(currentPowerSelection != NULL){
-            currentManualPower = (currentPowerSelection as Number).doubleValue
+            currentManualPower = Double::parseDouble(currentPowerSelection)
         }
+        logDebug("EstufaInfrarrojos.rules", "Going to set value to proxy item: "+currentManualPower)
+
+        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentManualPower.intValue)
+
         if(energyTimer!==null){
             logDebug("EstufaInfrarrojos.rules","Energy timer not null, resetting it as user selected power changed")
             energyTimer.cancel()
@@ -181,7 +184,7 @@ when
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
-    val receivedEstat = receivedCommand
+    val receivedEstat = receivedCommand.toString
     logInfo("EstufaInfrarrojos.rules", "EstufaInfrarrojos estat changed to "+receivedEstat)
     //update last connection
     EstufaInfrarrojos_Ultima_Connexio.postUpdate(nowDateType)
@@ -195,7 +198,7 @@ then
                 logDebug("EstufaInfrarrojos.rules","Timer reached, changing state to offline")
                 commsTimer = null
                 EstufaInfrarrojos_Potencia_Estat.sendCommand("offline")
-                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
             ])
 
     logDebug("EstufaInfrarrojos.rules","Comms timer resetted, now changin state")
