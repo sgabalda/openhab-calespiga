@@ -144,7 +144,7 @@ then
 
         //start energy timer if power > 0
         var currentManualPower = 0.0
-        if(currentPowerSelection != NULL){
+        if(currentPowerSelection != null){
             currentManualPower = Double::parseDouble(currentPowerSelection)
         }
         logDebug("EstufaInfrarrojos.rules", "Going to set value to proxy item: "+currentManualPower)
