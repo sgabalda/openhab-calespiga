@@ -173,11 +173,11 @@ end
 
 rule "update state from MQTT EstufaInfrarrojos"
 when
-    Item EstufaInfrarrojos_Potencia_ProxyRecepcio received update
+    Item EstufaInfrarrojos_Potencia_ProxyRecepcio received command
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
-    val receivedEstat = EstufaInfrarrojos_Potencia_ProxyRecepcio.state.toString
+    val receivedEstat = receivedCommand
     logInfo("EstufaInfrarrojos.rules", "EstufaInfrarrojos estat changed to "+receivedEstat)
     //update last connection
     EstufaInfrarrojos_Ultima_Connexio.postUpdate(nowDateType)
@@ -194,6 +194,7 @@ then
                 EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
             ])
 
+    logDebug("EstufaInfrarrojos.rules","Comms timer resetted, now changin state")
     //update Estat item
     if(receivedEstat == "0"){
         EstufaInfrarrojos_Potencia_Estat.sendCommand("off")
