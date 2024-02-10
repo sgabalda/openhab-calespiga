@@ -8,7 +8,7 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
 
     Thing mqtt:topic:estufa1 (mqtt:broker:defaultBroker) {
         Channels:
-            Type number : Status [ stateTopic="estufa1/status" ]
-            Type number : Set [ commandTopic="estufa1/set" ]
+            Type string : Status [ stateTopic="estufa1/status" ]
+            Type string : Set [ commandTopic="estufa1/set" ]
     }
 }
