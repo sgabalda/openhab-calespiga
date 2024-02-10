@@ -2,8 +2,8 @@
 #include <PubSubClient.h>
 
 #define ARDUINO_CLIENT_ID "esp32_estufa_infrarrojos"                     // Client ID for Arduino pub/sub
-#define SUB_ESTUFA_POT "esp32_estufa_infrarrojos/potencia/set"
-#define PUB_ESTUFA_POT "esp32_estufa_infrarrojos/potencia/status"
+#define SUB_ESTUFA_POT "estufa1/set"
+#define PUB_ESTUFA_POT "estufa1/status"
 #define MAX_TIME_BETWEEN_ORDERS 3*60*1000   // 3 minutes, if the MQTT goes nuts, turn off the heater just in case
 
 // Replace the next variables with your SSID/Password combination
