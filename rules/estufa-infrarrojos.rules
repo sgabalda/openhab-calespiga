@@ -104,7 +104,7 @@ then
             logDebug("EstufaInfrarrojos.rules","Energy timer not null, resetting it as mode set to manual")
             energyTimer.cancel()
         }
-        if(currentManualPower = 0.0){
+        if(currentManualPower == 0.0){
             energyTimer = null
         }else{
             val duradaEncesaItemValue = EstufaInrarrojos_Durada_Encesa_Auto.state
@@ -150,7 +150,7 @@ then
             logDebug("EstufaInfrarrojos.rules","Energy timer not null, resetting it as user selected power changed")
             energyTimer.cancel()
         }
-        if(currentManualPower = 0.0){
+        if(currentManualPower == 0.0){
             energyTimer = null
         }else{
             val duradaEncesaItemValue = EstufaInrarrojos_Durada_Encesa_Auto.state
@@ -212,7 +212,6 @@ when
     Item EstufaInfrarrojos_Potencia_Estat received command
 then
     val previousState = previousState.toString
-    val receivedEstat = receivedCommand.toString
     var previousPower = 0.0
 
     if(previousState == "600"){
