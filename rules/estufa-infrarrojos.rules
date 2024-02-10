@@ -180,7 +180,7 @@ end
 
 rule "update state from MQTT EstufaInfrarrojos"
 when
-    Item EstufaInfrarrojos_Potencia_ProxyRecepcio changed
+    Item EstufaInfrarrojos_Potencia_ProxyRecepcio updated
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
