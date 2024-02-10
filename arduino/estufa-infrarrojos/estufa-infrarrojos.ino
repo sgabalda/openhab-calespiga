@@ -68,10 +68,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
   message[length] = '\0';
 
   if (strcmp(message, "0") == 0){
+      lastOrder=millis();
       estufaOff();
   }else if (strcmp(message, "600") == 0){
+      lastOrder=millis();
       estufa600W();
   }else if (strcmp(message, "1200") == 0){
+      lastOrder=millis();
       estufa1200W();
   }else{
       Serial.println("Error, message not valid:");
@@ -159,5 +162,5 @@ void turnRelay(int relay, int status) {
   Serial.print(" set to ");
   Serial.println(status);
   digitalWrite(relay, status);
-  delay(330);
+  delay(1000);
 }

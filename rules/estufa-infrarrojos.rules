@@ -1,0 +1,254 @@
+import java.util.Date
+import java.time.ZonedDateTime
+
+val long COMMS_TIMEOUT_SECONDS = 60 
+var Timer commsTimer = null
+var Timer energyTimer = null
+var long lastChangePower = -1
+
+//rules to manage unused power
+
+rule "Potencia disponible estufa"
+when 
+	Item EstufaInrarrojos_AvailablePower received command
+then
+	val gestioAutoEstufaInfrarrojos = EstufaInrarrojos_GestioAutomatica.state
+    val estatEstufaInfrarrojos = EstufaInrarrojos_Potencia_Estat.state
+	var requiredPower = 0
+	if(gestioAutoEstufaInfrarrojos == "auto"){
+        if(estatEstufaInfrarrojos != "offline"){
+            logInfo("EstufaInfrarrojos.rules", "Received new power available for EstufaInfrarrojos auto")
+
+            val oldPowerState = receivedCommand
+            var availablePower = 0.0
+            if(oldPowerState != NULL){
+                availablePower = (oldPowerState as Number).doubleValue
+            }
+            if(availablePower >= 1200){
+                requiredPower = 1200
+            }else if(availablePower >= 600){
+                requiredPower = 600
+            }else{
+                requiredPower = 0
+            }
+            logInfo("EstufaInfrarrojos.rules", "The power that the EstufaInfrarrojos will use is "+requiredPower)
+        }else{
+		    logInfo("EstufaInfrarrojos.rules", "Received unused power, but EstufaInfrarrojos is offline, so ignoring it")
+	    }
+	}else{
+		logInfo("EstufaInfrarrojos.rules", "Received unused power, but EstufaInfrarrojos is manual, so ignoring it")
+	}
+	EstufaInfrarrojos_RequiredPower.sendCommand(requiredPower)
+	logInfo("EstufaInfrarrojos.rules", "Sent required power to EstufaInfrarrojos_RequiredPower")
+end
+
+rule "update EstufaInfrarrojos required power"
+when
+	Item EstufaInfrarrojos_RequiredPower received command
+then
+    logInfo("EstufaInfrarrojos.rules", "Required power updated, notifying the DestinationDeviceUpdated")
+	DestinationDeviceUpdated.sendCommand("EstufaInfrarrojos")
+end
+
+rule "Apply power EstufaInfrarrojos"
+when
+	Item EstufaInfrarrojos_ApplyChange received command
+then
+    val gestioAutoEstufaInfrarrojos = EstufaInrarrojos_GestioAutomatica.state
+    logInfo("EstufaInfrarrojos.rules", "Received command to apply the power")
+    if(gestioAutoEstufaInfrarrojos == "auto"){
+        val estatEstufaInfrarrojos = EstufaInrarrojos_Potencia_Estat.state
+        if(estatEstufaInfrarrojos != "offline"){
+            logInfo("EstufaInfrarrojos.rules", "Going to apply the required power")
+            val requiredPowerState = EstufaInfrarrojos_RequiredPower.state
+            var powerToApply = 0
+            if(requiredPowerState != NULL){
+                powerToApply = (requiredPowerState as Number).intValue
+            }
+            logInfo("EstufaInfrarrojos.rules", "The required power to apply is "+powerToApply)
+            EstufaInrarrojos_UsedPower.sendCommand(powerToApply)
+            EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand(powerToApply+"")
+            DestinationDeviceApplied.sendCommand("EstufaInfrarrojos")
+        }else{
+            logInfo("EstufaInfrarrojos.rules", "Estufa is offline, so not applying required power, but notifying as applied")
+            EstufaInrarrojos_UsedPower.sendCommand(0)
+            DestinationDeviceApplied.sendCommand("estufa-infrarrojos")
+        }
+    }else{
+        logInfo("EstufaInfrarrojos.rules", "Gestio is not automatic, so not applying required power, but notifying as applied")
+        EstufaInrarrojos_UsedPower.sendCommand(0)
+        DestinationDeviceApplied.sendCommand("estufa-infrarrojos")
+    }
+end
+
+//rules not to manage unused power
+rule "Canvi gestio EstufaInfrarrojos"
+when
+    Item EstufaInrarrojos_GestioAutomatica received command
+then
+    val gestioAutoEstufaInfrarrojos = receivedCommand
+    if(gestioAutoEstufaInfrarrojos != "auto"){
+        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state
+        logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to manual. Refreshed status to "+currentPowerSelection)
+        EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
+        //we are not using unused power, because all is manual.
+        EstufaInfrarrojos_UsedPower.sendCommand(0)
+
+        val currentManualPower = 0.0
+        if(currentPowerSelection != NULL){
+            currentManualPower = (currentPowerSelection as Number).doubleValue
+        }
+        
+        //set or reset energy timer
+        if(energyTimer!==null){
+            logDebug("EstufaInfrarrojos.rules","Energy timer not null, resetting it as mode set to manual")
+            energyTimer.cancel()
+        }
+        if(currentManualPower = 0.0){
+            energyTimer = null
+        }else{
+            val duradaEncesaItemValue = EstufaInrarrojos_Durada_Encesa_Auto.state
+            val minutesToRun = 1
+            if(duradaEncesaItemValue != NULL){
+                minutesToRun = (duradaEncesaItemValue as Number).longValue
+            }
+            energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
+                energyTimer = null
+                EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+            ])
+        }
+        EstufaInfrarrojos_UsedPower.sendCommand(0)
+    }else{
+        logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to auto, starting from 0 used power")
+        EstufaInfrarrojos_UsedPower.sendCommand(0)
+        EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+        //cancel energy timer
+        if(energyTimer!==null){
+            logDebug("EstufaInfrarrojos.rules","Energy timer not null, cancelling it as mode set to auto")
+            energyTimer.cancel()
+        }
+    }
+end
+
+rule "Canvi manual EstufaInfrarrojos"
+when 
+    Item EstufaInfrarrojos_Potencia_UserSelection received command
+then
+    val gestioAutoEstufaInfrarrojos = GestioAutomaticaEstufaInfrarrojos.state
+    if(gestioAutoEstufaInfrarrojos != "auto"){
+        val currentPowerSelection = receivedCommand
+        logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is manual. Refreshed status to "+currentPowerSelection)
+        EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
+        
+        //start energy timer if power > 0
+        val currentManualPower = 0.0
+        if(currentPowerSelection != NULL){
+            currentManualPower = (currentPowerSelection as Number).doubleValue
+        }
+        if(energyTimer!==null){
+            logDebug("EstufaInfrarrojos.rules","Energy timer not null, resetting it as user selected power changed")
+            energyTimer.cancel()
+        }
+        if(currentManualPower = 0.0){
+            energyTimer = null
+        }else{
+            val duradaEncesaItemValue = EstufaInrarrojos_Durada_Encesa_Auto.state
+            val minutesToRun = 1
+            if(duradaEncesaItemValue != NULL){
+                minutesToRun = (duradaEncesaItemValue as Number).longValue
+            }
+            energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
+                energyTimer = null
+                EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+            ])
+        }
+        //we are not using unused power, because all is manual.
+        EstufaInfrarrojos_UsedPower.sendCommand(0)
+    }else{
+        logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is auto. Changing the power has no effects")
+    }
+end
+
+rule "update state from MQTT EstufaInfrarrojos"
+when
+    Item EstufaInrarrojos_Potencia_ProxyRecepcio received update
+then
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+    val receivedEstat = EstufaInrarrojos_Potencia_ProxyRecepcio.state.toString
+    logInfo("EstufaInfrarrojos.rules", "EstufaInfrarrojos estat changed to "+receivedEstat)
+    //update last connection
+    EstufaInrarrojos_Ultima_Connexio.postUpdate(nowDateType)
+
+    //reset comms timer
+    if(commsTimer!==null){
+        logDebug("EstufaInfrarrojos.rules","comms timer not null, cancelling it")
+        commsTimer.cancel()
+    }
+    commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS), [|
+                logDebug("EstufaInfrarrojos.rules","Timer reached, changing state to offline")
+                commsTimer = null
+                EstufaInrarrojos_Potencia_Estat.sendCommand("offline")
+                EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+            ])
+
+    //update Estat item
+    if(receivedEstat == "0"){
+        EstufaInrarrojos_Potencia_Estat.sendCommand("off")
+    }else if(receivedEstat == "600"){
+        EstufaInrarrojos_Potencia_Estat.sendCommand("600")
+    }else if(receivedEstat == "1200"){
+        EstufaInrarrojos_Potencia_Estat.sendCommand("1200")
+    }else{
+        EstufaInrarrojos_Potencia_Estat.sendCommand("error")
+    }
+      
+end
+
+rule "update display energy for EstufaInfrarrojos"
+when
+    Item EstufaInfrarrojos_Potencia_Estat received command
+then
+    val previousState = Item.previousState().toString
+    val receivedEstat = receivedCommand.toString
+    var previousPower = 0.0
+
+    if(previousState == "600"){
+        previousPower = 600.0
+    }else if(previousState == "1200"){
+        previousPower = 1200.0
+    }
+    logInfo("EstufaInfrarrojos.rules", "As previous state is "+previousState+", previous power is "+previousPower)
+
+    val now_millis = (new Date()).time
+    logInfo("EstufaInfrarrojos.rules", "Going to update energy from "+lastChangePower+" with "+previousPower)
+    if(lastChangePower>0 ){
+
+        val timeMillis = now_millis - lastChangePower
+        val timeHours = (timeMillis/1000.0)/3600
+        val energyToAdd = previousPower*timeHours/1000
+
+        var energyCurrent = 0.0
+
+        val EstufaInfrarrojosEnergiaState = EstufaInfrarrojos_Energia_Avui.state
+        if(EstufaInfrarrojosEnergiaState != NULL){
+            energyCurrent = ( EstufaInfrarrojosEnergiaState as Number).doubleValue
+        }
+
+        logInfo("EstufaInfrarrojos.rules", "Adding energy EstufaInfrarrojos "+energyToAdd+" to "+energyCurrent)
+
+        EstufaInfrarrojos_Energia_Avui.postUpdate(energyCurrent + energyToAdd)
+
+    }
+    lastChangePower = now_millis
+end 
+
+rule "Reset energy today EstufaInfrarrojos"
+when
+    Time cron "0 0 0 ? * * *"
+then
+    EstufaInfrarrojos_Energia_Avui.postUpdate(0)
+    lastChangePower = -1
+end
