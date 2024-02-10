@@ -1,7 +1,7 @@
 import java.util.Date
 import java.time.ZonedDateTime
 
-val long COMMS_TIMEOUT_SECONDS = 60 
+val long COMMS_TIMEOUT_MINUTES = 2 
 var Timer commsTimer = null
 var Timer energyTimer = null
 var long lastChangePower = -1
@@ -160,7 +160,7 @@ then
             energyTimer = null
         }else{
             val duradaEncesaItemValue = EstufaInfrarrojos_Durada_Encesa_Auto.state
-            var minutesToRun = 1
+            var long minutesToRun = 1
             if(duradaEncesaItemValue != NULL){
                 minutesToRun = (duradaEncesaItemValue as Number).longValue
             }
@@ -194,7 +194,7 @@ then
         logDebug("EstufaInfrarrojos.rules","comms timer not null, cancelling it")
         commsTimer.cancel()
     }
-    commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS), [|
+    commsTimer = createTimer(now.plusMinutes(COMMS_TIMEOUT_MINUTES.longValue), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, changing state to offline")
                 commsTimer = null
                 EstufaInfrarrojos_Potencia_Estat.sendCommand("offline")
