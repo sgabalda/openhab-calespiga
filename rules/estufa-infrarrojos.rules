@@ -88,7 +88,7 @@ when
 then
     val gestioAutoEstufaInfrarrojos = receivedCommand
     if(gestioAutoEstufaInfrarrojos != "auto"){
-        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state.toString
+        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to manual. Refreshed status to "+currentPowerSelection)
         EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
         //we are not using unused power, because all is manual.
@@ -96,7 +96,7 @@ then
 
         var currentManualPower = 0.0
         if(currentPowerSelection != NULL){
-            currentManualPower = Double::parseDouble(currentPowerSelection)
+            currentManualPower = Double::parseDouble(currentPowerSelection.toString)
         }
         
         //set or reset energy timer
@@ -139,13 +139,13 @@ when
 then
     val gestioAutoEstufaInfrarrojos = EstufaInfrarrojos_GestioAutomatica.state
     if(gestioAutoEstufaInfrarrojos != "auto"){
-        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state.toString
+        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is manual. Refreshed status to "+currentPowerSelection)
 
         //start energy timer if power > 0
         var currentManualPower = 0.0
-        if(currentPowerSelection != null){
-            currentManualPower = Double::parseDouble(currentPowerSelection)
+        if(currentPowerSelection != NULL){
+            currentManualPower = Double::parseDouble(currentPowerSelection.toString)
         }
         logDebug("EstufaInfrarrojos.rules", "Going to set value to proxy item: "+currentManualPower)
 
