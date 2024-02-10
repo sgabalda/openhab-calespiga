@@ -94,7 +94,7 @@ then
         //we are not using unused power, because all is manual.
         EstufaInfrarrojos_UsedPower.sendCommand(0)
 
-        val currentManualPower = 0.0
+        var currentManualPower = 0.0
         if(currentPowerSelection != NULL){
             currentManualPower = (currentPowerSelection as Number).doubleValue
         }
@@ -108,7 +108,7 @@ then
             energyTimer = null
         }else{
             val duradaEncesaItemValue = EstufaInrarrojos_Durada_Encesa_Auto.state
-            val minutesToRun = 1
+            var minutesToRun = 1
             if(duradaEncesaItemValue != NULL){
                 minutesToRun = (duradaEncesaItemValue as Number).longValue
             }
@@ -142,7 +142,7 @@ then
         EstufaInrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
 
         //start energy timer if power > 0
-        val currentManualPower = 0.0
+        var currentManualPower = 0.0
         if(currentPowerSelection != NULL){
             currentManualPower = (currentPowerSelection as Number).doubleValue
         }
@@ -154,7 +154,7 @@ then
             energyTimer = null
         }else{
             val duradaEncesaItemValue = EstufaInrarrojos_Durada_Encesa_Auto.state
-            val minutesToRun = 1
+            var minutesToRun = 1
             if(duradaEncesaItemValue != NULL){
                 minutesToRun = (duradaEncesaItemValue as Number).longValue
             }

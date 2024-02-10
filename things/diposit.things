@@ -1,12 +1,12 @@
 Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
 
-    Thing mqtt:topic:defaultBroker:diposit1 (mqtt:broker:defaultBroker) {
+    Thing mqtt:topic:diposit1 (mqtt:broker:defaultBroker) {
         Channels:
             Type number : Percentatge [ stateTopic="diposit1/percentage" ]
             Type number : Litres [ stateTopic="diposit1/liters" ]
     }
 
-    Thing mqtt:topic:defaultBroker:esp32_estufa_infrarrojos (mqtt:broker:defaultBroker) {
+    Thing mqtt:topic:esp32_estufa_infrarrojos (mqtt:broker:defaultBroker) {
         Channels:
             Type number : Status [ stateTopic="esp32_estufa_infrarrojos/potencia/status" ]
             Type number : Set [ commandTopic="esp32_estufa_infrarrojos/potencia/set" ]
