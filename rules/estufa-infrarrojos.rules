@@ -88,7 +88,7 @@ when
 then
     val gestioAutoEstufaInfrarrojos = receivedCommand
     if(gestioAutoEstufaInfrarrojos != "auto"){
-        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state
+        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state.toString
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to manual. Refreshed status to "+currentPowerSelection)
         EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentPowerSelection+"")
         //we are not using unused power, because all is manual.
@@ -139,7 +139,7 @@ when
 then
     val gestioAutoEstufaInfrarrojos = EstufaInfrarrojos_GestioAutomatica.state
     if(gestioAutoEstufaInfrarrojos != "auto"){
-        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state
+        val currentPowerSelection = EstufaInfrarrojos_Potencia_UserSelection.state.toString
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is manual. Refreshed status to "+currentPowerSelection)
 
         //start energy timer if power > 0
