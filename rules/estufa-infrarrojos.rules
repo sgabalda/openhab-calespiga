@@ -105,6 +105,7 @@ then
             energyTimer.cancel()
         }
         if(currentManualPower == 0.0){
+            logDebug("EstufaInfrarrojos.rules","As current power is 0, not setting a energy timer")
             energyTimer = null
         }else{
             val duradaEncesaItemValue = EstufaInfrarrojos_Durada_Encesa_Auto.state
@@ -112,6 +113,7 @@ then
             if(duradaEncesaItemValue != NULL){
                 minutesToRun = (duradaEncesaItemValue as Number).longValue
             }
+            logDebug("EstufaInfrarrojos.rules","As current power is not 0, setting a energy timer for "+minutesToRun+" mins")
             energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
@@ -151,6 +153,7 @@ then
             energyTimer.cancel()
         }
         if(currentManualPower == 0.0){
+            logDebug("EstufaInfrarrojos.rules","As current power is 0, not setting a energy timer")
             energyTimer = null
         }else{
             val duradaEncesaItemValue = EstufaInfrarrojos_Durada_Encesa_Auto.state
@@ -158,6 +161,7 @@ then
             if(duradaEncesaItemValue != NULL){
                 minutesToRun = (duradaEncesaItemValue as Number).longValue
             }
+            logDebug("EstufaInfrarrojos.rules","As current power is not 0, setting a energy timer for "+minutesToRun+" mins")
             energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
@@ -244,6 +248,13 @@ then
     }
     lastChangePower = now_millis
 end 
+
+rule "Proxy emissio debug log"
+when
+    EstufaInfrarrojos_Potencia_ProxyEmissio received command
+then
+    logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedCommand)
+end
 
 rule "Reset energy today EstufaInfrarrojos"
 when
