@@ -251,7 +251,7 @@ end
 
 rule "Proxy emissio debug log"
 when
-    EstufaInfrarrojos_Potencia_ProxyEmissio received command
+    Item EstufaInfrarrojos_Potencia_ProxyEmissio received command
 then
     logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedCommand)
 end
