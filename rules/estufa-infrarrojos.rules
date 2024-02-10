@@ -4,6 +4,7 @@ import java.time.ZonedDateTime
 val long COMMS_TIMEOUT_MINUTES = 2 
 var Timer commsTimer = null
 var Timer energyTimer = null
+var Timer periodicUpdateTimer = null
 var long lastChangePower = -1
 
 //rules to manage unused power
@@ -118,6 +119,7 @@ then
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
                 EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
+                EstufaInfrarrojos_Potencia_UserSelection.postUpdate("0")
             ])
         }
         EstufaInfrarrojos_UsedPower.sendCommand(0)
@@ -168,7 +170,8 @@ then
             energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
-                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand("0")
+                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
+                EstufaInfrarrojos_Potencia_UserSelection.postUpdate("0")
             ])
         }
         //we are not using unused power, because all is manual.
@@ -257,8 +260,8 @@ when
     Item EstufaInfrarrojos_Potencia_ProxyEmissio changed
 then
     val receivedValue = EstufaInfrarrojos_Potencia_ProxyEmissio.state.toString
-    val mqttActions = getActions("mqtt", "mqtt:broker:defaultBroker")
-    mqttActions.publishMQTT("estufa1/set", receivedValue, true)
+ //   val mqttActions = getActions("mqtt", "mqtt:broker:defaultBroker")
+ //   mqttActions.publishMQTT("estufa1/set", receivedValue, true)
     logDebug("EstufaInfrarrojos.rules","Proxy emissio received command "+receivedValue)
 end
 
