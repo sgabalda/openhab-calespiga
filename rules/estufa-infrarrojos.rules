@@ -135,7 +135,7 @@ rule "Canvi manual EstufaInfrarrojos"
 when 
     Item EstufaInfrarrojos_Potencia_UserSelection received command
 then
-    val gestioAutoEstufaInfrarrojos = GestioAutomaticaEstufaInfrarrojos.state
+    val gestioAutoEstufaInfrarrojos = EstufaInfrarrojos_GestioAutomatica.state
     if(gestioAutoEstufaInfrarrojos != "auto"){
         val currentPowerSelection = receivedCommand
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos is manual. Refreshed status to "+currentPowerSelection)
