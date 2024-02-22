@@ -66,6 +66,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   for (int i = 0; i < length; i++)
     message[i] = (char)payload[i];
   message[length] = '\0';
+  Serial.println(message);
 
   if (strcmp(message, "0") == 0){
       lastOrder=millis();
@@ -96,6 +97,7 @@ void reconnect() {
       Serial.println("connected");
       // Subscribe
       client.subscribe(SUB_ESTUFA_POT);
+      delay(1000);
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -106,14 +108,13 @@ void reconnect() {
   }
 }
 void checkMaxTime(){
-  Serial.println(
-      String("Time since last oreder is: ")
-      +String(millis()-lastOrder) + String("ms"));
+  Serial.print("Time since last order is: ");
+  Serial.print(millis()-lastOrder);
+  Serial.println("ms");
   if(millis()-lastOrder > MAX_TIME_BETWEEN_ORDERS){
-    Serial.println(
-      String("Too much time between orders, turning off estufa:")
-      +String(millis()-lastOrder) + String("ms")
-    );
+    Serial.print("Too much time between orders, turning off estufa:");
+    Serial.print(millis()-lastOrder);
+    Serial.println("ms");
     estufaOff();
     lastOrder=millis();
   }
@@ -126,6 +127,8 @@ void loop() {
   checkMaxTime();
   applyRelayStatus();
   delay(3000);
+  Serial.print("Free memory is: ");
+  Serial.println(ESP.getFreeHeap());
 }
 
 void estufaOff(){

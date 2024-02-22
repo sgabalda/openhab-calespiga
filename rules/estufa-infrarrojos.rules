@@ -210,26 +210,9 @@ then
                 EstufaInfrarrojos_Potencia_Estat.sendCommand("offline")
                 EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
             ])
+    logDebug("EstufaInfrarrojos.rules","Comms timer resetted, now updating energy")
 
-    logDebug("EstufaInfrarrojos.rules","Comms timer resetted, now changin state")
-    //update Estat item
-    if(receivedEstat == "0"){
-        EstufaInfrarrojos_Potencia_Estat.sendCommand("off")
-    }else if(receivedEstat == "600"){
-        EstufaInfrarrojos_Potencia_Estat.sendCommand("600")
-    }else if(receivedEstat == "1200"){
-        EstufaInfrarrojos_Potencia_Estat.sendCommand("1200")
-    }else{
-        EstufaInfrarrojos_Potencia_Estat.sendCommand("error")
-    }
-      
-end
-
-rule "update display energy for EstufaInfrarrojos"
-when
-    Item EstufaInfrarrojos_Potencia_Estat changed
-then
-    val previousState = previousState.toString
+    val previousState = EstufaInfrarrojos_Potencia_Estat.state.toString
     var previousPower = 0.0
 
     if(previousState == "600"){
@@ -260,7 +243,20 @@ then
 
     }
     lastChangePower = now_millis
-end 
+
+    logDebug("EstufaInfrarrojos.rules","Energy updated, now updating state")
+    //update Estat item
+    if(receivedEstat == "0"){
+        EstufaInfrarrojos_Potencia_Estat.sendCommand("off")
+    }else if(receivedEstat == "600"){
+        EstufaInfrarrojos_Potencia_Estat.sendCommand("600")
+    }else if(receivedEstat == "1200"){
+        EstufaInfrarrojos_Potencia_Estat.sendCommand("1200")
+    }else{
+        EstufaInfrarrojos_Potencia_Estat.sendCommand("error")
+    }
+      
+end
 
 rule "Proxy emissio debug log"
 when
