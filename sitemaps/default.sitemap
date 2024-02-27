@@ -92,6 +92,17 @@ sitemap default label="Ca l'espiga" {
             Webview height=14 url="http://calespiga.ddns.net:3000/d/euckLcRRz/cotxe?orgId=1"
         }
     }
+    Text item=EstufaInfrarrojos_Title label="Estufes" icon="radiator"
+    {
+        Frame label="Estufa infrarrojos" {
+            Text item=EstufaInfrarrojos_Potencia_Estat icon="estufa_ir" label="Estat [%s]"
+            Text item=EstufaInfrarrojos_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=EstufaInfrarrojos_GestioAutomatica icon="remote_control" label="Gestió estufa" mappings=["auto"="Automatic", "manual"="Manual"]
+            Selection item=EstufaInfrarrojos_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "600"="600W", "1200"="1200W"]
+            Setpoint item=EstufaInfrarrojos_Durada_Encesa_Auto icon="stopwatch" label="Durada manual [%.1f min]" minValue=1 maxValue=120 step=1
+            Text item=EstufaInfrarrojos_Energia_Avui icon="energy" label="Energia avui: [%.3f kWh]" 
+        }
+    }
     Text item=AlarmsTitle label="Alertes" icon="alert"
     {
         Frame label="Comunicació calentador" {
@@ -119,8 +130,9 @@ sitemap default label="Ca l'espiga" {
             Text item=NotUsedPower icon="receiver" label="Potencia no usada [%d W]"
         }
         Frame label="Dispositius" {
-            Setpoint item=Cotxe_Priority icon="electric_car" label="Prioritat cotxe [%d]" minValue=1 maxValue=2 step=1
-            Setpoint item=Calentador_Priority icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=2 step=1
+            Setpoint item=Cotxe_Priority icon="electric_car" label="Prioritat cotxe [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=Calentador_Priority icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=EstufaInfrarrojos_Priority icon="radiator" label="Prioritat Estufa infrarrojos [%d]" minValue=1 maxValue=3 step=1
         }
     }
     Text item=SystemTitle label="Sistema" icon="settings"

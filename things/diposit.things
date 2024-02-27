@@ -5,4 +5,10 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type number : Percentatge [ stateTopic="diposit1/percentage" ]
             Type number : Litres [ stateTopic="diposit1/liters" ]
     }
+
+    Thing mqtt:topic:estufa1 "estufa1" (mqtt:broker:defaultBroker) {
+        Channels:
+            Type string : Status "Status" [ stateTopic="estufa1/status" ]
+            Type number : Set "Set" [ commandTopic="estufa1/set" ]
+    }
 }
