@@ -8,6 +8,7 @@ String Calentador_Potencia_ProxyItem "Proxy Item calentador"    //for internal u
 String Calentador_Potencia_UserSelection "Pot. seleccionada (W)"  <dial_heater>   //what the user selects as current power to use
 Number:Power Calentador_Potencia_UserDisplay "Consum (W)"   <water_heater> //what the user sees as current power used
 Number:Energy Calentador_Energia_Avui "Energia "   <heater_display> //what the user sees as today used energy for the heater
+DateTime Calentador_Ultima_Connexio "Instant darrera connexio"
 
 String Calentador_Termostat_UserDisplay "Proxy Item termostat"
 DateTime Calentador_Hot_Date_Proxy "Proxy Ultim moment calent" <time>

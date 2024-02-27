@@ -2,6 +2,8 @@ import java.util.Date
 import java.time.ZonedDateTime
 
 var long lastChangePower = -1
+val long COMMS_TIMEOUT_SECONDS = 30
+var Timer commsTimer = null
 
 //rules to manage unused power
 
@@ -143,9 +145,25 @@ then
         Calentador_Potencia_ProxyItem.sendCommand(0+"")
     }
     Calentador_Termostat_UserDisplay.postUpdate(receivedEstat)   
-    //TODO update the last communication item
 
-    //TODO cancel previous timer and set a new one to put offline if there is no more messages.
+    // update the last communication item
+    Calentador_Ultima_Connexio.postUpdate(nowDateType)
+
+    //cancel previous timer and set a new one to put offline if there is no more messages.
+    if(commsTimer!==null){
+        logDebug("Calentador.rules","comms timer not null, cancelling it")
+        commsTimer.cancel()
+    }
+    commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS.longValue), [|
+                logDebug("Calentador.rules","Timer reached, changing state to offline")
+                commsTimer = null
+                //we are not using unused power, because it is offline.
+                Calentador_UsedPower.sendCommand(0)
+                //turn off
+                Calentador_Potencia_ProxyItem.sendCommand(0+"") 
+                Calentador_Termostat_UserDisplay.sendCommand("OFFLINE")
+            ])
+    logDebug("Calentador.rules","Comms timer resetted, now updating energy")
 end
 
 rule "Turn On Calentador"
