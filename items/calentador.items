@@ -1,5 +1,9 @@
 String GestioAutomaticaCalentador "Gestio automàtica del calentador" <thermostat_heater>
 
+String Calentador_Termostat_ProxyRecepcio "Termostat Recepcio" {channel="mqtt:topic:arduino_calentador:TermostatStatus"}
+String Calentador_Potencia_ProxyRecepcio "Potencia Recepcio" {channel="mqtt:topic:arduino_calentador:PotenciaStatus"}
+String Calentador_Potencia_ProxyEmissio "Emissio" {channel="mqtt:topic:arduino_calentador:PotenciaSet"}
+
 String Calentador_Potencia_ProxyItem "Proxy Item calentador"    //for internal use, will be forwarded to MQTT or GPIOs
 String Calentador_Potencia_UserSelection "Pot. seleccionada (W)"  <dial_heater>   //what the user selects as current power to use
 Number:Power Calentador_Potencia_UserDisplay "Consum (W)"   <water_heater> //what the user sees as current power used

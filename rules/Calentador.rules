@@ -110,10 +110,11 @@ end
 
 rule "Forward termostat state from MQTT calentador"
 when
-    Item ArduinoCalentadorThing_CalentadorTermostatStatus  received update
+    //Item ArduinoCalentadorThing_CalentadorTermostatStatus received update
+    Item Calentador_Termostat_ProxyRecepcio received update
 then
-    Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
-
+    //Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
+    Calentador_Estat_ProxyItem.postUpdate(Calentador_Termostat_ProxyRecepcio.state.toString)
 end
 
 rule "forward last hot date calentador"
@@ -141,24 +142,28 @@ then
         //turn off
         Calentador_Potencia_ProxyItem.sendCommand(0+"")
     }
-    Calentador_Termostat_UserDisplay.postUpdate(receivedEstat)    
-    
+    Calentador_Termostat_UserDisplay.postUpdate(receivedEstat)   
+    //TODO update the last communication item
+
+    //TODO cancel previous timer and set a new one to put offline if there is no more messages.
 end
 
 rule "Turn On Calentador"
 when
     Item Calentador_Potencia_ProxyItem received command
 then
-    ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
-    
+    //ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
+    Calentador_Potencia_ProxyEmissio.sendCommand(receivedCommand);
     logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
 end
 
 rule "update display state from MQTT calentador"
 when
-    Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update
+    //Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update
+    Item Calentador_Potencia_ProxyRecepcio received update
 then
-    val receivedEstat = ArduinoCalentadorThing_CalentadorPotenciaEstat.state.toString
+    //val receivedEstat = ArduinoCalentadorThing_CalentadorPotenciaEstat.state.toString
+    val receivedEstat = Calentador_Potencia_ProxyRecepcio.state.toString
     var newPower = 0
     if(receivedEstat != "OFF"){
         newPower = Double::parseDouble(receivedEstat)
