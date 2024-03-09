@@ -1,4 +1,3 @@
-import java.util.Date
 import java.time.ZonedDateTime
 
 rule "update last connexion from MQTT Diposit"
