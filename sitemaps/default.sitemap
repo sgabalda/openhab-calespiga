@@ -26,7 +26,7 @@ sitemap default label="Ca l'espiga" {
             Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat Pot.: [%d W]" 
             
             Text item=Calentador_Termostat_UserDisplay icon="calentador_termostat" label="Estat Term.: [%s]" 
-            Text item=EstufaInfrarrojos_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+            Text item=Calentador_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
             Text item=Calentador_Hot_Date icon="time" label="Ultim cop calent: [%1$td/%1$tm/%1$tY %1$tT]" 
             
             Text item=Calentador_Energia_Avui icon="energy" label="Energia avui: [%.3f kWh]" 
