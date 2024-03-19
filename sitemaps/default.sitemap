@@ -148,9 +148,9 @@ sitemap default label="Ca l'espiga" {
             Text item=DiskInodesPercent icon="receiver" label="Ús inodes [%s %%]"
         }
         Frame label="Controladors" {
-            Text item=Calentador_Controlador_Memoria icon="receiver" label="Mem. calentador [%s %%]"
-            Text item=Diposit_Controlador_Memoria icon="receiver" label="Mem. dipòsit [%s %%]"
-            Text item=EstufaInfrarrojos_Controlador_Memoria icon="receiver" label="Mem. estufa infr. [%s %%]"
+            Text item=Calentador_Controlador_Memoria icon="receiver" label="Mem. calentador [%s bytes]"
+            Text item=Diposit_Controlador_Memoria icon="receiver" label="Mem. dipòsit [%s bytes]"
+            Text item=EstufaInfrarrojos_Controlador_Memoria icon="receiver" label="Mem. estufa infr. [%s bytes]"
         }
     }
 }
