@@ -1,2 +1,6 @@
 Number DipositPercentNumber {channel="mqtt:topic:diposit1:Percentatge"}
 Number DipositLitres {channel="mqtt:topic:diposit1:Litres"}
+
+DateTime Diposit_Ultima_Connexio "Instant darrera connexio"
+
+Number Diposit_Controlador_Memoria "Memòria controlador dipòsit" {channel="mqtt:topic:diposit1:Memoria"}

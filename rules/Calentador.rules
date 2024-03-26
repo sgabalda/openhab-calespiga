@@ -117,6 +117,26 @@ when
 then
     //Calentador_Estat_ProxyItem.postUpdate(ArduinoCalentadorThing_CalentadorTermostatStatus.state.toString)
     Calentador_Estat_ProxyItem.postUpdate(Calentador_Termostat_ProxyRecepcio.state.toString)
+    
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+    // update the last communication item
+    Calentador_Ultima_Connexio.postUpdate(nowDateType)
+
+    //cancel previous timer and set a new one to put offline if there is no more messages.
+    if(commsTimer!==null){
+        logDebug("Calentador.rules","comms timer not null, cancelling it")
+        commsTimer.cancel()
+    }
+    commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS.longValue), [|
+                logDebug("Calentador.rules","Timer reached, changing state to offline")
+                commsTimer = null
+                //we are not using unused power, because it is offline.
+                Calentador_UsedPower.sendCommand(0)
+                //turn off
+                Calentador_Potencia_ProxyItem.sendCommand(0+"") 
+                Calentador_Termostat_UserDisplay.sendCommand("OFFLINE")
+            ])
 end
 
 rule "forward last hot date calentador"
@@ -146,23 +166,6 @@ then
     }
     Calentador_Termostat_UserDisplay.postUpdate(receivedEstat)   
 
-    // update the last communication item
-    Calentador_Ultima_Connexio.postUpdate(nowDateType)
-
-    //cancel previous timer and set a new one to put offline if there is no more messages.
-    if(commsTimer!==null){
-        logDebug("Calentador.rules","comms timer not null, cancelling it")
-        commsTimer.cancel()
-    }
-    commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS.longValue), [|
-                logDebug("Calentador.rules","Timer reached, changing state to offline")
-                commsTimer = null
-                //we are not using unused power, because it is offline.
-                Calentador_UsedPower.sendCommand(0)
-                //turn off
-                Calentador_Potencia_ProxyItem.sendCommand(0+"") 
-                Calentador_Termostat_UserDisplay.sendCommand("OFFLINE")
-            ])
     logDebug("Calentador.rules","Comms timer resetted, now updating energy")
 end
 
@@ -170,17 +173,14 @@ rule "Turn On Calentador"
 when
     Item Calentador_Potencia_ProxyItem received command
 then
-    //ArduinoCalentadorThing_CalentadorPotencia.sendCommand(receivedCommand);
     Calentador_Potencia_ProxyEmissio.sendCommand(receivedCommand);
     logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
 end
 
 rule "update display state from MQTT calentador"
 when
-    //Item ArduinoCalentadorThing_CalentadorPotenciaEstat received update
     Item Calentador_Potencia_ProxyRecepcio received update
 then
-    //val receivedEstat = ArduinoCalentadorThing_CalentadorPotenciaEstat.state.toString
     val receivedEstat = Calentador_Potencia_ProxyRecepcio.state.toString
     var newPower = 0
     if(receivedEstat != "OFF"){

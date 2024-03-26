@@ -1,21 +1,23 @@
 #include <UIPEthernet.h>
 #include <PubSubClient.h>
+#include <MemoryFree.h>
 
 #define ARDUINO_CLIENT_ID "arduino_diposit1"
 #define TOPIC_MEASUREMENTS_TANK_PERCENT "diposit1/percentage"
 #define TOPIC_MEASUREMENTS_TANK_LITERS "diposit1/liters"
 #define TOPIC_MEASUREMENTS_TANK_HEIGHT "diposit1/height"
+#define TOPIC_MEMORY "diposit1/memory"
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
 
 double V0 = 0.18; //Volts without liquid
-double V1 = 1.35; //Volts with h1 of liquid
-double h1 = 1.54; // height at V1
+double V1 = 1.25; //Volts with h1 of liquid
+double h1 = 1.80; // height at V1
 double level, Vout, aux, i, result;
-double area = 5.29; //sq meters of tank
+double area = 5.20; //sq meters of tank
 int previousLiters = 0;
-int maxHeightCm = 200;
+int maxHeightCm = 180;
 bool mqttEnabled = true;
 
 void reconnect() {
@@ -23,9 +25,9 @@ void reconnect() {
     if (client.connect(ARDUINO_CLIENT_ID)) {
       Serial.println("connected");
     } else {
-      Serial.print("failed, rc=");
+      Serial.print(F("failed, rc="));
       Serial.print(client.state());
-      Serial.println(" try in 5s");
+      Serial.println(F(" try in 5s"));
       // Wait 5 seconds before retrying
       delay(5000);
     }
@@ -48,13 +50,13 @@ void setup()
     Ethernet.begin(mac, ip);
     // Check for Ethernet hardware present
     if (Ethernet.hardwareStatus() == EthernetNoHardware) {
-      Serial.println("Ethernet shield not found");
+      Serial.println(F("Ethernet shield not found"));
       while (true) {
         delay(1); // do nothing, no point running without Ethernet hardware
       }
     }
     while (Ethernet.linkStatus() != LinkON) {
-      Serial.println("Eth error. 5s retry");
+      Serial.println(F("Eth error. 5s retry"));
       delay(5000);
     }
     delay(1500); // Allow hardware to stabilize 1.5 sec
@@ -77,12 +79,12 @@ double readHeight()
     level = 0.0;
   }
 
-  Serial.print("\n\nVoltaje: ");
+  Serial.print(F("\n\nVoltaje: "));
   Serial.print(Vout);
-  Serial.println(" v");
-  Serial.print("Nivel: ");
+  Serial.println(F(" v"));
+  Serial.print(F("Nivel: "));
   Serial.print(level);
-  Serial.println(" m");
+  Serial.println(F(" m"));
   
   return level;
 }
@@ -124,16 +126,24 @@ void measureAndPublishTankLevel(){
     itoa(heightCm, cstr, 10);
     client.publish(TOPIC_MEASUREMENTS_TANK_HEIGHT,cstr);
   }
-  Serial.print("Percentage: ");
-  Serial.print(percentage);
-  Serial.println(" %");
-  Serial.print("liters: ");
-  Serial.print(liters);
-  Serial.println(" L");
-  Serial.print("Height: ");
-  Serial.print(heightCm);
-  Serial.println(" cm");
+  Serial.print(F("Percentage: "));
+  Serial.println(percentage);
+  Serial.print(F("liters: "));
+  Serial.println(liters);
+  Serial.print(F("Height: "));
+  Serial.println(heightCm);
 
+}
+
+void reportMemory(){
+  int freeMem = freeMemory();
+  if(mqttEnabled){
+    char cstr[16];
+    itoa(freeMem, cstr, 10);
+    client.publish(TOPIC_MEMORY,cstr);
+  }
+  Serial.print(F("Memory free (bytes): "));
+  Serial.println(freeMem);
 }
 
 void loop()
@@ -145,5 +155,6 @@ void loop()
     client.loop();
   }
   measureAndPublishTankLevel();
+  reportMemory();
   delay(4000);
 }

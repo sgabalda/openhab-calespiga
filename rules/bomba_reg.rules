@@ -114,3 +114,12 @@ then
     }
 
 end
+
+rule "update reg title state"
+when
+    Item DipositPercentNumber received update
+then
+    val current = DipositPercentNumber.state.toString
+    logInfo("BombaReg", "Going to update reg title to "+current)
+    RegTitle.sendCommand(current)
+end

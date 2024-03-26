@@ -6,6 +6,7 @@ Number EstufaInfrarrojos_Potencia_ProxyEmissio "Emissio" {channel="mqtt:topic:es
 String EstufaInfrarrojos_Potencia_Estat "Estat"      //offline, OFF or the power used if not OFF
 Number:Energy EstufaInfrarrojos_Energia_Avui "Energia " <heater_display> //what the user sees as today used energy for the heater
 DateTime EstufaInfrarrojos_Ultima_Connexio "Instant darrera connexio"
+Number EstufaInfrarrojos_Controlador_Memoria "Memòria controlador estufa infrarrojos" {channel="mqtt:topic:estufa1:Memoria"}
 Number EstufaInfrarrojos_Durada_Encesa_Auto "Durada encesa manual (minuts)" //timeout to turn off automatically when in manual mode
 
 //		<device>_AvailablePower -> that receives the power available for the device

@@ -26,7 +26,7 @@ sitemap default label="Ca l'espiga" {
             Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat Pot.: [%d W]" 
             
             Text item=Calentador_Termostat_UserDisplay icon="calentador_termostat" label="Estat Term.: [%s]" 
-            Text item=EstufaInfrarrojos_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+            Text item=Calentador_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
             Text item=Calentador_Hot_Date icon="time" label="Ultim cop calent: [%1$td/%1$tm/%1$tY %1$tT]" 
             
             Text item=Calentador_Energia_Avui icon="energy" label="Energia avui: [%.3f kWh]" 
@@ -36,19 +36,24 @@ sitemap default label="Ca l'espiga" {
         }
     }
 
-    Text item=RegTitle label="Reg i aigua" icon="faucet"
+    Text item=RegTitle label="Reg i aigua" icon="wassertank"
     {
         Frame label="Reg de l'hort" {
-            Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
-            Text icon="water" item=DipositPercentNumber label="Nivell diposit: [%d %%]"
-            Text icon="water" item=DipositLitres label="Litres diposit: [%d L]"
+            Text item=Encesa_Bomba label="Estat reg: [%s]" icon="hydrant"
             Switch item=Encesa_Bomba_Manual icon="sprinkler"
             Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
             Switch item=Encesa_Bomba_Auto icon="sprinkler"
             Setpoint item=Durada_Encesa_Auto icon="stopwatch" label="Durada [%.1f min]" minValue=1 maxValue=30 step=1
             Setpoint item=Hora_Encesa_Auto icon="time" label="Hora [%.1f h]" minValue=0 maxValue=24 step=1
             Setpoint item=Periode_Encesa_Auto icon="stopwatch" label="Cada [%.1f h]" minValue=2 maxValue=72 step=1
-            Text icon="time" item=Darrera_Encesa_Bomba label="Darrer reg [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=Darrera_Encesa_Bomba label="Darrer reg [%1$td/%1$tm/%1$tY %1$tT]"            
+        }
+        Frame label="Diposit" {
+            Text icon="wassertank" item=DipositPercentNumber label="Nivell diposit: [%d %%]"
+            Text icon="water" item=DipositLitres label="Litres diposit: [%d L]"
+            Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
+            Text icon="time" item=Darrera_Encesa_Bomba label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
+            Text item=Diposit_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
         }
         Frame{
             Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
@@ -142,9 +147,13 @@ sitemap default label="Ca l'espiga" {
             Text item=DiskPercent icon="receiver" label="Ús disc [%s %%]"
             Text item=DiskInodesPercent icon="receiver" label="Ús inodes [%s %%]"
         }
-        Frame label="Test" {
-            Switch item=GPIO_Test icon="switch" label="Test GPIO 19"
-            Switch item=GPIO_Test_Inverted icon="switch" label="Test GPIO 18 (inv)"
+        Frame label="Controladors" {
+            Text item=Calentador_Controlador_Memoria icon="receiver" label="Mem. calentador [%s bytes]"
+            Text item=Diposit_Controlador_Memoria icon="receiver" label="Mem. dipòsit [%s bytes]"
+            Text item=EstufaInfrarrojos_Controlador_Memoria icon="receiver" label="Mem. estufa infr. [%s bytes]"
+        }
+        Frame{
+            Webview height=14 url="http://calespiga.ddns.net:3000/d/X3vwvRmRk/memoria-arduinos?orgId=1"
         }
     }
 }

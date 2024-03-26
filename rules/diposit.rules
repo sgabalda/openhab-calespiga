@@ -1,0 +1,11 @@
+import java.time.ZonedDateTime
+
+rule "update last connexion from MQTT Diposit"
+when
+    Item DipositPercentNumber received update
+then
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+    //update last connection
+    Diposit_Ultima_Connexio.postUpdate(nowDateType)
+end
