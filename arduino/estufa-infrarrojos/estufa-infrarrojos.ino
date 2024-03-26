@@ -5,6 +5,7 @@
 #define SUB_ESTUFA_POT "estufa1/set"
 #define PUB_ESTUFA_POT "estufa1/status"
 #define MAX_TIME_BETWEEN_ORDERS 3*60*1000   // 3 minutes, if the MQTT goes nuts, turn off the heater just in case
+#define TOPIC_MEMORY "estufa1/memory"
 
 // Replace the next variables with your SSID/Password combination
 const char* ssid = "Ca l'espiga";
@@ -126,9 +127,18 @@ void loop() {
   client.loop();
   checkMaxTime();
   applyRelayStatus();
+  reportFreeMemory();
   delay(3000);
-  Serial.print("Free memory is: ");
-  Serial.println(ESP.getFreeHeap());
+
+}
+
+void reportFreeMemory(){
+  int freeMem = esp_get_free_heap_size();
+  char cstr[16];
+  itoa(freeMem, cstr, 10);
+  client.publish(TOPIC_MEMORY,cstr);
+  Serial.print("Free mem: ");
+  Serial.println(freeMem);
 }
 
 void estufaOff(){
