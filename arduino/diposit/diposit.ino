@@ -1,4 +1,4 @@
-#include <UIPEthernet.h>
+#include <Ethernet.h>
 #include <PubSubClient.h>
 #include <MemoryFree.h>
 
@@ -11,9 +11,9 @@
 EthernetClient ethClient;
 PubSubClient client(ethClient);
 
-double V0 = 0.18; //Volts without liquid
-double V1 = 1.25; //Volts with h1 of liquid
-double h1 = 1.80; // height at V1
+double V0 = 0.52; //Volts without liquid
+double V1 = 2.35; //Volts with h1 of liquid
+double h1 = 1.32; // height at V1
 double level, Vout, aux, i, result;
 double area = 5.20; //sq meters of tank
 int previousLiters = 0;
@@ -55,7 +55,7 @@ void setup()
         delay(1); // do nothing, no point running without Ethernet hardware
       }
     }
-    while (Ethernet.linkStatus() != LinkON) {
+    while (Ethernet.linkStatus() == LinkOFF) {
       Serial.println(F("Eth error. 5s retry"));
       delay(5000);
     }
