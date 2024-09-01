@@ -20,5 +20,9 @@ String BassaCirculacioProxy "Proxy ordre circulacio"
 
 Number BassaAiguagrisaHoraEncesa 
 Number BassaAiguagrisaHoraApagat 
-
 String BassaAiguagrisaHoraDescripcio "Hores encesa aigua grisa"
+
+String BassaModeCirculacio "Mode circulació bassa"
+Number BassaCirculacioHoraEncesa 
+Number BassaCirculacioHoraApagat 
+String BassaCirculacioDescripcio "Gestió circulació"

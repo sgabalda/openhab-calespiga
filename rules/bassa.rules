@@ -1,4 +1,3 @@
-import java.util.Date
 import java.time.ZonedDateTime
 
 var long lastChangePower = -1
@@ -76,7 +75,6 @@ then
     }
 
     val now = ZonedDateTime::now
-    val nowDateType = new DateTimeType(now)
     val currentHour = now.getHour()
 
     logDebug("bassa.rules","Checking if aiguagrisa should be open: current "+currentHour+", encesa "+horaEncesa+", apagat "+horaApagat)
@@ -106,5 +104,76 @@ then
     }else{
         logDebug("bassa.rules","aiguagrisa: Current hour between encesa & apagat, apagat is before so turning off")
         BassaAiguagrisaProxy.sendCommand("stop")
+    }
+end
+
+rule "Circulacio encesa per hores"
+when Item BassaCirculacioHoraEncesa changed
+    or Item BassaCirculacioHoraApagat changed
+    or Item BassaModeCirculacio changed
+    or Time cron "0 0 * ? * * *" //every hour
+then
+    var modeString = "hores"
+    val modeState = BassaModeCirculacio.state
+    if(modeState != NULL){
+        logDebug("bassa.rules","circulacio: the mode item is not null")
+        modeString = modeState.toString
+    }
+    logDebug("bassa.rules","circulacio: the mode is "+modeString)
+    if(modeString == "hores"){
+        logDebug("bassa.rules","circulacio: mode is 'hores', checking the hora encesa")
+        var horaEncesa = 0
+        val horaEncesaState = BassaCirculacioHoraEncesa.state
+        if(horaEncesaState != NULL){
+            horaEncesa = (horaEncesaState as Number).intValue
+        }
+        var horaApagat = 24
+        val horaApagatState = BassaCirculacioHoraApagat.state
+        if(horaApagatState != NULL){
+            horaApagat = (horaApagatState as Number).intValue
+        }
+        if(horaApagat == 0 && horaEncesa == 24){
+            BassaCirculacioDescripcio.postUpdate("Sempre apagada")
+        }else if(horaApagat == 24 && horaEncesa == 0){
+            BassaCirculacioDescripcio.postUpdate("Sempre encesa")
+        }else if(horaApagat == horaEncesa){
+            BassaCirculacioDescripcio.postUpdate("Sempre encesa")
+        }else{
+            BassaCirculacioDescripcio.postUpdate("Encesa de "+horaEncesa+" a "+horaApagat)
+        }
+
+        val now = ZonedDateTime::now
+        val currentHour = now.getHour()
+
+        logDebug("bassa.rules","Checking if circulacio should be open: current "+currentHour+", encesa "+horaEncesa+", apagat "+horaApagat)
+
+        if(currentHour >= horaApagat && currentHour >= horaEncesa){
+            //we are after encesa and apagat, so the latest is the state we should have
+            if(horaApagat > horaEncesa){
+                logDebug("bassa.rules","circulacio: Current hour after encesa & apagat, apagat is later so turning off")
+                BassaCirculacioProxy.sendCommand("stop")
+            }else{
+                logDebug("bassa.rules","circulacio: Current hour after encesa & apagat, encesa is later so turning on depuradora")
+                BassaCirculacioProxy.sendCommand("depuradora")
+            }
+        }else if( horaApagat > currentHour &&  horaEncesa > currentHour){
+            //we are before encesa and apagat, so the latest is the state we should have
+            if(horaApagat > horaEncesa){
+                logDebug("bassa.rules","circulacio: Current hour before encesa & apagat, apagat is later so turning off")
+                BassaCirculacioProxy.sendCommand("stop")
+            }else{
+                logDebug("bassa.rules","circulacio: Current hour before encesa & apagat, encesa is later so turning on depuradora")
+                BassaCirculacioProxy.sendCommand("depuradora")
+            }
+        }else if(currentHour >= horaEncesa){
+            //we are after encesa, but before apagat, so turning on
+            logDebug("bassa.rules","circulacio: Current hour between encesa & apagat, encesa is before so turning on depuradora")
+            BassaCirculacioProxy.sendCommand("depuradora")
+        }else{
+            logDebug("bassa.rules","circulacio: Current hour between encesa & apagat, apagat is before so turning off")
+            BassaCirculacioProxy.sendCommand("stop")
+        }
+    }else{
+        logDebug("bassa.rules","circulacio: The mode is not 'hores', so doing nothing")
     }
 end
