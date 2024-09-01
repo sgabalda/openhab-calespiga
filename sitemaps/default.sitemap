@@ -58,6 +58,16 @@ sitemap default label="Ca l'espiga" {
         Frame{
             Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
         }
+        Frame label="Bassa" {
+            Text icon="humidity" item=BassaPercentNumber label="Nivell bassa: [%d %%]"
+            Text icon="water" item=BassaLitres label="Litres bassa: [%d L]"
+            Text icon="flow" item=BassaAltura label="Profunditat bassa: [%d cm]"
+            Text icon="hydrant" item=BassaRegStatus label="Bomba reg: [%s]" 
+            Text icon="hydrant" item=BassaAiguagrisaStatus label="Aigua grisa: [%s]"
+            Text icon="faucet" item=BassaCirculacioStatus label="Circulacio: [%s]"
+            Text icon="network" item=BassaStatusConnexio label="Connexió: [%s]"
+            Text icon="time" item=BassaUltimaConnexio label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+        }
         
     }
 
@@ -151,6 +161,7 @@ sitemap default label="Ca l'espiga" {
             Text item=Calentador_Controlador_Memoria icon="receiver" label="Mem. calentador [%s bytes]"
             Text item=Diposit_Controlador_Memoria icon="receiver" label="Mem. dipòsit [%s bytes]"
             Text item=EstufaInfrarrojos_Controlador_Memoria icon="receiver" label="Mem. estufa infr. [%s bytes]"
+            Text item=BassaControladorMemoria icon="receiver" label="Mem. bassa [%s bytes]"
         }
         Frame{
             Webview height=14 url="http://calespiga.ddns.net:3000/d/X3vwvRmRk/memoria-arduinos?orgId=1"

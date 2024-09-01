@@ -1,0 +1,52 @@
+import java.util.Date
+import java.time.ZonedDateTime
+
+var long lastChangePower = -1
+val long COMMS_TIMEOUT_SECONDS = 30
+var Timer commsTimer = null
+
+rule "Set default commmands"    
+when System started
+then
+    BassaAiguagrisaProxy.sendCommand("start")   // to be removed when the modes are implemented and controlled via UI
+    BassaRegProxy.sendCommand("stop")   // to be removed when the modes are implemented and controlled via UI
+    BassaCirculacioProxy.sendCommand("depuradora")  // to be removed when the modes are implemented and controlled via UI
+
+end
+
+rule "forward proxy values"
+when BassaRegProxy changed
+    or BassaAiguagrisaProxy changed
+    or BassaCirculacioProxy changed
+    or Time cron "0 0/2 * ? * * *" //every two minutes
+then
+    BassaAiguagrisaCommand.sendCommand(BassaAiguagrisaProxy.state.toString)
+    BassaRegCommand.sendCommand(BassaRegProxy.state.toString)
+    BassaCirculacioCommand.sendCommand(BassaCirculacioProxy.state.toString)
+end
+
+rule "update last connexion from MQTT Bassa"
+when
+    Item BassaPercentNumber received update
+then
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+    //update last connection
+    BassaUltimaConnexio.postUpdate(nowDateType)
+    BassaStatusConnexio.sendCommand("Online")
+    //cancel previous timer and set a new one to put offline if there is no more messages.
+    if(commsTimer!==null){
+        logDebug("bassa.rules","comms timer not null, cancelling it")
+        commsTimer.cancel()
+    }
+    commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS.longValue), [|
+                logWarn("bassa.rules","Timer reached, changing state to default")
+                commsTimer = null
+                //Status of bassa is offline
+                BassaStatusConnexio.sendCommand("Offline")
+                BassaAiguagrisaProxy.sendCommand("start")
+                BassaRegProxy.sendCommand("stop")
+                BassaCirculacioProxy.sendCommand("depuradora")
+            ])
+end
+

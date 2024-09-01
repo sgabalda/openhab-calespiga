@@ -26,8 +26,8 @@
 
 #define COMMAND_START "start"
 #define COMMAND_STOP "stop"
-#define COMMAND_DIPOSIT "start"
-#define COMMAND_DEPURADORA "stop"
+#define COMMAND_DIPOSIT "diposit"
+#define COMMAND_DEPURADORA "depuradora"
 
 
 #define MAX_TIME_BETWEEN_ORDERS 3*60*1000   // 3 minutes
