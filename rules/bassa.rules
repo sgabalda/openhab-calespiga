@@ -8,7 +8,6 @@ rule "Set default commmands"
 when System started
 then
     BassaRegProxy.sendCommand("stop")   // to be removed when the modes are implemented and controlled via UI
-    BassaCirculacioProxy.sendCommand("depuradora")  // to be removed when the modes are implemented and controlled via UI
 end
 
 rule "forward proxy values"
