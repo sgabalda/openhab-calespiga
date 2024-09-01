@@ -13,9 +13,9 @@ then
 end
 
 rule "forward proxy values"
-when BassaRegProxy changed
-    or BassaAiguagrisaProxy changed
-    or BassaCirculacioProxy changed
+when Item BassaRegProxy changed
+    or Item BassaAiguagrisaProxy changed
+    or Item BassaCirculacioProxy changed
     or Time cron "0 0/2 * ? * * *" //every two minutes
 then
     logDebug("bassa.rules","Forwarding proxy values to command items")
@@ -50,8 +50,8 @@ then
 end
 
 rule "Aigua grisa encesa per hores"
-when BassaAiguagrisaHoraEncesa changed
-    or BassaAiguagrisaHoraApagat changed
+when Item BassaAiguagrisaHoraEncesa changed
+    or Item BassaAiguagrisaHoraApagat changed
     or Time cron "0 0 * ? * * *" //every hour
 then
     logDebug("bassa.rules","aiguagrisa: checking the hora encesa")
