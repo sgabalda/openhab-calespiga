@@ -14,11 +14,25 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type number : Memoria "Memoria" [ stateTopic="estufa1/memory" ]
     }
 
-        Thing mqtt:topic:arduino_calentador "arduino_calentador" (mqtt:broker:defaultBroker) {
+    Thing mqtt:topic:arduino_calentador "arduino_calentador" (mqtt:broker:defaultBroker) {
         Channels:
             Type string : TermostatStatus "TermostatStatus" [ stateTopic="arduino_calentador/termostat/status" ]
             Type string : PotenciaStatus "PotenciaStatus" [ stateTopic="arduino_calentador/potencia/status" ]
             Type string : PotenciaSet "PotenciaSet" [ commandTopic="arduino_calentador/potencia/set" ]
             Type number : Memoria "Memoria" [ stateTopic="arduino_calentador/memory" ]
+    }
+    
+    Thing mqtt:topic:bassa "bassa" (mqtt:broker:defaultBroker) {
+        Channels:
+            Type string : RegStatus "RegStatus" [ stateTopic="bassa/reg/status" ]
+            Type string : RegSet "RegSet" [ commandTopic="bassa/reg/set" ]
+            Type string : CirculacioStatus "CirculacioStatus" [ stateTopic="bassa/circulacio/status" ]
+            Type string : CirculacioSet "CirculacioSet" [ commandTopic="bassa/circulacio/set" ]
+            Type string : AiguagrisaStatus "AiguagrisaStatus" [ stateTopic="bassa/aiguagrisa/status" ]
+            Type string : AiguagrisaSet "AiguagrisaSet" [ commandTopic="bassa/aiguagrisa/set" ]
+            Type number : Percentatge "Percentatge" [ stateTopic="bassa/percentage" ]
+            Type number : Litres "Litres" [ stateTopic="bassa/liters" ]
+            Type number : Altura "Altura" [ stateTopic="bassa/height" ]
+            Type number : Memoria "Memoria" [ stateTopic="bassa/memory" ]
     }
 }
