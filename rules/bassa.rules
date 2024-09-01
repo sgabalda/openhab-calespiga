@@ -18,6 +18,7 @@ when BassaRegProxy changed
     or BassaCirculacioProxy changed
     or Time cron "0 0/2 * ? * * *" //every two minutes
 then
+    logDebug("bassa.rules","Forwarding proxy values to command items")
     BassaAiguagrisaCommand.sendCommand(BassaAiguagrisaProxy.state.toString)
     BassaRegCommand.sendCommand(BassaRegProxy.state.toString)
     BassaCirculacioCommand.sendCommand(BassaCirculacioProxy.state.toString)
@@ -53,6 +54,7 @@ when BassaAiguagrisaHoraEncesa changed
     or BassaAiguagrisaHoraApagat changed
     or Time cron "0 0 * ? * * *" //every hour
 then
+    logDebug("bassa.rules","aiguagrisa: checking the hora encesa")
     var horaEncesa = 0
     val horaEncesaState = BassaAiguagrisaHoraEncesa.state
     if(horaEncesaState != NULL){
