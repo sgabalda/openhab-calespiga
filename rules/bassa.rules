@@ -8,10 +8,8 @@ var Timer commsTimer = null
 rule "Set default commmands"    
 when System started
 then
-    BassaAiguagrisaProxy.sendCommand("start")   // to be removed when the modes are implemented and controlled via UI
     BassaRegProxy.sendCommand("stop")   // to be removed when the modes are implemented and controlled via UI
     BassaCirculacioProxy.sendCommand("depuradora")  // to be removed when the modes are implemented and controlled via UI
-
 end
 
 rule "forward proxy values"
@@ -50,3 +48,61 @@ then
             ])
 end
 
+rule "Aigua grisa encesa per hores"
+when BassaAiguagrisaHoraEncesa changed
+    or BassaAiguagrisaHoraApagat changed
+    or Time cron "0 0 * ? * * *" //every hour
+then
+    var horaEncesa = 0
+    val horaEncesaState = BassaAiguagrisaHoraEncesa.state
+    if(horaEncesaState != NULL){
+        horaEncesa = (horaEncesaState as Number).intValue
+    }
+    var horaApagat = 24
+    val horaApagatState = BassaAiguagrisaHoraApagat.state
+    if(horaApagatState != NULL){
+        horaApagat = (horaApagatState as Number).intValue
+    }
+    if(horaApagat == 0 && horaEncesa == 24){
+        BassaAiguagrisaHoraDescripcio.postUpdate("Sempre apagada")
+    }else if(horaApagat == 24 && horaEncesa == 0){
+        BassaAiguagrisaHoraDescripcio.postUpdate("Sempre encesa")
+    }else if(horaApagat == horaEncesa){
+        BassaAiguagrisaHoraDescripcio.postUpdate("Sempre encesa")
+    }else{
+        BassaAiguagrisaHoraDescripcio.postUpdate("Encesa de "+horaEncesa+" a "+horaApagat)
+    }
+
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now)
+    val currentHour = now.getHour()
+
+    logDebug("bassa.rules","Checking if aiguagrisa should be open: current "+currentHour+", encesa "+horaEncesa+", apagat "+horaApagat)
+
+    if(currentHour >= horaApagat && currentHour >= horaEncesa){
+        //we are after encesa and apagat, so the latest is the state we should have
+        if(horaApagat > horaEncesa){
+            logDebug("bassa.rules","aiguagrisa: Current hour after encesa & apagat, apagat is later so turning off")
+            BassaAiguagrisaProxy.sendCommand("stop")
+        }else{
+            logDebug("bassa.rules","aiguagrisa: Current hour after encesa & apagat, encesa is later so turning on")
+            BassaAiguagrisaProxy.sendCommand("start")
+        }
+    }else if( horaApagat > currentHour &&  horaEncesa > currentHour){
+        //we are before encesa and apagat, so the latest is the state we should have
+        if(horaApagat > horaEncesa){
+            logDebug("bassa.rules","aiguagrisa: Current hour before encesa & apagat, apagat is later so turning off")
+            BassaAiguagrisaProxy.sendCommand("stop")
+        }else{
+            logDebug("bassa.rules","aiguagrisa: Current hour before encesa & apagat, encesa is later so turning on")
+            BassaAiguagrisaProxy.sendCommand("start")
+        }
+    }else if(currentHour >= horaEncesa){
+        //we are after encesa, but before apagat, so turning on
+        logDebug("bassa.rules","aiguagrisa: Current hour between encesa & apagat, encesa is before so turning on")
+        BassaAiguagrisaProxy.sendCommand("start")
+    }else{
+        logDebug("bassa.rules","aiguagrisa: Current hour between encesa & apagat, apagat is before so turning off")
+        BassaAiguagrisaProxy.sendCommand("stop")
+    }
+end

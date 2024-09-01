@@ -55,20 +55,26 @@ sitemap default label="Ca l'espiga" {
             Text icon="time" item=Darrera_Encesa_Bomba label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
             Text item=Diposit_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
         }
-        Frame{
-            Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
-        }
         Frame label="Bassa" {
             Text icon="humidity" item=BassaPercentNumber label="Nivell bassa: [%d %%]"
             Text icon="water" item=BassaLitres label="Litres bassa: [%d L]"
             Text icon="flow" item=BassaAltura label="Profunditat bassa: [%d cm]"
             Text icon="hydrant" item=BassaRegStatus label="Bomba reg: [%s]" 
-            Text icon="hydrant" item=BassaAiguagrisaStatus label="Aigua grisa: [%s]"
             Text icon="faucet" item=BassaCirculacioStatus label="Circulacio: [%s]"
             Text icon="network" item=BassaStatusConnexio label="Connexió: [%s]"
             Text icon="time" item=BassaUltimaConnexio label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
         }
-        
+        Frame label="Aigua grisa" {
+            Text icon="hydrant" item=BassaAiguagrisaStatus label="Estat: [%s]"
+            Setpoint icon="time" item=BassaAiguagrisaHoraEncesa label="Hora inici [%.1f h]" minValue=0 maxValue=24 step=1
+            Setpoint icon="time" item=BassaAiguagrisaHoraApagat label="Hora fi [%.1f h]" minValue=0 maxValue=24 step=1
+            Text icon="time" item=BassaAiguagrisaHoraDescripcio label="Programació: [%s]"
+            Text icon="network" item=BassaStatusConnexio label="Connexió: [%s]"
+            Text icon="time" item=BassaUltimaConnexio label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+        }
+        Frame{
+            Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
+        }
     }
 
     Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"

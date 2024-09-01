@@ -18,3 +18,7 @@ String BassaAiguagrisaProxy "Proxy ordre aigua grisa"
 String BassaRegProxy "Proxy ordre reg"
 String BassaCirculacioProxy "Proxy ordre circulacio"
 
+Number BassaAiguagrisaHoraEncesa 
+Number BassaAiguagrisaHoraApagat 
+
+String BassaAiguagrisaHoraDescripcio "Hores encesa aigua grisa"
