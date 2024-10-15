@@ -55,8 +55,8 @@
 #define AIGUAGRISA_OFF 1  // Can transition to ON only
 #define AIGUAGRISA_ON 2  //can transition to OFF only
 
-#define RELAY_ON LOW
-#define RELAY_OFF HIGH
+#define RELAY_ON HIGH
+#define RELAY_OFF LOW
 
 // Networking details
 byte mac[]    = {  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x03 };  // Ethernet shield (W5100) MAC address
@@ -68,11 +68,11 @@ PubSubClient client(ethClient);
 
 //Pressure sensor calibration
 double V0 = 0.52; //Volts without liquid
-double V1 = 2.35; //Volts with h1 of liquid
-double h1 = 1.32; // height at V1
+double V1 = 2.56; //Volts with h1 of liquid
+double h1 = 1.53; // measured height at V1
 double level, Vout, aux, i, result;
 int previousLiters = 0;
-int maxHeightCm = 153;
+int maxHeightCm = 153;  //max measured height
 
 long lastOrder = 0;     //to store the last time when an order was received
 
@@ -146,7 +146,7 @@ void reconnect()
       // (re)subscribe
       client.subscribe(TOPIC_REG_SET);
       client.subscribe(TOPIC_CIRCULACIO_SET);
-      client.subscribe(TOPIC_CIRCULACIO_SET);
+      client.subscribe(TOPIC_AIGUAGRISA_SET);
     } else {
       Serial.print(F("Connection failed, state: "));
       Serial.print(client.state());
@@ -196,17 +196,18 @@ double readHeight()
   return level;
 }
 
-double calculateVolume(double height){
+double calculateVolume(double height){  //returns the volume in liters
+  height = height + 0.1; //the sensor is 5cm above bottom level
   /*
   liters in function of height:
   center volume + slope volume + corner volume
-  center volume = Area of center * h = 5.79 * height (center is 5,79 m²)
+  center volume = Area of center * h = 5.79 * height (center is ~ 6,5 m²)
   slope volume = 0.5 * h² / tg (alpha) = 0.5 * height * height * 0.577 (alpha = 60 deg)
   corner volume = 1/3 * h³ / (tg (alpha))² = 1/9 * height * height * height (alpha = 60 deg)
 
-  volume = 5.79 * height + 0.5 * height * height * 0.577 + 1/9 * height * height * height
+  volume = 6.5 * height + 0.5 * height * height * 0.577 + 1/9 * height * height * height
   */
-  return 5.79 * height + 0.5 * height * height * 0.577 + 1/9 * height * height * height * 1000;
+  return (6.5 * height + 0.5 * height * height * 0.577 + 1/9 * height * height * height) * 1000;
 }
 
 void measureAndReportDepthSensor(){
