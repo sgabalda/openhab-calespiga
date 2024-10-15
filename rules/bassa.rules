@@ -39,7 +39,7 @@ then
         logDebug("bassa.rules","comms timer not null, cancelling it")
         commsTimer.cancel()
     }
-    commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS.longValue), [|
+    commsTimer = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS), [|
                 logWarn("bassa.rules","Timer reached, changing state to default")
                 commsTimer = null
                 //Status of bassa is offline
@@ -63,7 +63,7 @@ then
         logDebug("bassa.rules","comms timer not null, cancelling it")
         commsTimerAiguaGrisa.cancel()
     }
-    commsTimerAiguaGrisa = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS.longValue), [|
+    commsTimerAiguaGrisa = createTimer(now.plusSeconds(COMMS_TIMEOUT_SECONDS), [|
                 logWarn("bassa.rules","Timer reached, changing state to default")
                 commsTimerAiguaGrisa = null
                 //Status of aiguagrisa is offline
@@ -308,7 +308,7 @@ then
     }
     logDebug("bassa.rules","circulacio: the mode is "+modeString)
     if(modeString == "unusedPower"){
-        val circulacioString = "stop"
+        var circulacioString = "stop"
         val circulacioState = BassaCirculacioProxy.state
         if(circulacioState != NULL){
             logDebug("bassa.rules","circulacio: the circulacio proxy item is not null")
