@@ -5,6 +5,8 @@ val long COMMS_TIMEOUT_SECONDS = 30
 var Timer commsTimer = null
 var Timer commsTimerAiguaGrisa = null
 
+val USED_POWER = 250.0
+
 rule "Set default commmands"    
 when System started
 then
@@ -252,8 +254,6 @@ then
 end
 
 //rules to manage unused power
-
-val USED_POWER = 250.0
 
 rule "Potencia disponible bomba"
 when
