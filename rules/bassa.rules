@@ -40,7 +40,6 @@ then
     }
     commsTimer = createTimer(now.plusSeconds(30L), [|
                 logWarn("bassa.rules","Timer reached, changing state to default")
-                commsTimer.cancel()
                 commsTimer = null
                 //Status of bassa is offline
                 BassaStatusConnexio.sendCommand("Offline")
@@ -66,7 +65,6 @@ then
     }
     commsTimerAiguaGrisa = createTimer(now.plusSeconds(30L), [|
                 logWarn("bassa.rules","Timer reached, changing state to default")
-                commsTimerAiguaGrisa.cancel()
                 commsTimerAiguaGrisa = null
                 //Status of aiguagrisa is offline
                 BassaAiguaGrisaStatusConnexio.sendCommand("Offline")
@@ -159,7 +157,7 @@ then
             horaApagat = (horaApagatState as Number).intValue
         }
         var cadencia = 50
-        val cadenciaState = BassaCirculacioHoraApagat.state
+        val cadenciaState = BassaCirculacioCadencia.state
         if(cadenciaState != NULL){
             cadencia = (cadenciaState as Number).intValue
         }
