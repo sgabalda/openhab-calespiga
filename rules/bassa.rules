@@ -205,7 +205,7 @@ then
             horaApagat = (horaApagatState as Number).intValue
         }
         var cadencia = 50
-        val cadenciaState = BassaCirculacioHoraApagat.state
+        val cadenciaState = BassaCirculacioCadencia.state
         if(cadenciaState != NULL){
             cadencia = (cadenciaState as Number).intValue
         }
@@ -248,6 +248,7 @@ then
             }
         }else{
             logDebug("bassa.rules","Current minute is NOT within cadencia")
+            BassaCirculacioProxy.sendCommand("stop")
         }
     }else{
         logDebug("bassa.rules","circulacio: The mode is not 'hores', so doing nothing")
