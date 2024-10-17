@@ -278,10 +278,10 @@ then
             availablePower = (oldPowerState as Number).doubleValue
         }
         if(availablePower >= USED_POWER){
-            logInfo("bassa.rules", "As available power is "+available+",  required power set to the same")
+            logInfo("bassa.rules", "As available power is "+availablePower+",  required power set to the same")
             requiredPower = USED_POWER
         }else{
-            logInfo("bassa.rules", "As available power is "+available+",  required power set to 0.0")
+            logInfo("bassa.rules", "As available power is "+availablePower+",  required power set to 0.0")
             requiredPower = 0.0
         }
     }else{
