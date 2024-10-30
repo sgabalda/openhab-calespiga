@@ -1,0 +1,352 @@
+import java.time.ZonedDateTime
+
+var long lastChangePower = -1
+var Timer commsTimer = null
+var Timer commsTimerAiguaGrisa = null
+
+val USED_POWER = 250.0
+
+rule "Set default commmands"    
+when System started
+then
+    BassaRegProxy.sendCommand("stop")   // to be removed when the modes are implemented and controlled via UI
+end
+
+rule "forward proxy values"
+when Item BassaRegProxy changed
+    or Item BassaAiguagrisaProxy changed
+    or Item BassaCirculacioProxy changed
+    or Time cron "0/15 * * * * * *" //every 15 secs
+then
+    logDebug("bassa.rules","Forwarding proxy values to command items")
+    BassaAiguagrisaCommand.sendCommand(BassaAiguagrisaProxy.state.toString)
+    BassaRegCommand.sendCommand(BassaRegProxy.state.toString)
+    BassaCirculacioCommand.sendCommand(BassaCirculacioProxy.state.toString)
+end
+
+rule "update last connexion from MQTT Bassa"
+when
+    Item BassaPercentNumber received update
+then
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+    //update last connection
+    BassaUltimaConnexio.postUpdate(nowDateType)
+    BassaStatusConnexio.sendCommand("Online")
+    //cancel previous timer and set a new one to put offline if there is no more messages.
+    if(commsTimer!==null){
+        logDebug("bassa.rules","comms timer not null, cancelling it")
+        commsTimer.cancel()
+    }
+    commsTimer = createTimer(now.plusSeconds(30L), [|
+                logWarn("bassa.rules","Timer reached, changing state to default")
+                commsTimer = null
+                //Status of bassa is offline
+                BassaStatusConnexio.sendCommand("Offline")
+                BassaRegProxy.sendCommand("stop")
+                BassaCirculacioProxy.sendCommand("depuradora")
+                logWarn("bassa.rules","Finished timer execution")
+            ])
+end
+
+rule "update last connexion from MQTT AiguaGrisa"
+when
+    Item BassaAiguagrisaStatus received update
+then
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+    //update last connection
+    BassaAiguaGrisaUltimaConnexio.postUpdate(nowDateType)
+    BassaAiguaGrisaStatusConnexio.sendCommand("Online")
+    //cancel previous timer and set a new one to put offline if there is no more messages.
+    if(commsTimerAiguaGrisa!==null){
+        logDebug("bassa.rules","comms timer not null, cancelling it")
+        commsTimerAiguaGrisa.cancel()
+    }
+    commsTimerAiguaGrisa = createTimer(now.plusSeconds(30L), [|
+                logWarn("bassa.rules","Timer reached, changing state to default")
+                commsTimerAiguaGrisa = null
+                //Status of aiguagrisa is offline
+                BassaAiguaGrisaStatusConnexio.sendCommand("Offline")
+                BassaAiguagrisaProxy.sendCommand("start")
+                logWarn("bassa.rules","Finished timer execution")
+            ])
+end
+
+rule "Aigua grisa encesa per hores"
+when Item BassaAiguagrisaHoraEncesa changed
+    or Item BassaAiguagrisaHoraApagat changed
+    or Time cron "0 0 * ? * * *" //every hour
+then
+    logDebug("bassa.rules","aiguagrisa: checking the hora encesa")
+    var horaEncesa = 0
+    val horaEncesaState = BassaAiguagrisaHoraEncesa.state
+    if(horaEncesaState != NULL){
+        horaEncesa = (horaEncesaState as Number).intValue
+    }
+    var horaApagat = 24
+    val horaApagatState = BassaAiguagrisaHoraApagat.state
+    if(horaApagatState != NULL){
+        horaApagat = (horaApagatState as Number).intValue
+    }
+    if(horaApagat == 0 && horaEncesa == 24){
+        BassaAiguagrisaHoraDescripcio.postUpdate("Sempre apagada")
+    }else if(horaApagat == 24 && horaEncesa == 0){
+        BassaAiguagrisaHoraDescripcio.postUpdate("Sempre encesa")
+    }else if(horaApagat == horaEncesa){
+        BassaAiguagrisaHoraDescripcio.postUpdate("Sempre encesa")
+    }else{
+        BassaAiguagrisaHoraDescripcio.postUpdate("Encesa de "+horaEncesa+" a "+horaApagat)
+    }
+
+    val now = ZonedDateTime::now
+    val currentHour = now.getHour()
+
+    logDebug("bassa.rules","Checking if aiguagrisa should be open: current "+currentHour+", encesa "+horaEncesa+", apagat "+horaApagat)
+
+    if(currentHour >= horaApagat && currentHour >= horaEncesa){
+        //we are after encesa and apagat, so the latest is the state we should have
+        if(horaApagat > horaEncesa){
+            logDebug("bassa.rules","aiguagrisa: Current hour after encesa & apagat, apagat is later so turning off")
+            BassaAiguagrisaProxy.sendCommand("stop")
+        }else{
+            logDebug("bassa.rules","aiguagrisa: Current hour after encesa & apagat, encesa is later so turning on")
+            BassaAiguagrisaProxy.sendCommand("start")
+        }
+    }else if( horaApagat > currentHour &&  horaEncesa > currentHour){
+        //we are before encesa and apagat, so the latest is the state we should have
+        if(horaApagat > horaEncesa){
+            logDebug("bassa.rules","aiguagrisa: Current hour before encesa & apagat, apagat is later so turning off")
+            BassaAiguagrisaProxy.sendCommand("stop")
+        }else{
+            logDebug("bassa.rules","aiguagrisa: Current hour before encesa & apagat, encesa is later so turning on")
+            BassaAiguagrisaProxy.sendCommand("start")
+        }
+    }else if(currentHour >= horaEncesa){
+        //we are after encesa, but before apagat, so turning on
+        logDebug("bassa.rules","aiguagrisa: Current hour between encesa & apagat, encesa is before so turning on")
+        BassaAiguagrisaProxy.sendCommand("start")
+    }else{
+        logDebug("bassa.rules","aiguagrisa: Current hour between encesa & apagat, apagat is before so turning off")
+        BassaAiguagrisaProxy.sendCommand("stop")
+    }
+end
+
+rule "Canvi de missatge circulacio"
+when Item BassaCirculacioHoraEncesa changed
+    or Item BassaCirculacioHoraApagat changed
+    or Item BassaModeCirculacio changed
+    or Item BassaCirculacioCadencia changed
+then
+    var modeString = "hores"
+    val modeState = BassaModeCirculacio.state
+    if(modeState != NULL){
+        logDebug("bassa.rules","circulacio: the mode item is not null")
+        modeString = modeState.toString
+    }
+    if(modeString == "hores"){
+        logDebug("bassa.rules","circulacio: mode is 'hores', checking the hora encesa")
+        var horaEncesa = 0
+        val horaEncesaState = BassaCirculacioHoraEncesa.state
+        if(horaEncesaState != NULL){
+            horaEncesa = (horaEncesaState as Number).intValue
+        }
+        var horaApagat = 24
+        val horaApagatState = BassaCirculacioHoraApagat.state
+        if(horaApagatState != NULL){
+            horaApagat = (horaApagatState as Number).intValue
+        }
+        var cadencia = 50
+        val cadenciaState = BassaCirculacioCadencia.state
+        if(cadenciaState != NULL){
+            cadencia = (cadenciaState as Number).intValue
+        }
+        val cadenciaText = ", "+cadencia+"% del temps"
+
+        if(horaApagat == 0 && horaEncesa == 24){
+            BassaCirculacioDescripcio.postUpdate("Sempre apagada")
+        }else if(horaApagat == 24 && horaEncesa == 0){
+            BassaCirculacioDescripcio.postUpdate("Sempre encesa"+cadenciaText)
+        }else if(horaApagat == horaEncesa){
+            BassaCirculacioDescripcio.postUpdate("Sempre encesa"+cadenciaText)
+        }else{
+            BassaCirculacioDescripcio.postUpdate("Encesa de "+horaEncesa+" a "+horaApagat+cadenciaText)
+        }
+    }else{
+        BassaCirculacioDescripcio.postUpdate("Si sobra energia")
+    }
+
+end
+
+rule "Circulacio encesa per hores"
+when Item BassaCirculacioHoraEncesa changed
+    or Item BassaCirculacioHoraApagat changed
+    or Item BassaModeCirculacio changed
+    or Item BassaCirculacioCadencia changed
+    or Time cron "0 * * ? * * *" //every minute
+then
+    var modeString = "hores"
+    val modeState = BassaModeCirculacio.state
+    if(modeState != NULL){
+        logDebug("bassa.rules","circulacio: the mode item is not null")
+        modeString = modeState.toString
+    }
+    logDebug("bassa.rules","circulacio: the mode is "+modeString)
+    if(modeString == "hores"){
+        logDebug("bassa.rules","circulacio: mode is 'hores', checking the hora encesa")
+        var horaEncesa = 0
+        val horaEncesaState = BassaCirculacioHoraEncesa.state
+        if(horaEncesaState != NULL){
+            horaEncesa = (horaEncesaState as Number).intValue
+        }
+        var horaApagat = 24
+        val horaApagatState = BassaCirculacioHoraApagat.state
+        if(horaApagatState != NULL){
+            horaApagat = (horaApagatState as Number).intValue
+        }
+        var cadencia = 50
+        val cadenciaState = BassaCirculacioCadencia.state
+        if(cadenciaState != NULL){
+            cadencia = (cadenciaState as Number).intValue
+        }
+
+        val now = ZonedDateTime::now
+        val currentHour = now.getHour()
+        val currentMinute = now.getMinute()
+
+        logDebug("bassa.rules","Checking if circulacio should be open due to cadencia ("+cadencia+"), minute: "+currentMinute)
+
+        if(cadencia >= ((currentMinute % 10)+1)*10){
+            logDebug("bassa.rules","Current minute is within cadencia")
+            logDebug("bassa.rules","Checking if circulacio should be open: current "+currentHour+", encesa "+horaEncesa+", apagat "+horaApagat)
+
+            if(currentHour >= horaApagat && currentHour >= horaEncesa){
+                //we are after encesa and apagat, so the latest is the state we should have
+                if(horaApagat > horaEncesa){
+                    logDebug("bassa.rules","circulacio: Current hour after encesa & apagat, apagat is later so turning off")
+                    BassaCirculacioProxy.sendCommand("stop")
+                }else{
+                    logDebug("bassa.rules","circulacio: Current hour after encesa & apagat, encesa is later so turning on depuradora")
+                    BassaCirculacioProxy.sendCommand("depuradora")
+                }
+            }else if( horaApagat > currentHour &&  horaEncesa > currentHour){
+                //we are before encesa and apagat, so the latest is the state we should have
+                if(horaApagat > horaEncesa){
+                    logDebug("bassa.rules","circulacio: Current hour before encesa & apagat, apagat is later so turning off")
+                    BassaCirculacioProxy.sendCommand("stop")
+                }else{
+                    logDebug("bassa.rules","circulacio: Current hour before encesa & apagat, encesa is later so turning on depuradora")
+                    BassaCirculacioProxy.sendCommand("depuradora")
+                }
+            }else if(currentHour >= horaEncesa){
+                //we are after encesa, but before apagat, so turning on
+                logDebug("bassa.rules","circulacio: Current hour between encesa & apagat, encesa is before so turning on depuradora")
+                BassaCirculacioProxy.sendCommand("depuradora")
+            }else{
+                logDebug("bassa.rules","circulacio: Current hour between encesa & apagat, apagat is before so turning off")
+                BassaCirculacioProxy.sendCommand("stop")
+            }
+        }else{
+            logDebug("bassa.rules","Current minute is NOT within cadencia")
+            BassaCirculacioProxy.sendCommand("stop")
+        }
+    }else{
+        logDebug("bassa.rules","circulacio: The mode is not 'hores', so doing nothing")
+    }
+end
+
+//rules to manage unused power
+
+rule "Potencia disponible bomba"
+when
+	Item Bassa_AvailablePower received command
+then
+    var modeString = "hores"
+    val modeState = BassaModeCirculacio.state
+    if(modeState != NULL){
+        logDebug("bassa.rules","circulacio: the mode item is not null")
+        modeString = modeState.toString
+    }
+
+    var requiredPower = 0.0
+
+    logDebug("bassa.rules","circulacio: the mode is "+modeString)
+    if(modeString == "unusedPower"){
+        val oldPowerState = receivedCommand
+        var availablePower = 0.0
+        if(oldPowerState != NULL){
+            availablePower = (oldPowerState as Number).doubleValue
+        }
+        if(availablePower >= USED_POWER){
+            logInfo("bassa.rules", "As available power is "+availablePower+",  required power set to the same")
+            requiredPower = USED_POWER
+        }else{
+            logInfo("bassa.rules", "As available power is "+availablePower+",  required power set to 0.0")
+            requiredPower = 0.0
+        }
+    }else{
+		logDebug("bassa.rules", "Received unused power, but basa is not unused power mode")
+	}
+    Bassa_RequiredPower.sendCommand(requiredPower)
+end
+
+rule "update bassa required power"
+when
+	Item Bassa_RequiredPower received command
+then
+    logInfo("bassa.rules", "Required power updated, notifying the DestinationDeviceUpdated")
+	DestinationDeviceUpdated.sendCommand("bassa")
+end
+
+rule "Apply power bassa"
+when
+	Item Bassa_ApplyChange received command
+then
+    var modeString = "hores"
+    val modeState = BassaModeCirculacio.state
+    if(modeState != NULL){
+        logDebug("bassa.rules","circulacio: the mode item is not null")
+        modeString = modeState.toString
+    }
+    logDebug("bassa.rules","circulacio: the mode is "+modeString)
+    if(modeString == "unusedPower"){
+        var circulacioString = "stop"
+        val circulacioState = BassaCirculacioProxy.state
+        if(circulacioState != NULL){
+            logDebug("bassa.rules","circulacio: the circulacio proxy item is not null")
+            circulacioString = circulacioState.toString
+        }
+
+        if(circulacioString == "diposit"){
+            logInfo("bassa.rules", "Circulacio set to Diposit, not applying unused power")
+            Bassa_UsedPower.sendCommand(0)
+        }else{
+
+            logInfo("bassa.rules", "Going to apply the required power, as the circulacio is not diposit")
+            val requiredPowerState = Bassa_RequiredPower.state
+            var powerToApply = 0
+            if(requiredPowerState != NULL){
+                powerToApply = (requiredPowerState as Number).intValue
+            }
+            logInfo("bassa.rules", "The required power to apply is "+powerToApply)
+
+            if(powerToApply >= USED_POWER){
+                //if the bassa was stopped, put it to depuradora. Otherwise leave it as it is
+                if(circulacioString == "stop"){
+                    BassaCirculacioProxy.sendCommand("depuradora")
+                }
+                Bassa_UsedPower.sendCommand(powerToApply)
+            }else{
+                if(circulacioString == "depuradora"){
+                    BassaCirculacioProxy.sendCommand("stop")
+                }
+                Bassa_UsedPower.sendCommand(0)
+            }    
+        }    
+        DestinationDeviceApplied.sendCommand("bassa")
+    }else{
+        logInfo("bassa.rules", "Gestio is not unusedPower, so not applying required power, but notifying as applied")
+        Bassa_UsedPower.sendCommand(0)
+        DestinationDeviceApplied.sendCommand("bassa")
+    }
+end

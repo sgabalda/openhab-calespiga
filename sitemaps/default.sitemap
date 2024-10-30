@@ -55,10 +55,31 @@ sitemap default label="Ca l'espiga" {
             Text icon="time" item=Darrera_Encesa_Bomba label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
             Text item=Diposit_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
         }
+        Frame label="Bassa" {
+            Text icon="humidity" item=BassaPercentNumber label="Nivell bassa: [%d %%]"
+            Text icon="water" item=BassaLitres label="Litres bassa: [%d L]"
+            Text icon="flow" item=BassaAltura label="Profunditat bassa: [%d cm]"
+            Text icon="hydrant" item=BassaRegStatus label="Bomba reg: [%s]"
+            Text icon="faucet" item=BassaCirculacioStatus label="Estat circulacio: [%s]"
+            Selection icon="switch_on_off" item=BassaModeCirculacio label="Mode circulacio: [%s]"  mappings=["hores"="Hores", "unusedPower"="Pot. sobrant"]
+            Setpoint icon="time" item=BassaCirculacioHoraEncesa label="Hora inici [%.1f h]" minValue=0 maxValue=24 step=1
+            Setpoint icon="time" item=BassaCirculacioHoraApagat label="Hora fi [%.1f h]" minValue=0 maxValue=24 step=1
+            Setpoint icon="time" item=BassaCirculacioCadencia label="Cadència encesa: [%d %%]" minValue=10 maxValue=100 step=10
+            Text icon="time" item=BassaCirculacioDescripcio label="Programació: [%s]"
+            Text icon="network" item=BassaStatusConnexio label="Connexió: [%s]"
+            Text icon="time" item=BassaUltimaConnexio label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+        }
+        Frame label="Aigua grisa" {
+            Text icon="hydrant" item=BassaAiguagrisaStatus label="Estat: [%s]"
+            Setpoint icon="time" item=BassaAiguagrisaHoraEncesa label="Hora inici [%.1f h]" minValue=0 maxValue=24 step=1
+            Setpoint icon="time" item=BassaAiguagrisaHoraApagat label="Hora fi [%.1f h]" minValue=0 maxValue=24 step=1
+            Text icon="time" item=BassaAiguagrisaHoraDescripcio label="Programació: [%s]"
+            Text icon="network" item=BassaAiguaGrisaStatusConnexio label="Connexió: [%s]"
+            Text icon="time" item=BassaAiguaGrisaUltimaConnexio label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+        }
         Frame{
             Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
         }
-        
     }
 
     Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
@@ -136,9 +157,10 @@ sitemap default label="Ca l'espiga" {
             Text item=NotUsedPower icon="receiver" label="Potencia no usada [%d W]"
         }
         Frame label="Dispositius" {
-            Setpoint item=Cotxe_Priority icon="electric_car" label="Prioritat cotxe [%d]" minValue=1 maxValue=3 step=1
-            Setpoint item=Calentador_Priority icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=3 step=1
-            Setpoint item=EstufaInfrarrojos_Priority icon="radiator" label="Prioritat Estufa infrarrojos [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=Cotxe_Priority icon="electric_car" label="Prioritat cotxe [%d]" minValue=1 maxValue=4 step=1
+            Setpoint item=Calentador_Priority icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=4 step=1
+            Setpoint item=EstufaInfrarrojos_Priority icon="radiator" label="Prioritat Estufa infrarrojos [%d]" minValue=1 maxValue=4 step=1
+            Setpoint item=Bassa_Priority icon="faucet" label="Prioritat Bassa [%d]" minValue=1 maxValue=4 step=1
         }
     }
     Text item=SystemTitle label="Sistema" icon="settings"
@@ -151,6 +173,7 @@ sitemap default label="Ca l'espiga" {
             Text item=Calentador_Controlador_Memoria icon="receiver" label="Mem. calentador [%s bytes]"
             Text item=Diposit_Controlador_Memoria icon="receiver" label="Mem. dipòsit [%s bytes]"
             Text item=EstufaInfrarrojos_Controlador_Memoria icon="receiver" label="Mem. estufa infr. [%s bytes]"
+            Text item=BassaControladorMemoria icon="receiver" label="Mem. bassa [%s bytes]"
         }
         Frame{
             Webview height=14 url="http://calespiga.ddns.net:3000/d/X3vwvRmRk/memoria-arduinos?orgId=1"

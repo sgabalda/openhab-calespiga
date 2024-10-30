@@ -4,7 +4,6 @@ import java.util.List
 
 var test = false     //set to true to use test mode (unused power will not be read from Sunny boy
 
-val availableDevices = newArrayList("Cotxe","Calentador")
 var finishedRetries = 0
 val MAX_FINISHED_RETRIES = 5
 var currentItemUpdated = 0
@@ -203,7 +202,7 @@ then
                 logInfo("UnusedPower","Getting used power by device "+devices.get(i))
                 val currentItem = ScriptServiceUtil.getItemRegistry.getItem(devices.get(i) + "_UsedPower")
                 logInfo("UnusedPower","Got the current item used power (forget next is "+forgetLastUsedPower+")")
-                if(currentItem.state != null){
+                if(currentItem != null && currentItem.state != NULL){
                     val unusedByDevice = (currentItem.state as Number).intValue
                     if(unusedByDevice == 0){
                         logInfo("UnusedPower","Unused power for "+devices.get(i)+" is 0, not adding it: "+currentItem.state)
@@ -215,7 +214,7 @@ then
                         availablePower = availablePower + (currentItem.state as Number).intValue
                     }
                 }
-                logInfo("UnusedPower","Available power is now "+availablePower)
+                logInfo("UnusedPower","Available power is after checking device "+devices.get(i)+": "+availablePower)
                 i = i - 1
             }
 

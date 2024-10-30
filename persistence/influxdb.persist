@@ -11,4 +11,5 @@ VentiladorGestioElect,VentiladorBateriesManual,VentiladorElectronicaManual: stra
 ElectronicaTemperatura,BateriesTemperatura,ExteriorArmarisTemperatura,BateriesTemperaturaAdosada: strategy = everyChange
 Calentador_Controlador_Memoria,Diposit_Controlador_Memoria,EstufaInfrarrojos_Controlador_Memoria: strategy = everyChange, everyMinute
 Calentador_Energia_Avui,Calentador_Potencia_UserDisplay,Cotxe_Potencia_UserDisplay,Cotxe_Energia_Avui,DipositPercentNumber,DipositLitres: strategy = everyChange, everyMinute
+BassaPercentNumber,BassaLitres,BassaAltura: strategy = everyChange, everyMinute
 }

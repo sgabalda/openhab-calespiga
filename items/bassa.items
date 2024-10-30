@@ -1,0 +1,46 @@
+Number BassaPercentNumber {channel="mqtt:topic:bassa:Percentatge"}
+Number BassaLitres {channel="mqtt:topic:bassa:Litres"}
+Number BassaAltura {channel="mqtt:topic:bassa:Altura"}
+Number BassaControladorMemoria "Memòria controlador bassa" {channel="mqtt:topic:bassa:Memoria"}
+
+DateTime BassaUltimaConnexio "Instant darrera connexio"
+String BassaStatusConnexio "Estat connexió"
+
+DateTime BassaAiguaGrisaUltimaConnexio "Instant darrera connexio"
+String BassaAiguaGrisaStatusConnexio "Estat connexió"
+
+String BassaAiguagrisaStatus "Estat aigua grisa" {channel="mqtt:topic:bassa:AiguagrisaStatus"}
+String BassaRegStatus "Estat bomba reg" {channel="mqtt:topic:bassa:RegStatus"}
+String BassaCirculacioStatus "Estat circulacio" {channel="mqtt:topic:bassa:CirculacioStatus"}
+
+String BassaAiguagrisaCommand "Ordre aigua grisa" {channel="mqtt:topic:bassa:AiguagrisaSet"}
+String BassaRegCommand "Ordre reg" {channel="mqtt:topic:bassa:RegSet"}
+String BassaCirculacioCommand "Ordre circulacio" {channel="mqtt:topic:bassa:CirculacioSet"}
+
+String BassaAiguagrisaProxy "Proxy ordre aigua grisa"
+String BassaRegProxy "Proxy ordre reg"
+String BassaCirculacioProxy "Proxy ordre circulacio"
+String BassaCirculacioCadenciaProxy "Proxy encesa circulacio"     //per controlar l'encesa en base a la cadència
+
+Number BassaCirculacioCadencia "Cadencia de la circulacio de la bassa"
+
+Number BassaAiguagrisaHoraEncesa 
+Number BassaAiguagrisaHoraApagat 
+String BassaAiguagrisaHoraDescripcio "Hores encesa aigua grisa"
+
+String BassaModeCirculacio "Mode circulació bassa"
+Number BassaCirculacioHoraEncesa 
+Number BassaCirculacioHoraApagat 
+String BassaCirculacioDescripcio "Gestió circulació"
+
+//		<device>_AvailablePower -> that receives the power available for the device
+//		<device>_UsedPower		-> that exposes the power that is currently using the device
+//		<device>_RequiredPower	-> that exposes the power that will be used by the device
+//		<device>_ApplyChange	-> that triggers the change to consume what was exposed in the
+//      <device>_Priority  (UnusedPowerPriority)  -> Number with the priority for that device. To add also on the sitemap
+
+Number:Power Bassa_AvailablePower "Potencia sobrant disponible per la bassa"
+Number:Power Bassa_UsedPower "Potencia actualment usada per la bassa"
+Number:Power Bassa_RequiredPower "Potencia que serà usada per la bassa"
+String Bassa_ApplyChange "Dispara el càlcul de potència"
+Number Bassa_Priority "Prioritat d'us de la bassa amb potencia sobrant" (UnusedPowerPriority)
