@@ -162,6 +162,9 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=EstufaInfrarrojos_Priority icon="radiator" label="Prioritat Estufa infrarrojos [%d]" minValue=1 maxValue=4 step=1
             Setpoint item=Bassa_Priority icon="faucet" label="Prioritat Bassa [%d]" minValue=1 maxValue=4 step=1
         }
+        Frame{
+            Webview height=14 url="http://calespiga.ddns.net:3000/d/HIpApQWRk/potencia-sobrant"
+        }
     }
     Text item=SystemTitle label="Sistema" icon="settings"
     {
