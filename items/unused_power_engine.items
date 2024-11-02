@@ -1,5 +1,7 @@
 Group UnusedPowerPriority "Prioritat potencia sobrant"
 
+Group UsedPowerPersist "Potencia usada de la sobrant per metriques"
+
 Number NotUsedPower "Potència extra"
 //the extra power not currently used that is available to be used by devices
 Number:Power AvailablePower "Potència disponible"
