@@ -16,13 +16,13 @@ DateTime Calentador_Hot_Date_Proxy "Proxy Ultim moment calent" <time>
 DateTime Calentador_Hot_Date "Ultim moment calent" <time>
 
 //		<device>_AvailablePower -> that receives the power available for the device
-//		<device>_UsedPower		-> that exposes the power that is currently using the device
+//		<device>_UsedPower (UsedPowerPersist)	-> that exposes the power that is currently using the device
 //		<device>_RequiredPower	-> that exposes the power that will be used by the device
 //		<device>_ApplyChange	-> switch that triggers the change to consume what was exposed in the _RequiredPower
 //      <device>_Priority  (UnusedPowerPriority)  -> Number with the priority for that device. To add also on the sitemap
 
 Number:Power Calentador_AvailablePower "Potencia sobrant disponible pel calentador"
-Number:Power Calentador_UsedPower "Potencia sobrant disponible pel calentador"
+Number:Power Calentador_UsedPower "Potencia sobrant disponible pel calentador" (UsedPowerPersist)
 Number:Power Calentador_RequiredPower "Potencia sobrant disponible pel calentador"
 String Calentador_ApplyChange "Dispara el càlcul de potència"
 Number Calentador_Priority "Prioritat d'us del calentador amb potencia sobrant" (UnusedPowerPriority)
