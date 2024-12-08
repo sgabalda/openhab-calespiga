@@ -1,8 +1,8 @@
 
-Number:Temperature ElectronicaTemperatura      "T. arm. electronica: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:armarielectronica:temperature" }
-Number:Temperature BateriesTemperatura      "T. arm. bateries: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:armaribateries:temperature" }
-Number:Temperature ExteriorArmarisTemperatura      "T. fora: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:armarielectronicafora:temperature" }
-Number:Temperature BateriesTemperaturaAdosada      "T. bateries: [%.2f %unit%]" <temperature>  { channel="onewiregpio:sensor:tempbateria:temperature" }
+Number:Temperature ElectronicaTemperatura      "T. arm. electronica: [%.2f %unit%]" <temperature> {channel="mqtt:topic:temperatures:Electronics"}
+Number:Temperature BateriesTemperatura      "T. arm. bateries: [%.2f %unit%]" <temperature>  {channel="mqtt:topic:temperatures:BatteriesCloset"}
+Number:Temperature ExteriorArmarisTemperatura      "T. fora: [%.2f %unit%]" <temperature> {channel="mqtt:topic:temperatures:Outdoor"}
+Number:Temperature BateriesTemperaturaAdosada      "T. bateries: [%.2f %unit%]" <temperature> {channel="mqtt:topic:temperatures:Batteries"}
 
 Number:Temperature BateriesTemperaturaObjectiu      "T. objectiu bat."
 
