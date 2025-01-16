@@ -1,7 +1,7 @@
-Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput) //this is the actual item tant turns on or off the pump
+Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput) //this is the actual item tant turns on or off the pump of the tank
 String Encesa_BombaNumber "2" // Item required with the GPIO number
 
-Number Encesa_Bomba_Proxy "Proxy encesa bomba reg"
+Number Encesa_Bomba_Proxy "Proxy encesa bomba reg diposit"
 DateTime Darrera_Encesa_Bomba "Instant darrera encesa"
 
 Switch Encesa_Bomba_Manual "Encesa manual bomba reg"
@@ -11,5 +11,11 @@ Switch Encesa_Bomba_Auto "Encesa auto bomba reg"
 Number Durada_Encesa_Auto "Durada encesa auto (minuts)"
 Number Hora_Encesa_Auto "Hora encesa auto"
 Number Periode_Encesa_Auto "Periode encesa auto (h)"
+
+Number Encesa_Bomba_Bassa_Proxy "Proxy encesa bomba reg bassa"
+
+Number Encesa_Reg_Router "Decisor bomba reg" //decideix a quina bomba fa regar
+
+String Bomba_Activa "Bomba activa pel reg" //per a que l'usuari decideixi quina bomba vol usar
 
 String RegTitle "Reg i aigua"

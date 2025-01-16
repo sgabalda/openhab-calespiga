@@ -2,32 +2,146 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.lang.Math
 
-var Timer apagarBombaTimer = null
+var Timer apagarBombaDipositTimer = null
+var Timer reintentarBombaDipositTimer = null
 
-rule "Encesa proxy bomba reg"
+var Timer apagarBombaBassaTimer = null
+var Timer reintentarBombaBassaTimer = null
+
+val long secondsBetweenRetries = 30
+
+rule "Encesa proxy bomba diposit"
 when
     Item Encesa_Bomba_Proxy received command
 then
     val minutesToRun = (receivedCommand as Number).longValue
-    if(apagarBombaTimer!==null){
-        logDebug("BombaReg","timer not null, cancelling it")
-        apagarBombaTimer.cancel()
-        apagarBombaTimer=null
+    if(apagarBombaDipositTimer!==null){
+        logDebug("BombaReg","apagarBombaDipositTimer not null, cancelling it")
+        apagarBombaDipositTimer.cancel()
+        apagarBombaDipositTimer=null
+    }
+    if(reintentarBombaDipositTimer!==null){
+        logDebug("BombaReg","reintentarBombaTimer not null, cancelling it")
+        reintentarBombaDipositTimer.cancel()
+        reintentarBombaDipositTimer=null
     }
     if(minutesToRun > 0){
-        logInfo("BombaReg","Turning on bomba reg for "+minutesToRun+" minutes")
-        Encesa_Bomba.sendCommand(ON)
-        logDebug("BombaReg","Setting timer")
-        val now = ZonedDateTime::now
-        apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
-                logDebug("BombaReg","Timer reached, turning off bomba")
-                apagarBombaTimer = null
-                Encesa_Bomba_Manual.sendCommand(OFF)
-            ])
+        var shouldStartNow = false //TODO check the depuradora is not on diposit
+        
+        var circulacioStatusString = "off"
+        val circulacioStatus = BassaCirculacioStatus.state
+        if(circulacioStatus != NULL){
+            circulacioStatusString = circulacioStatus.toString
+        }
+        if(circulacioStatusString == "depuradora" || circulacioStatusString == "off"){
+            shouldStartNow = true
+        }
+        if(shouldStartNow){
+            logInfo("BombaReg","Turning on bomba reg diposit for "+minutesToRun+" minutes")
+            Encesa_Bomba.sendCommand(ON)
+            logDebug("BombaReg","Setting timer for turning off diposit")
+            val now = ZonedDateTime::now
+            apagarBombaDipositTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                    logDebug("BombaReg","Timer reached, turning off bomba diposit")
+                    apagarBombaDipositTimer = null
+                    Encesa_Bomba_Manual.sendCommand(OFF)
+                    Encesa_Bomba_Proxy.sendCommand(0)
+                ])
+        }else{
+            logInfo("BombaReg","Not possible to water yet, retrying reg diposit for "
+                    +minutesToRun+" minutes in "+secondsBetweenRetries+" s")
+            Encesa_Bomba.sendCommand(OFF)
+            logDebug("BombaReg","Setting timer for retrying off diposit")
+            val now = ZonedDateTime::now
+            reintentarBombaDipositTimer = createTimer(now.plusSeconds(secondsBetweenRetries), [|
+                    logDebug("BombaReg","Timer reached, retrying bomba diposit")
+                    reintentarBombaDipositTimer = null
+                    Encesa_Bomba_Proxy.sendCommand(minutesToRun)
+                ])
+        }
+        
     }else{
         logInfo("BombaReg","Turning off bomba reg")
         Encesa_Bomba.sendCommand(OFF)
     }
+end
+
+rule "Encesa proxy bomba reg bassa"
+when
+    Item Encesa_Bomba_Bassa_Proxy received command
+then
+    val minutesToRun = (receivedCommand as Number).longValue
+    if(apagarBombaBassaTimer!==null){
+        logDebug("BombaReg","apagarBombaBassaTimer not null, cancelling it")
+        apagarBombaBassaTimer.cancel()
+        apagarBombaBassaTimer=null
+    }
+    if(reintentarBombaBassaTimer!==null){
+        logDebug("BombaReg","reintentarBombaBassaTimer not null, cancelling it")
+        reintentarBombaBassaTimer.cancel()
+        reintentarBombaBassaTimer=null
+    }
+    if(minutesToRun > 0){
+        BassaRegProxy.sendCommand("start")
+        var shouldStartNow = false //will start only when the status is ON
+        
+        var regStatusString = "off"
+        val regStatus = BassaRegStatus.state
+        if(regStatus != NULL){
+            regStatusString = regStatus.toString
+        }
+        if(regStatusString == "on"){
+            shouldStartNow = true
+        }
+        if(shouldStartNow){
+            logInfo("BombaReg","Turned on bomba reg bassa for "+minutesToRun+" minutes")
+            logDebug("BombaReg","Setting timer for turning off bassa")
+            val now = ZonedDateTime::now
+            apagarBombaBassaTimer = createTimer(now.plusMinutes(minutesToRun), [|
+                    logDebug("BombaReg","Timer reached, turning off bomba bassa")
+                    apagarBombaBassaTimer = null
+                    Encesa_Bomba_Manual.sendCommand(OFF)
+                    Encesa_Bomba_Bassa_Proxy.sendCommand(0)
+                ])
+        }else{
+            logInfo("BombaReg","Not possible to water yet, retrying reg bassa for "
+                    +minutesToRun+" minutes in "+secondsBetweenRetries+" s")
+            logDebug("BombaReg","Setting timer for retrying off bassa")
+            val now = ZonedDateTime::now
+            reintentarBombaBassaTimer = createTimer(now.plusSeconds(secondsBetweenRetries), [|
+                    logDebug("BombaReg","Timer reached, retrying bomba bassa")
+                    reintentarBombaBassaTimer = null
+                    Encesa_Bomba_Bassa_Proxy.sendCommand(minutesToRun)
+                ])
+        }
+        
+    }else{
+        logInfo("BombaReg","Turning off bomba bassa")
+        BassaRegProxy.sendCommand("off")
+    }
+end
+
+
+rule "Decsio encesa bomba reg"
+when
+    Item Encesa_Reg_Router received command
+then
+    val minutesToRun = (receivedCommand as Number).longValue
+    val bombaToUse = Bomba_Activa.state
+    var bombaToUseString = "diposit"
+    val bombaToUse = BassaModeCirculacio.state
+    if(bombaToUse != NULL){
+        bombaToUseString = bombaToUse.toString
+    }
+    logDebug("BombaReg","The pump to use is "+bombaToUseString)
+    if(bombaToUseString == "diposit"){
+        Encesa_Bomba_Proxy.sendCommand(minutesToRun)
+        Encesa_Bomba_Bassa_Proxy.sendCommand(0)
+    }else{
+        Encesa_Bomba_Proxy.sendCommand(0)
+        Encesa_Bomba_Bassa_Proxy.sendCommand(minutesToRun)
+    }
+    
 end
 
 rule "Encesa manual bomba reg"
@@ -41,7 +155,7 @@ then
     if(minutesToRunState != NULL){
         minutesToRun = (minutesToRunState as Number).intValue
     }
-    Encesa_Bomba_Proxy.sendCommand(minutesToRun)
+    Encesa_Reg_Router.sendCommand(minutesToRun)
 end
 
 rule "Apagada manual bomba reg"
@@ -49,7 +163,7 @@ when
     Item Encesa_Bomba_Manual received command OFF
 then
     logInfo("BombaReg","Bomba manually turned off")
-    Encesa_Bomba_Proxy.sendCommand(0)
+    Encesa_Reg_Router.sendCommand(0)
     logDebug("BombaReg","Done turning off")
 end
 
@@ -105,7 +219,7 @@ then
         logDebug("BombaReg", "shouldWater is "+shouldWater)
         
         if(shouldWater){
-            Encesa_Bomba_Proxy.sendCommand(minutesToRun)
+            Encesa_Reg_Router.sendCommand(minutesToRun)
             Darrera_Encesa_Bomba.postUpdate(nowDateType)
         }
 
