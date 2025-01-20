@@ -15,16 +15,12 @@
 #define TOPIC_TEMPERATURE_OUTDOOR "diposit1/temperature/outdoor"
 
 // Data wire is conntec to the Arduino digital pin 4
-#define ONE_WIRE_BUS 4
+#define ONE_WIRE_BUS 2
 
 OneWire oneWire(ONE_WIRE_BUS);
 
 // Pass our oneWire reference to Dallas Temperature. 
 DallasTemperature sensors(&oneWire);
-
-//TODO these next two are to be removed when the adresses are identified for 1-wire
-int numberOfDevices; // Number of temperature devices found
-DeviceAddress tempDeviceAddress;
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
@@ -70,21 +66,20 @@ void setup()
   Serial.begin(9600);
   sensors.begin();
 
-  //TODO this can be removed when the addresses are identifies
-  numberOfDevices = sensors.getDeviceCount();
+  //WARNING:  this can be removed if memory is needed, it is useful only when the addresses are identified
+  DeviceAddress tempDeviceAddress;
+  int numberOfDevices = sensors.getDeviceCount();
   Serial.print(F("Number of devices: "));
   Serial.println(numberOfDevices, DEC);
 
-  Serial.println("Printing addresses...");
   for (int i = 0;  i < numberOfDevices;  i++)
   {
-    Serial.print("Sensor ");
     Serial.print(i+1);
-    Serial.print(" : ");
+    Serial.print(F(" : "));
     sensors.getAddress(tempDeviceAddress, i);
     printAddress(tempDeviceAddress);
   }
-  //TODO remove until here
+  //WARNING remove until here
 
 
   if(mqttEnabled){
@@ -113,10 +108,11 @@ void setup()
 }
 
 void readTempSensors(){
-  uint8_t sensorElectronica[8] = { 0x28, 0x03, 0x11, 0x97, 0x79, 0x72, 0xCF, 0x27}; //28-0311977972cf
-  uint8_t sensorArmariBat[8] = { 0x28, 0x61, 0x64, 0x12, 0x3C, 0x7C, 0x2F, 0x27 }; //28-031097796fef
-  uint8_t sensorBateries[8] = { 0x28, 0x61, 0x64, 0x12, 0x3C, 0x7C, 0x2F, 0x27 }; //28-03109779272a
-  uint8_t sensorExterior[8] = { 0x28, 0x61, 0x64, 0x12, 0x3F, 0xFD, 0x80, 0xC6 }; //28-031097794907
+
+  byte sensorBateries[8] = {0x28, 0x2A, 0x27, 0x79, 0x97, 0x10, 0x03, 0xA9}; //1st on index
+  byte sensorExterior[8] = {0x28, 0x07, 0x49, 0x79, 0x97, 0x10, 0x03, 0xE6}; //2nd on o¡index
+  byte sensorElectronica[8] = {0x28, 0xCF, 0x72, 0x79, 0x97, 0x11, 0x03, 0xE8}; //3rd on index
+  byte sensorArmariBat[8] = {0x28, 0xEF, 0x6F, 0x79, 0x97, 0x10, 0x03, 0x0A};  //4th on index
 
   sensors.requestTemperatures();
 
@@ -126,25 +122,25 @@ void readTempSensors(){
   tempC = sensors.getTempC(sensorElectronica);
   dtostrf(tempC, 4, 2, cstr);
   client.publish(TOPIC_TEMPERATURE_ELECTRONICS,cstr);
-  Serial.print(F("temperature for electronics: "));
+  Serial.print(F("T electronics: "));
   Serial.println(cstr);
 
   tempC = sensors.getTempC(sensorArmariBat);
   dtostrf(tempC, 4, 2, cstr);
   client.publish(TOPIC_TEMPERATURE_BATTERIES_CLOSET,cstr);
-    Serial.print(F("temperature for armari bat: "));
+    Serial.print(F("T armari bat: "));
   Serial.println(cstr);
 
   tempC = sensors.getTempC(sensorBateries);
   dtostrf(tempC, 4, 2, cstr);
   client.publish(TOPIC_TEMPERATURE_BATTERIES,cstr);
-    Serial.print(F("temperature for bat: "));
+    Serial.print(F("T for bat: "));
   Serial.println(cstr);
   
   tempC = sensors.getTempC(sensorExterior);
   dtostrf(tempC, 4, 2, cstr);
   client.publish(TOPIC_TEMPERATURE_OUTDOOR,cstr);
-    Serial.print(F("temperature outdoor: "));
+    Serial.print(F("T outdoor: "));
   Serial.println(cstr);
 
 }
