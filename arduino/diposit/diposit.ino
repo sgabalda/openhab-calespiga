@@ -1,12 +1,26 @@
 #include <Ethernet.h>
 #include <PubSubClient.h>
 #include <MemoryFree.h>
+#include <OneWire.h>
+#include <DallasTemperature.h>
 
 #define ARDUINO_CLIENT_ID "arduino_diposit1"
 #define TOPIC_MEASUREMENTS_TANK_PERCENT "diposit1/percentage"
 #define TOPIC_MEASUREMENTS_TANK_LITERS "diposit1/liters"
 #define TOPIC_MEASUREMENTS_TANK_HEIGHT "diposit1/height"
 #define TOPIC_MEMORY "diposit1/memory"
+#define TOPIC_TEMPERATURE_ELECTRONICS "diposit1/temperature/electronics"
+#define TOPIC_TEMPERATURE_BATTERIES "diposit1/temperature/batteries"
+#define TOPIC_TEMPERATURE_BATTERIES_CLOSET "diposit1/temperature/batteriescloset"
+#define TOPIC_TEMPERATURE_OUTDOOR "diposit1/temperature/outdoor"
+
+// Data wire is conntec to the Arduino digital pin 4
+#define ONE_WIRE_BUS 2
+
+OneWire oneWire(ONE_WIRE_BUS);
+
+// Pass our oneWire reference to Dallas Temperature. 
+DallasTemperature sensors(&oneWire);
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
@@ -33,11 +47,40 @@ void reconnect() {
     }
   }
 }
+//TODO to be removed when the addresses are identified
+void printAddress(DeviceAddress deviceAddress)
+{ 
+  for (uint8_t i = 0; i < 8; i++)
+  {
+    Serial.print("0x");
+    if (deviceAddress[i] < 0x10) Serial.print("0");
+    Serial.print(deviceAddress[i], HEX);
+    if (i < 7) Serial.print(", ");
+  }
+  Serial.println("");
+}
 
 void setup()
 {
 
   Serial.begin(9600);
+  sensors.begin();
+
+  //WARNING:  this can be removed if memory is needed, it is useful only when the addresses are identified
+  DeviceAddress tempDeviceAddress;
+  int numberOfDevices = sensors.getDeviceCount();
+  Serial.print(F("Number of devices: "));
+  Serial.println(numberOfDevices, DEC);
+
+  for (int i = 0;  i < numberOfDevices;  i++)
+  {
+    Serial.print(i+1);
+    Serial.print(F(" : "));
+    sensors.getAddress(tempDeviceAddress, i);
+    printAddress(tempDeviceAddress);
+  }
+  //WARNING remove until here
+
 
   if(mqttEnabled){
     byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xEF };
@@ -61,6 +104,44 @@ void setup()
     }
     delay(1500); // Allow hardware to stabilize 1.5 sec
   }
+
+}
+
+void readTempSensors(){
+
+  byte sensorBateries[8] = {0x28, 0x2A, 0x27, 0x79, 0x97, 0x10, 0x03, 0xA9}; //1st on index
+  byte sensorExterior[8] = {0x28, 0x07, 0x49, 0x79, 0x97, 0x10, 0x03, 0xE6}; //2nd on o¡index
+  byte sensorElectronica[8] = {0x28, 0xCF, 0x72, 0x79, 0x97, 0x11, 0x03, 0xE8}; //3rd on index
+  byte sensorArmariBat[8] = {0x28, 0xEF, 0x6F, 0x79, 0x97, 0x10, 0x03, 0x0A};  //4th on index
+
+  sensors.requestTemperatures();
+
+  char cstr[16];
+  float tempC;
+
+  tempC = sensors.getTempC(sensorElectronica);
+  dtostrf(tempC, 4, 2, cstr);
+  client.publish(TOPIC_TEMPERATURE_ELECTRONICS,cstr);
+  Serial.print(F("T electronics: "));
+  Serial.println(cstr);
+
+  tempC = sensors.getTempC(sensorArmariBat);
+  dtostrf(tempC, 4, 2, cstr);
+  client.publish(TOPIC_TEMPERATURE_BATTERIES_CLOSET,cstr);
+    Serial.print(F("T armari bat: "));
+  Serial.println(cstr);
+
+  tempC = sensors.getTempC(sensorBateries);
+  dtostrf(tempC, 4, 2, cstr);
+  client.publish(TOPIC_TEMPERATURE_BATTERIES,cstr);
+    Serial.print(F("T for bat: "));
+  Serial.println(cstr);
+  
+  tempC = sensors.getTempC(sensorExterior);
+  dtostrf(tempC, 4, 2, cstr);
+  client.publish(TOPIC_TEMPERATURE_OUTDOOR,cstr);
+    Serial.print(F("T outdoor: "));
+  Serial.println(cstr);
 
 }
 
@@ -155,6 +236,7 @@ void loop()
     client.loop();
   }
   measureAndPublishTankLevel();
+  readTempSensors();
   reportMemory();
   delay(4000);
 }

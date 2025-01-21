@@ -7,6 +7,14 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type number : Memoria [ stateTopic="diposit1/memory" ]
     }
 
+    Thing mqtt:topic:temperatures (mqtt:broker:defaultBroker) {
+        Channels:
+            Type number : Electronics [ stateTopic="diposit1/temperature/electronics" ]
+            Type number : Batteries [ stateTopic="diposit1/temperature/batteries" ]
+            Type number : BatteriesCloset [ stateTopic="diposit1/temperature/batteriescloset" ]
+            Type number : Outdoor [ stateTopic="diposit1/temperature/outdoor" ]
+    }
+
     Thing mqtt:topic:estufa1 "estufa1" (mqtt:broker:defaultBroker) {
         Channels:
             Type string : Status "Status" [ stateTopic="estufa1/status" ]

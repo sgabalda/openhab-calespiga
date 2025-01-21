@@ -1,4 +1,0 @@
-Thing onewiregpio:sensor:armarielectronica "Armari electrònica" [gpio_bus_file="/sys/bus/w1/devices/28-0311977972cf/w1_slave",refresh_time=30]
-Thing onewiregpio:sensor:armaribateries "Armari bateries" [gpio_bus_file="/sys/bus/w1/devices/28-031097796fef/w1_slave",refresh_time=30]
-Thing onewiregpio:sensor:armarielectronicafora "Armari electrònica fora" [gpio_bus_file="/sys/bus/w1/devices/28-031097794907/w1_slave",refresh_time=30]
-Thing onewiregpio:sensor:tempbateria "Bateria temp" [gpio_bus_file="/sys/bus/w1/devices/28-03109779272a/w1_slave",refresh_time=30]
