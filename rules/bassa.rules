@@ -76,9 +76,9 @@ then
     val ultimaConnexioState = BassaUltimaConnexio.state
     logDebug("bassa.rules", "Ultima connexio obtained: "+ultimaConnexioState)
     if(ultimaConnexioState != NULL){
-        val lastReg = (lastRegItemState as DateTimeType).getZonedDateTime()
-        logDebug("BombaReg", "Last reg time is "+lastReg)
-        secondsAgo = ChronoUnit.SECONDS.between(lastReg, now);
+        val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
+        logDebug("bassa.rules", "LastConnection time is "+lastConnection)
+        secondsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
         logDebug("bassa.rules", "Last connection Bassa time is "+secondsAgo+"s ago.")
     }else{
         logError("bassa.rules", "Can not read last connection Bassa (state is "+ultimaConnexioState+
@@ -91,6 +91,8 @@ then
         BassaCirculacioProxy.sendCommand("stop")
         AlarmBassaComunicacio.postUpdate(ON)
         logError("bassa.rules","Not received comm from Bassa/Aiguagrisa since "+secondsAgo+"s ago, setting defaults")
+    }else{
+       logDebug("bassa.rules", "lastConnection was before threshold, so nothing to do "+lastReg) 
     }
 
 end
