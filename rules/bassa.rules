@@ -57,11 +57,11 @@ rule "Comprova last connexió bassa"
 when 
     Time cron "0/30 * * * * * *" //every 30 secs
 then
+    logDebug("bassa.rules", "Checking bassa connection")
     val now = ZonedDateTime::now
 
     var ultimaConnexio = new DateTime(0L)
     val ultimaConnexioState = BassaUltimaConnexio.state
-    logDebug("bassa.rules", "Last connection Bassa state is "+ultimaConnexioState)
     if(ultimaConnexioState != NULL){
         ultimaConnexio = new DateTime(ultimaConnexioState.toString)
         logDebug("bassa.rules", "Last connection Bassa time is "+ultimaConnexio)
@@ -92,11 +92,11 @@ rule "Comprova last connexió aigua grisa"
 when 
     Time cron "0/30 * * * * * *" //every 30 secs
 then
+    logDebug("bassa.rules", "Checking aigua grisa connection")
     val now = ZonedDateTime::now
 
     var ultimaConnexio = new DateTime(0L)
     val ultimaConnexioState = BassaAiguaGrisaUltimaConnexio.state
-    logDebug("bassa.rules", "Last connection Aiguagrisa state is "+ultimaConnexioState)
     if(ultimaConnexioState != NULL){
         ultimaConnexio = new DateTime(ultimaConnexioState.toString)
         logDebug("bassa.rules", "Last connection Aiguagrisa time is "+ultimaConnexio)
