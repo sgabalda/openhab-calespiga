@@ -33,6 +33,7 @@ when
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
+    logDebug("bassa.rules", "Received comm from Bassa "+now)
     //update last connection
     BassaUltimaConnexio.postUpdate(nowDateType)
     BassaStatusConnexio.sendCommand("Online")
@@ -45,6 +46,7 @@ when
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
+    logDebug("bassa.rules", "Received comm from Aigua grisa "+now)
     //update last connection
     BassaAiguaGrisaUltimaConnexio.postUpdate(nowDateType)
     BassaAiguaGrisaStatusConnexio.sendCommand("Online")
@@ -67,16 +69,16 @@ then
         logError("bassa.rules", "Can not read last connection Bassa (state is "+ultimaConnexioState+
         "), assuming never connected.")
     }
-    val secondsItem = AlarmBassaCommunicacio_Seconds.state
+    val secondsItem = AlarmBassaComunicacio_Seconds.state
     var timeForReceivingResponse = 60L
     if(secondsItem != NULL){
         timeForReceivingResponse = (secondsItem as Number).intValue
         logDebug("bassa.rules", "setting the time for Bassa/Aiguagrisa response alert to "+timeForReceivingResponse+"s") 
     }else{
-        AlarmBassaCommunicacio_Seconds.sendCommand(60)
+        AlarmBassaComunicacio_Seconds.sendCommand(60)
         logWarn("Calentador_notificacions.rules", "setting the time for Bassa/Aiguagrisa response alert to the default "+timeForReceivingResponse+"s") 
     }
-    if(ultimaConnexio.plusSeconds(timeForReceivingResponse).isBefore(now)){
+    if(ultimaConnexio.getZonedDateTime().plusSeconds(timeForReceivingResponse).isBefore(now)){
         BassaStatusConnexio.sendCommand("Offline")
         BassaRegProxy.sendCommand("stop")
         BassaCirculacioProxy.sendCommand("stop")
@@ -111,7 +113,7 @@ then
         AlarmBassaCommunicacio_Seconds.sendCommand(60)
         logWarn("Calentador_notificacions.rules", "setting the time for Bassa/Aiguagrisa response alert to the default "+timeForReceivingResponse+"s") 
     }
-    if(ultimaConnexio.plusSeconds(30L).isBefore(now)){
+    if(ultimaConnexio.getZonedDateTime().plusSeconds(30L).isBefore(now)){
         BassaAiguaGrisaStatusConnexio.sendCommand("Offline")
         BassaAiguagrisaProxy.sendCommand("start")
         AlarmBassaComunicacio.postUpdate(ON)
