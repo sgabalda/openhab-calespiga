@@ -60,7 +60,7 @@ then
     logDebug("bassa.rules", "Checking bassa connection")
     val now = ZonedDateTime::now
     logDebug("bassa.rules", "current date is "+now)
-    var ultimaConnexio = new DateTime(0L)
+/*    var ultimaConnexio = new DateTime(0L)
     logDebug("bassa.rules", "Going to check ultima connxio")
     val ultimaConnexioState = BassaUltimaConnexio.state
     logDebug("bassa.rules", "Ultima connexio obtained")
@@ -87,9 +87,10 @@ then
         AlarmBassaComunicacio.postUpdate(ON)
         logError("bassa.rules","Not received comm from Bassa/Aiguagrisa since "+ultimaConnexio+", setting defaults")
     }
+*/
 end
 
-
+/*
 rule "Comprova last connexió aigua grisa"
 when 
     Time cron "0/30 * * * * * *" //every 30 secs
@@ -122,6 +123,7 @@ then
         logError("bassa.rules","Not received comm from AiguaGrisa since "+ultimaConnexio+", setting defaults")
     }
 end
+*/
 
 rule "Aigua grisa encesa per hores"
 when Item BassaAiguagrisaHoraEncesa changed
