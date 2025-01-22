@@ -92,45 +92,11 @@ then
         AlarmBassaComunicacio.postUpdate(ON)
         logError("bassa.rules","Not received comm from Bassa/Aiguagrisa since "+secondsAgo+"s ago, setting defaults")
     }else{
-       logDebug("bassa.rules", "lastConnection was before threshold, so nothing to do "+lastReg) 
-    }
-
-end
-
-/*
-rule "Comprova last connexió aigua grisa"
-when 
-    Time cron "0/30 * * * * * *" //every 30 secs
-then
-    logDebug("bassa.rules", "Checking aigua grisa connection")
-    val now = ZonedDateTime::now
-
-    var ultimaConnexio = new DateTime(0L)
-    val ultimaConnexioState = BassaAiguaGrisaUltimaConnexio.state
-    if(ultimaConnexioState != NULL){
-        ultimaConnexio = new DateTime(ultimaConnexioState.toString)
-        logDebug("bassa.rules", "Last connection Aiguagrisa time is "+ultimaConnexio)
-    }else{
-        logError("bassa.rules", "Can not read last connection Aiguagrisa (state is "+ultimaConnexioState+
-        "), assuming never connected.")
-    }
-    val secondsItem = AlarmBassaCommunicacio_Seconds.state
-    var timeForReceivingResponse = 60L
-    if(secondsItem != NULL){
-        timeForReceivingResponse = (secondsItem as Number).intValue
-        logDebug("bassa.rules", "setting the time for Bassa/Aiguagrisa response alert to "+timeForReceivingResponse+"s") 
-    }else{
-        AlarmBassaCommunicacio_Seconds.sendCommand(60)
-        logWarn("Calentador_notificacions.rules", "setting the time for Bassa/Aiguagrisa response alert to the default "+timeForReceivingResponse+"s") 
-    }
-    if(ultimaConnexio.getZonedDateTime().plusSeconds(30L).isBefore(now)){
-        BassaAiguaGrisaStatusConnexio.sendCommand("Offline")
-        BassaAiguagrisaProxy.sendCommand("start")
-        AlarmBassaComunicacio.postUpdate(ON)
-        logError("bassa.rules","Not received comm from AiguaGrisa since "+ultimaConnexio+", setting defaults")
+       logDebug("bassa.rules", "lastConnection was before threshold, so nothing to do ") 
     }
 end
-*/
+
+
 
 rule "Aigua grisa encesa per hores"
 when Item BassaAiguagrisaHoraEncesa changed
