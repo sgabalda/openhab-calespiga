@@ -59,9 +59,11 @@ when
 then
     logDebug("bassa.rules", "Checking bassa connection")
     val now = ZonedDateTime::now
-
+    logDebug("bassa.rules", "current date is "+now)
     var ultimaConnexio = new DateTime(0L)
+    logDebug("bassa.rules", "Going to check ultima connxio")
     val ultimaConnexioState = BassaUltimaConnexio.state
+    logDebug("bassa.rules", "Ultima connexio obtained")
     if(ultimaConnexioState != NULL){
         ultimaConnexio = new DateTime(ultimaConnexioState.toString)
         logDebug("bassa.rules", "Last connection Bassa time is "+ultimaConnexio)
