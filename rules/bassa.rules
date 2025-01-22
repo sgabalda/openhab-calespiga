@@ -56,9 +56,8 @@ when
     Time cron "0/30 * * * * * *" //every 30 secs
 then
     val now = ZonedDateTime::now
-    val nowDateType = new DateTimeType(now)
 
-    val ultimaConnexio = new DateTime(0L)
+    var ultimaConnexio = new DateTime(0L)
     val ultimaConnexioState = BassaUltimaConnexio.state
     logDebug("bassa.rules", "Last connection Bassa state is "+ultimaConnexioState)
     if(ultimaConnexioState != NULL){
@@ -92,9 +91,8 @@ when
     Time cron "0/30 * * * * * *" //every 30 secs
 then
     val now = ZonedDateTime::now
-    val nowDateType = new DateTimeType(now)
 
-    val ultimaConnexio = new DateTime(0L)
+    var ultimaConnexio = new DateTime(0L)
     val ultimaConnexioState = BassaAiguaGrisaUltimaConnexio.state
     logDebug("bassa.rules", "Last connection Aiguagrisa state is "+ultimaConnexioState)
     if(ultimaConnexioState != NULL){
