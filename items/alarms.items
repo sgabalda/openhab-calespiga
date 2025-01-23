@@ -20,3 +20,12 @@ Number AlarmTempBateriesTimeNotifications "Min. entre notif."
 String AlarmTempBateriesText "Temperatura de bateries fora del rang de seguretat."
 Number AlarmTempBateries_GrausInf "Graus limit inf."
 Number AlarmTempBateries_GrausSup "Graus limit sup."
+
+Switch AlarmBassaComunicacio "Com. bassa" (Alarms)
+DateTime AlarmBassaComunicacioTimeOn "Com. bassa activada"
+DateTime AlarmBassaComunicacioTimeOff "Com. bassa desact."
+Switch AlarmBassaComunicacioNotification "Notificacio Com. bassa"
+DateTime AlarmBassaComunicacioLastNotificationTime "Darrera notif."
+Number AlarmBassaComunicacioTimeNotifications "Min. entre notif."
+String AlarmBassaComunicacioText "La comunicació amb la bassa s'ha perdut! Cal comprovar que està tot bé."
+Number AlarmBassaComunicacio_Seconds "Segons limit comunicació"

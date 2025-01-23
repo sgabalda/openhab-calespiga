@@ -149,6 +149,14 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmTempBateries_GrausInf icon="temperature_cold" label="Graus min. [%.1f C]" minValue=-2 maxValue=10 step=1
             Setpoint item=AlarmTempBateries_GrausSup icon="temperature_hot" label="Graus max. [%.1f C]" minValue=25 maxValue=45 step=1
         }
+        Frame label="Comunicació bassa" {
+            Text item=AlarmBassaComunicacio label="Estat [%s]" icon="alert"
+            Text icon="time" item=AlarmBassaComunicacioTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=AlarmBassaComunicacioTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=AlarmBassaComunicacioNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
+            Setpoint item=AlarmBassaComunicacioTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
+            Setpoint item=AlarmBassaComunicacio_Seconds icon="stopwatch" label="Temps limit [%.1f s]" minValue=30 maxValue=120 step=10
+        }
     }
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
     {

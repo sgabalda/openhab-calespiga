@@ -1,8 +1,7 @@
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 var long lastChangePower = -1
-var Timer commsTimer = null
-var Timer commsTimerAiguaGrisa = null
 
 val USED_POWER = 250.0
 
@@ -18,10 +17,15 @@ when Item BassaRegProxy changed
     or Item BassaCirculacioProxy changed
     or Time cron "0/15 * * * * * *" //every 15 secs
 then
-    logDebug("bassa.rules","Forwarding proxy values to command items")
-    BassaAiguagrisaCommand.sendCommand(BassaAiguagrisaProxy.state.toString)
-    BassaRegCommand.sendCommand(BassaRegProxy.state.toString)
-    BassaCirculacioCommand.sendCommand(BassaCirculacioProxy.state.toString)
+    val commandGrisa = BassaAiguagrisaProxy.state.toString
+    val commandReg = BassaRegProxy.state.toString
+    val commandCirculacio = BassaCirculacioProxy.state.toString
+
+    logDebug("bassa.rules","Forwarding proxy values to command items: Reg: "+commandReg+
+        ", Circulacio: "+commandCirculacio+", Aigua grisa: "+commandGrisa)
+    BassaAiguagrisaCommand.sendCommand(commandGrisa)
+    BassaRegCommand.sendCommand(commandReg)
+    BassaCirculacioCommand.sendCommand(commandCirculacio)
 end
 
 rule "update last connexion from MQTT Bassa"
@@ -30,23 +34,11 @@ when
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
+    logDebug("bassa.rules", "Received comm from Bassa "+now)
     //update last connection
     BassaUltimaConnexio.postUpdate(nowDateType)
     BassaStatusConnexio.sendCommand("Online")
-    //cancel previous timer and set a new one to put offline if there is no more messages.
-    if(commsTimer!==null){
-        logDebug("bassa.rules","comms timer not null, cancelling it")
-        commsTimer.cancel()
-    }
-    commsTimer = createTimer(now.plusSeconds(30L), [|
-                logWarn("bassa.rules","Timer reached, changing state to default")
-                commsTimer = null
-                //Status of bassa is offline
-                BassaStatusConnexio.sendCommand("Offline")
-                BassaRegProxy.sendCommand("stop")
-                BassaCirculacioProxy.sendCommand("depuradora")
-                logWarn("bassa.rules","Finished timer execution")
-            ])
+    AlarmBassaComunicacio.postUpdate(OFF)
 end
 
 rule "update last connexion from MQTT AiguaGrisa"
@@ -55,23 +47,58 @@ when
 then
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
+    logDebug("bassa.rules", "Received comm from Aigua grisa "+now)
     //update last connection
     BassaAiguaGrisaUltimaConnexio.postUpdate(nowDateType)
     BassaAiguaGrisaStatusConnexio.sendCommand("Online")
-    //cancel previous timer and set a new one to put offline if there is no more messages.
-    if(commsTimerAiguaGrisa!==null){
-        logDebug("bassa.rules","comms timer not null, cancelling it")
-        commsTimerAiguaGrisa.cancel()
-    }
-    commsTimerAiguaGrisa = createTimer(now.plusSeconds(30L), [|
-                logWarn("bassa.rules","Timer reached, changing state to default")
-                commsTimerAiguaGrisa = null
-                //Status of aiguagrisa is offline
-                BassaAiguaGrisaStatusConnexio.sendCommand("Offline")
-                BassaAiguagrisaProxy.sendCommand("start")
-                logWarn("bassa.rules","Finished timer execution")
-            ])
+    AlarmBassaComunicacio.postUpdate(OFF)
 end
+
+rule "Comprova last connexió bassa"
+when 
+    Time cron "0/30 * * * * * *" //every 30 secs
+then
+    logDebug("bassa.rules", "Checking bassa connection")
+    val now = ZonedDateTime::now
+    logDebug("bassa.rules", "current date is "+now)
+
+    val secondsItem = AlarmBassaComunicacio_Seconds.state
+    var timeForReceivingResponse = 60L
+    if(secondsItem != NULL){
+        timeForReceivingResponse = (secondsItem as Number).intValue
+        logDebug("bassa.rules", "setting the time for Bassa/Aiguagrisa response alert to "+timeForReceivingResponse+"s") 
+    }else{
+        AlarmBassaComunicacio_Seconds.sendCommand(60)
+        logWarn("Calentador_notificacions.rules", "setting the time for Bassa/Aiguagrisa response alert to the default "+timeForReceivingResponse+"s") 
+    }
+
+    var secondsAgo = timeForReceivingResponse + 1L
+    val ultimaConnexioState = BassaUltimaConnexio.state
+    logDebug("bassa.rules", "Ultima connexio obtained: "+ultimaConnexioState)
+    if(ultimaConnexioState != NULL){
+        val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
+        logDebug("bassa.rules", "LastConnection time is "+lastConnection)
+        secondsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+        logDebug("bassa.rules", "Last connection Bassa time is "+secondsAgo+"s ago.")
+    }else{
+        logError("bassa.rules", "Can not read last connection Bassa (state is "+ultimaConnexioState+
+        "), assuming already passed the time.")
+    }
+    
+    if(secondsAgo > timeForReceivingResponse){
+        BassaStatusConnexio.sendCommand("Offline")
+        BassaAiguaGrisaStatusConnexio.sendCommand("Offline")
+        BassaRegProxy.sendCommand("stop")
+        BassaCirculacioProxy.sendCommand("stop")
+        BassaAiguagrisaProxy.sendCommand("start")
+        AlarmBassaComunicacio.postUpdate(ON)
+        logError("bassa.rules","Not received comm from Bassa/Aiguagrisa since "+secondsAgo+"s ago, setting defaults")
+    }else{
+       logDebug("bassa.rules", "lastConnection was before threshold, so nothing to do ") 
+    }
+end
+
+
 
 rule "Aigua grisa encesa per hores"
 when Item BassaAiguagrisaHoraEncesa changed
