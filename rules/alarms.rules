@@ -1,5 +1,6 @@
 import org.openhab.core.model.script.ScriptServiceUtil
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 rule "Alarmes inicialització"
 when   
@@ -38,21 +39,6 @@ then
                 val alarmTextItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "Text")
                 if(alarmTextItem !== null ) {
                     logDebug("Alarms", "Found alarm text for "+alarmItem.name) 
-                    var lastNotified = new DateTime(0L)
-                    val alarmLastNotifItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "LastNotificationTime")
-                    logDebug("Alarms", "Got last notified item for alarm "+alarmItem.name) 
-                    if(alarmLastNotifItem !== null ) {
-                        val alarmLastNotifItemState = alarmLastNotifItem.state
-                        logDebug("Alarms", "Last notified item state is "+alarmLastNotifItemState+" for alarm "+alarmItem.name)
-                        if(alarmLastNotifItemState != NULL){
-                            lastNotified = new DateTime(alarmLastNotifItemState.toString)
-                            logDebug("Alarms", "Last notified time is "+lastNotified+" for alarm "+alarmItem.name)
-                        }else{
-                            logWarn("Alarms", "Last notified time is NULL, if it is not the first time maybe it is not properly updating for alarm "+alarmItem.name)
-                        }
-                    }else{
-                        logError("Alarms", "Alarm "+alarmItem.name+" has no LastNotification item. Can not filter notifications!")
-                    }
                     var timeBetweenNotificationsMinutes = 10L
                     val alarmTimeNotifItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "TimeNotifications")
                     if(alarmTimeNotifItem !== null ) {
@@ -66,8 +52,23 @@ then
                     }else{
                         logError("Alarms", "Alarm "+alarmItem.name+" has no Time item. Using the default!")
                     }
-                    val threshold = now.minusMinutes(timeBetweenNotificationsMinutes)
-                    if(lastNotified.isBefore(threshold)){
+                    var lastNotifiedMinutesAgo = timeBetweenNotificationsMinutes + 1L
+                    val alarmLastNotifItem = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "LastNotificationTime")
+                    logDebug("Alarms", "Got last notified item for alarm "+alarmItem.name) 
+                    if(alarmLastNotifItem !== null ) {
+                        val alarmLastNotifItemState = alarmLastNotifItem.state
+                        logDebug("Alarms", "Last notified item state is "+alarmLastNotifItemState+" for alarm "+alarmItem.name)
+                        if(alarmLastNotifItemState != NULL){
+                            val lastConnection = (alarmLastNotifItemState as DateTimeType).getZonedDateTime()
+                            lastNotifiedMinutesAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+                            logDebug("Alarms", "Last notified time is "+lastNotifiedMinutesAgo+"m ago, for alarm "+alarmItem.name)
+                        }else{
+                            logWarn("Alarms", "Last notified time is NULL, if it is not the first time maybe it is not properly updating for alarm "+alarmItem.name)
+                        }
+                    }else{
+                        logError("Alarms", "Alarm "+alarmItem.name+" has no LastNotification item. Can not filter notifications!")
+                    }
+                    if(lastNotifiedMinutesAgo > timeBetweenNotificationsMinutes){
                         if(alarmLastNotifItem !== null ) {
                             alarmLastNotifItem.postUpdate(nowDateType)
                             logDebug("Alarms", "Alarm last notified updated for alarm "+alarmItem.name)
@@ -95,7 +96,7 @@ then
             logDebug("Alarms", "There is still some alarm on, leaving the general state alarm as ON") 
             AlarmsTitle.sendCommand(ON)
         } else {
-            logDebug("Alarms", "There is still some alarm on, leaving the general state alarm as ON") 
+            logDebug("Alarms", "There is no more alarm on, leaving the general state alarm as OFF") 
             AlarmsTitle.sendCommand(OFF)
         }
         val alarmTimestampOff = ScriptServiceUtil.getItemRegistry.getItem(alarmItem.name + "TimeOff")

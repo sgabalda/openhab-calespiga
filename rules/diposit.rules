@@ -1,4 +1,5 @@
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
 
 rule "update last connexion from MQTT Diposit"
 when
@@ -8,4 +9,44 @@ then
     val nowDateType = new DateTimeType(now) 
     //update last connection
     Diposit_Ultima_Connexio.postUpdate(nowDateType)
+    AlarmDipositComunicacio.postUpdate(OFF)
+end
+
+rule "Comprova last connexió diposit"
+when 
+    Time cron "5,35 * * * * * *" //every 30 secs
+then
+    logDebug("diposit.rules", "Checking diposit connection")
+    val now = ZonedDateTime::now
+    logDebug("diposit.rules", "current date is "+now)
+
+    val secondsItem = AlarmDipositComunicacio_Seconds.state
+    var timeForReceivingResponse = 60L
+    if(secondsItem != NULL){
+        timeForReceivingResponse = (secondsItem as Number).intValue
+        logDebug("diposit.rules", "setting the time for Diposit response alert to "+timeForReceivingResponse+"s") 
+    }else{
+        AlarmDipositComunicacio_Seconds.sendCommand(60)
+        logWarn("Calentador_notificacions.rules", "setting the time for Diposit response alert to the default "+timeForReceivingResponse+"s") 
+    }
+
+    var secondsAgo = timeForReceivingResponse + 1L
+    val ultimaConnexioState = Diposit_Ultima_Connexio.state
+    logDebug("diposit.rules", "Ultima connexio obtained: "+ultimaConnexioState)
+    if(ultimaConnexioState != NULL){
+        val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
+        logDebug("diposit.rules", "LastConnection time is "+lastConnection)
+        secondsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+        logDebug("diposit.rules", "Last connection Diposit time is "+secondsAgo+"s ago.")
+    }else{
+        logError("diposit.rules", "Can not read last connection Diposit (state is "+ultimaConnexioState+
+        "), assuming already passed the time.")
+    }
+    
+    if(secondsAgo > timeForReceivingResponse){
+        AlarmDipositComunicacio.postUpdate(ON)
+        logError("diposit.rules","Not received comm from Diposit since "+secondsAgo+"s ago, triggering alarm")
+    }else{
+        logDebug("diposit.rules", "lastConnection was before threshold, so nothing to do ") 
+    }
 end
