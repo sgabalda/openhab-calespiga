@@ -9,6 +9,7 @@ then
     val nowDateType = new DateTimeType(now) 
     //update last connection
     Diposit_Ultima_Connexio.postUpdate(nowDateType)
+    AlarmDipositComunicacio.postUpdate(OFF)
 end
 
 rule "Comprova last connexió diposit"
@@ -46,6 +47,6 @@ then
         AlarmDipositComunicacio.postUpdate(ON)
         logError("diposit.rules","Not received comm from Diposit since "+secondsAgo+"s ago, triggering alarm")
     }else{
-       logDebug("diposit.rules", "lastConnection was before threshold, so nothing to do ") 
+        logDebug("diposit.rules", "lastConnection was before threshold, so nothing to do ") 
     }
 end
