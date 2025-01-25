@@ -10,60 +10,34 @@ var Timer reintentarBombaBassaTimer = null
 
 val long secondsBetweenRetries = 30
 
-rule "Encesa proxy bomba diposit"
+/*
+Encesa router 
+	- Ordre Bomba A: On/Off
+	- Estat Bomba A -: On/Off
+	- Darrera encesa bomba A: DateTime
+	- Darrer intent encesa bomba A: DateTime
+	- temps encesa bomba A
+	
+el router envia la ordre.
+	- la ordre fa les accions per que canvii l'estat, i actualitza el darrer intent encesa
+	- quan l'estat es posa a ON actualitza la darrera encesa
+	
+- una regla periodica mira:
+	- si la Ordre esta a ON i l'estat no ha canviat a ON
+		- alarma (mirar temps)
+	- si la Ordre esta a OFF i l'estat esta a ON
+		- alarma (mirar temps)
+	- si la ordre esta a ON i l'estat està a ON
+		- si ha passat el temps màxim
+			- enviar la ordre a Off
+            */
+
+rule "Ordre encesa bomba diposit"
 when
-    Item Encesa_Bomba_Proxy received command
+    Item Ordre_Encesa_Bomba_Diposit received command
 then
-    val minutesToRun = (receivedCommand as Number).longValue
-    if(apagarBombaDipositTimer!==null){
-        logDebug("BombaReg","apagarBombaDipositTimer not null, cancelling it")
-        apagarBombaDipositTimer.cancel()
-        apagarBombaDipositTimer=null
-    }
-    if(reintentarBombaDipositTimer!==null){
-        logDebug("BombaReg","reintentarBombaTimer not null, cancelling it")
-        reintentarBombaDipositTimer.cancel()
-        reintentarBombaDipositTimer=null
-    }
-    if(minutesToRun > 0){
-        var shouldStartNow = false //TODO check the depuradora is not on diposit
-        
-        var circulacioStatusString = "off"
-        val circulacioStatus = BassaCirculacioStatus.state
-        if(circulacioStatus != NULL){
-            circulacioStatusString = circulacioStatus.toString
-        }
-        if(circulacioStatusString == "depuradora" || circulacioStatusString == "off"){
-            shouldStartNow = true
-        }
-        if(shouldStartNow){
-            logInfo("BombaReg","Turning on bomba reg diposit for "+minutesToRun+" minutes")
-            Encesa_Bomba.sendCommand(ON)
-            logDebug("BombaReg","Setting timer for turning off diposit")
-            val now = ZonedDateTime::now
-            apagarBombaDipositTimer = createTimer(now.plusMinutes(minutesToRun), [|
-                    logDebug("BombaReg","Timer reached, turning off bomba diposit")
-                    apagarBombaDipositTimer = null
-                    Encesa_Bomba_Manual.sendCommand(OFF)
-                    Encesa_Bomba_Proxy.sendCommand(0)
-                ])
-        }else{
-            logInfo("BombaReg","Not possible to water yet, retrying reg diposit for "
-                    +minutesToRun+" minutes in "+secondsBetweenRetries+" s")
-            Encesa_Bomba.sendCommand(OFF)
-            logDebug("BombaReg","Setting timer for retrying off diposit")
-            val now = ZonedDateTime::now
-            reintentarBombaDipositTimer = createTimer(now.plusSeconds(secondsBetweenRetries), [|
-                    logDebug("BombaReg","Timer reached, retrying bomba diposit")
-                    reintentarBombaDipositTimer = null
-                    Encesa_Bomba_Proxy.sendCommand(minutesToRun)
-                ])
-        }
-        
-    }else{
-        logInfo("BombaReg","Turning off bomba reg")
-        Encesa_Bomba.sendCommand(OFF)
-    }
+    val ordre = receivedCommand
+    
 end
 
 rule "Encesa proxy bomba reg bassa"
@@ -127,6 +101,9 @@ when
     Item Encesa_Reg_Router received command
 then
     val minutesToRun = (receivedCommand as Number).longValue
+
+    Durada_Reg_Router.sendCommand(minutesToRun)
+
     val bombaToUse = Bomba_Activa.state
     var bombaToUseString = "diposit"
     val bombaToUse = BassaModeCirculacio.state
@@ -135,11 +112,11 @@ then
     }
     logDebug("BombaReg","The pump to use is "+bombaToUseString)
     if(bombaToUseString == "diposit"){
-        Encesa_Bomba_Proxy.sendCommand(minutesToRun)
-        Encesa_Bomba_Bassa_Proxy.sendCommand(0)
+        Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)
+        Ordre_Encesa_Bomba_Diposit.sendCommand(ON)
     }else{
-        Encesa_Bomba_Proxy.sendCommand(0)
-        Encesa_Bomba_Bassa_Proxy.sendCommand(minutesToRun)
+        Ordre_Encesa_Bomba_Bassa.sendCommand(ON)
+        Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)
     }
     
 end
@@ -205,7 +182,7 @@ then
         logDebug("BombaReg","currentHour is "+currentHour)
 
         var daysAgo = 0L
-        val lastRegItemState = Darrera_Encesa_Bomba.state
+        val lastRegItemState = Darrera_Encesa_Reg.state
         logDebug("BombaReg", "Last reg item state is "+lastRegItemState)
         if(lastRegItemState != NULL){
             logDebug("BombaReg", "Going to convert last reg time")
@@ -220,7 +197,7 @@ then
         
         if(shouldWater){
             Encesa_Reg_Router.sendCommand(minutesToRun)
-            Darrera_Encesa_Bomba.postUpdate(nowDateType)
+            Darrera_Encesa_Reg.postUpdate(nowDateType)
         }
 
     }else{
