@@ -166,6 +166,14 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmDipositComunicacioTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
             Setpoint item=AlarmDipositComunicacio_Seconds icon="stopwatch" label="Temps limit [%.1f s]" minValue=30 maxValue=120 step=10
         }
+        Frame label="Reg no executat" {
+            Text item=AlarmReg label="Estat [%s]" icon="alert"
+            Text icon="time" item=AlarmRegTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=AlarmRegTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=AlarmRegNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
+            Setpoint item=AlarmRegTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
+            Setpoint item=AlarmReg_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
+        }
     }
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
     {
