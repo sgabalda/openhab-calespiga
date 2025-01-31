@@ -129,7 +129,7 @@ then
         logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit obtained: "+intentEncesa)
         if(intentEncesa != NULL){
             val intent = (intentEncesa as DateTimeType).getZonedDateTime()
-            logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit time is "+lastConnection)
+            logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit time is "+intent)
                 minutesAgo = ChronoUnit.MINUTES.between(intent, now);
             logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit time is "+minutesAgo+"s ago.")
         }else{
@@ -272,7 +272,7 @@ then
         logDebug("BombaReg", "Darrer_Canvi_Bomba_Bassa obtained: "+intentEncesa)
         if(intentEncesa != NULL){
             val intent = (intentEncesa as DateTimeType).getZonedDateTime()
-            logDebug("BombaReg", "Darrer_Canvi_Bomba_Bassa time is "+lastConnection)
+            logDebug("BombaReg", "Darrer_Canvi_Bomba_Bassa time is "+intent)
             minutesAgo = ChronoUnit.MINUTES.between(intent, now);
             logDebug("BombaReg", "Darrer_Canvi_Bomba_Bassa time is "+minutesAgo+"s ago.")
         }else{
