@@ -98,7 +98,7 @@ end
 
 rule "Comprova canvi encesa bomba diposit"
 when
-    Time cron "10,25,40,55 * * * * * *" //every 15 secs
+    Time cron "0/15 * * * * * *" //every 15 secs
 then
     val ordre = Ordre_Encesa_Bomba_Diposit.state
     val state = Estat_Bomba_Diposit.state
@@ -149,6 +149,7 @@ then
         //if there was an alert, solve it as now it is in sync
         AlarmReg.postUpdate(OFF)
     }else if(state == ON && ordre == OFF){
+        logDebug("BombaReg", "Checking status of reg Diposit and state is ON and ordre is OFF")
         Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
 
         //In any case, check the Alarm is not to be triggered, the value sent does not matter
@@ -231,7 +232,7 @@ end
 
 rule "Comprova canvi encesa bomba Bassa"
 when
-    Time cron "10,25,40,55 * * * * * *" //every 15 secs
+    Time cron "0/15 * * * * * *" //every 15 secs
 then
     val ordre = Ordre_Encesa_Bomba_Bassa.state
     val state = Estat_Bomba_Bassa.state
@@ -283,6 +284,7 @@ then
         //if there was an alert, solve it as now it is in sync
         AlarmReg.postUpdate(OFF)
     }else if(state == ON && ordre == OFF){
+        logDebug("BombaReg", "Checking status of reg Bassa and state is ON and ordre is OFF")
         Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
 
         //In any case, check the Alarm is not to be triggered, the value sent does not matter

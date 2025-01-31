@@ -47,7 +47,7 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=Durada_Encesa_Auto icon="stopwatch" label="Durada [%.1f min]" minValue=1 maxValue=30 step=1
             Setpoint item=Hora_Encesa_Auto icon="time" label="Hora [%.1f h]" minValue=0 maxValue=24 step=1
             Setpoint item=Periode_Encesa_Auto icon="stopwatch" label="Cada [%.1f h]" minValue=2 maxValue=72 step=1
-            Text icon="time" item=Darrera_Encesa_Reg label="Darrer reg [%1$td/%1$tm/%1$tY %1$tT]"            
+            Text icon="time" item=Darrera_Encesa_Reg label="Darrer reg auto [%1$td/%1$tm/%1$tY %1$tT]"            
         }
         Frame label="Diposit" {
             Text icon="wassertank" item=DipositPercentNumber label="Nivell diposit: [%d %%]"
