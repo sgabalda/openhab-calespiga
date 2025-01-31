@@ -4,6 +4,8 @@ import java.lang.Math
 
 //RULES MANAGING Reg from DIPOSIT
 
+
+
 rule "Ordre encesa bomba diposit"
 when
     Item Ordre_Encesa_Bomba_Diposit changed
@@ -56,11 +58,17 @@ rule "Encesa diposit ha succeit"
 when
     Item Encesa_Bomba changed    //when it is run via MQTT, change here to read the status
 then
-    logDebug("BombaReg", "Diposit changed to "+newState+". Updating darrer canvi")
+    val nouEstat = newState
+    logDebug("BombaReg", "Diposit changed to "+nouEstat+". Updating darrer canvi")
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
 
     Darrer_Canvi_Bomba_Diposit.postUpdate(nowDateType)
+    if(nouEstat == ON){
+        Estat_Bomba_Diposit.sendCommand(ON)
+    }else{
+        Estat_Bomba_Diposit.sendCommand(OFF)
+    }
 end
 
 rule "Comprova alarma bomba diposit"
@@ -154,6 +162,8 @@ then
 
         //In any case, check the Alarm is not to be triggered, the value sent does not matter
         Comprovador_Alarma_Bomba_Diposit.sendCommand(ON)
+    }else{
+        logWarn("BombaReg", "Checking status of reg Diposit and some state is null: Ordre-> "+ordre+", State -> "+state)
     }
 end
 
@@ -190,11 +200,18 @@ rule "Encesa Bassa ha succeit"
 when
     Item BassaRegStatus changed
 then
-    logDebug("BombaReg", "Bassa changed to "+newState+". Updating darrer canvi")
+    val nouEstat = newState
+    logDebug("BombaReg", "Bassa changed to "+nouEstat+". Updating darrer canvi")
     val now = ZonedDateTime::now
     val nowDateType = new DateTimeType(now) 
 
     Darrer_Canvi_Bomba_Bassa.postUpdate(nowDateType)
+    if(nouEstat == ON){
+        Estat_Bomba_Bassa.sendCommand(ON)
+    }else{
+        Estat_Bomba_Bassa.sendCommand(OFF)
+    }
+    
 end
 
 rule "Comprova alarma bomba Bassa"
@@ -289,6 +306,8 @@ then
 
         //In any case, check the Alarm is not to be triggered, the value sent does not matter
         Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
+    }else{
+        logWarn("BombaReg", "Checking status of reg Bassa and some state is null: Ordre-> "+ordre+", State -> "+state)
     }
 end
 
