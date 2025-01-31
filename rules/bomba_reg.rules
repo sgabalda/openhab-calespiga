@@ -298,7 +298,6 @@ then
     }else{
         val bombaToUse = Bomba_Activa.state
         var bombaToUseString = "diposit"
-        val bombaToUse = BassaModeCirculacio.state
         if(bombaToUse != NULL){
             bombaToUseString = bombaToUse.toString
         }
