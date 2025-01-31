@@ -16,7 +16,12 @@ then
     Intent_Canvi_Bomba_Diposit.postUpdate(nowDateType) 
     logDebug("BombaReg", "Updated Intent_Canvi_Bomba_Diposit")
 
-    Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(novaOrdre)
+    if(novaOrdre == ON){
+        Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(ON)
+    }else{
+        Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)
+    }
+
     logDebug("BombaReg", "Send command to Executor_Ordre_Encesa_Bomba_Diposit")
 end
 
@@ -165,7 +170,10 @@ then
 
     Intent_Canvi_Bomba_Bassa.postUpdate(nowDateType) 
 
-    Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(novaOrdre)
+    if(novaOrdre == ON)
+        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(ON)
+    else
+        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)
 end
 
 rule "Executor ordre encesa bomba Bassa"
