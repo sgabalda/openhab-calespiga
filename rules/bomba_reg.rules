@@ -14,8 +14,10 @@ then
     val nowDateType = new DateTimeType(now) 
 
     Intent_Canvi_Bomba_Diposit.postUpdate(nowDateType) 
+    logDebug("BombaReg", "Updated Intent_Canvi_Bomba_Diposit")
 
     Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(novaOrdre)
+    logDebug("BombaReg", "Send command to Executor_Ordre_Encesa_Bomba_Diposit")
 end
 
 rule "Executor ordre encesa bomba diposit"
