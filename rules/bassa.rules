@@ -69,7 +69,7 @@ then
         logDebug("bassa.rules", "setting the time for Bassa/Aiguagrisa response alert to "+timeForReceivingResponse+"s") 
     }else{
         AlarmBassaComunicacio_Seconds.sendCommand(60)
-        logWarn("Calentador_notificacions.rules", "setting the time for Bassa/Aiguagrisa response alert to the default "+timeForReceivingResponse+"s") 
+        logWarn("bassa.rules", "setting the time for Bassa/Aiguagrisa response alert to the default "+timeForReceivingResponse+"s") 
     }
 
     var secondsAgo = timeForReceivingResponse + 1L
