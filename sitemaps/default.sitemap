@@ -53,7 +53,7 @@ sitemap default label="Ca l'espiga" {
             Text icon="wassertank" item=DipositPercentNumber label="Nivell diposit: [%d %%]"
             Text icon="water" item=DipositLitres label="Litres diposit: [%d L]"
             Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
-            Text icon="time" item=Darrera_Encesa_Bomba label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=Darrer_Canvi_Bomba_Diposit label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
             Text item=Diposit_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
         }
         Frame label="Bassa" {
@@ -61,6 +61,7 @@ sitemap default label="Ca l'espiga" {
             Text icon="water" item=BassaLitres label="Litres bassa: [%d L]"
             Text icon="flow" item=BassaAltura label="Profunditat bassa: [%d cm]"
             Text icon="hydrant" item=BassaRegStatus label="Bomba reg: [%s]"
+            Text icon="time" item=Darrer_Canvi_Bomba_Bassa label="Darrera encesa reg [%1$td/%1$tm/%1$tY %1$tT]"
             Text icon="faucet" item=BassaCirculacioStatus label="Estat circulacio: [%s]"
             Selection icon="switch_on_off" item=BassaModeCirculacio label="Mode circulacio: [%s]"  mappings=["hores"="Hores", "unusedPower"="Pot. sobrant"]
             Setpoint icon="time" item=BassaCirculacioHoraEncesa label="Hora inici [%.1f h]" minValue=0 maxValue=24 step=1

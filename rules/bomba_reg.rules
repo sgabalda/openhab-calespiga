@@ -77,11 +77,11 @@ then
     if(ultimaConnexioState != NULL){
         val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
         logDebug("BombaReg", "Ultima ordre sent time is "+lastConnection)
-        minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+            minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
         logDebug("BombaReg", "Ultima ordre sent is "+minutsAgo+"m ago.")
     }else{
         logError("BombaReg", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
-        "), assuming already passed the time.")
+            "), assuming already passed the time.")
     }
 
     if(minutsAgo > timeForReceivingResponse){
@@ -115,7 +115,7 @@ then
         if(intentEncesa != NULL){
             val intent = (intentEncesa as DateTimeType).getZonedDateTime()
             logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit time is "+lastConnection)
-            minutesAgo = ChronoUnit.MINUTES.between(intent, now);
+                minutesAgo = ChronoUnit.MINUTES.between(intent, now);
             logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit time is "+minutesAgo+"s ago.")
         }else{
             logError("BombaReg", "Can not read Darrer_Canvi_Bomba_Diposit (state is "+intentEncesa+
@@ -124,11 +124,11 @@ then
 
         if(minutesAgo > minutesToRun){
             logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
-            minutesToRun+"m so truning off").
+                minutesToRun+"m so truning off").
             Ordre_Encesa_Bomba_Diposit.sendCommand(OFF) 
         }else{
             logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
-            minutesToRun+"m so not changing anything").
+                minutesToRun+"m so not changing anything").
         }
     }else if(state == OFF && ordre == ON){
         logDebug("BombaReg", "Checking status of reg diposit and state is OFF and ordre is ON")
@@ -212,7 +212,7 @@ then
         logDebug("BombaReg", "Ultima ordre sent is "+minutsAgo+"m ago.")
     }else{
         logError("BombaReg", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
-        "), assuming already passed the time.")
+            "), assuming already passed the time.")
     }
 
     if(minutsAgo > timeForReceivingResponse){
@@ -250,16 +250,16 @@ then
             logDebug("BombaReg", "Darrer_Canvi_Bomba_Bassa time is "+minutesAgo+"s ago.")
         }else{
             logError("BombaReg", "Can not read Darrer_Canvi_Bomba_Bassa (state is "+intentEncesa+
-            "), assuming already passed the time.")
+                "), assuming already passed the time.")
         }
 
         if(minutesAgo > minutesToRun){
             logDebug("BombaReg", "Intent encesa bomba Bassa time is "+minutesAgo+"m ago, and limit is "+
-            minutesToRun+"m so truning off").
+                minutesToRun+"m so truning off").
             Ordre_Encesa_Bomba_Bassa.sendCommand(OFF) 
         }else{
             logDebug("BombaReg", "Intent encesa bomba Bassa time is "+minutesAgo+"m ago, and limit is "+
-            minutesToRun+"m so not changing anything").
+                minutesToRun+"m so not changing anything").
         }
     }else if(state == OFF && ordre == ON){
         logDebug("BombaReg", "Checking status of reg Bassa and state is OFF and ordre is ON")
