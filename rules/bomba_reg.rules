@@ -311,6 +311,8 @@ then
         Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
     }else{
         logWarn("BombaReg", "Checking status of reg Bassa and some state is null: Ordre-> "+ordre+", State -> "+state)
+        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
     }
 end
 
