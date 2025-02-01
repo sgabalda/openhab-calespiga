@@ -21,7 +21,7 @@ then
     val commandReg = BassaRegProxy.state.toString
     val commandCirculacio = BassaCirculacioProxy.state.toString
 
-    logDebug("bassa.rules","Forwarding proxy values to command items: Reg: "+commandReg+
+    logWarn("bassa.rules","Forwarding proxy values to command items: Reg: "+commandReg+
         ", Circulacio: "+commandCirculacio+", Aigua grisa: "+commandGrisa)
     BassaAiguagrisaCommand.sendCommand(commandGrisa)
     BassaRegCommand.sendCommand(commandReg)

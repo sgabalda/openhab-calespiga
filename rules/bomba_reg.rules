@@ -137,7 +137,7 @@ then
         if(minutesAgo > minutesToRun){
             logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
                 minutesToRun+"m so truning off")
-            Ordre_Encesa_Bomba_Diposit.sendCommand(OFF) 
+            Encesa_Bomba_Manual.sendCommand(OFF) 
         }else{
             logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
                 minutesToRun+"m so not changing anything")
@@ -191,7 +191,12 @@ when
 then
     val ordre = receivedCommand
     logDebug("BombaReg", "Executor Bassa received "+ordre)
-    BassaRegProxy.sendCommand(ordre)
+    if(ordre == ON){
+        BassaRegProxy.sendCommand("start")
+    }else{
+        BassaRegProxy.sendCommand("stop")
+    }
+    
 end
 
 rule "Encesa Bassa ha succeit"
@@ -281,7 +286,7 @@ then
         if(minutesAgo > minutesToRun){
             logDebug("BombaReg", "Intent encesa bomba Bassa time is "+minutesAgo+"m ago, and limit is "+
                 minutesToRun+"m so truning off")
-            Ordre_Encesa_Bomba_Bassa.sendCommand(OFF) 
+            Encesa_Bomba_Manual.sendCommand(OFF) 
         }else{
             logDebug("BombaReg", "Intent encesa bomba Bassa time is "+minutesAgo+"m ago, and limit is "+
                 minutesToRun+"m so not changing anything")
