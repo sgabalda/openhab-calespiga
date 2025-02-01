@@ -4,8 +4,6 @@ import java.lang.Math
 
 //RULES MANAGING Reg from DIPOSIT
 
-
-
 rule "Ordre encesa bomba diposit"
 when
     Item Ordre_Encesa_Bomba_Diposit changed
@@ -349,7 +347,6 @@ when
     Item Encesa_Bomba_Manual received command ON
 then
     logInfo("BombaReg","Manually turning on bomba reg")
-    logDebug("BombaReg","Getting the minutes to run")
     val minutesToRunState = Durada_Encesa_Manual.state
     var minutesToRun = 0
     if(minutesToRunState != NULL){
@@ -434,6 +431,6 @@ when
     Item DipositPercentNumber received update
 then
     val current = DipositPercentNumber.state.toString
-    logInfo("BombaReg", "Going to update reg title to "+current)
+    //logInfo("BombaReg", "Going to update reg title to "+current)
     RegTitle.sendCommand(current)
 end
