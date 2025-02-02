@@ -1,8 +1,7 @@
-Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput) //this is the actual item tant turns on or off the pump
+Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput) //this is the actual item tant turns on or off the pump of the tank
 String Encesa_BombaNumber "2" // Item required with the GPIO number
 
-Number Encesa_Bomba_Proxy "Proxy encesa bomba reg"
-DateTime Darrera_Encesa_Bomba "Instant darrera encesa"
+DateTime Darrera_Encesa_Reg "Instant darrera encesa"
 
 Switch Encesa_Bomba_Manual "Encesa manual bomba reg"
 Number Durada_Encesa_Manual "Durada encesa manual (minuts)"
@@ -11,5 +10,24 @@ Switch Encesa_Bomba_Auto "Encesa auto bomba reg"
 Number Durada_Encesa_Auto "Durada encesa auto (minuts)"
 Number Hora_Encesa_Auto "Hora encesa auto"
 Number Periode_Encesa_Auto "Periode encesa auto (h)"
+
+Switch Ordre_Encesa_Bomba_Bassa "Rep ordre encesa bomba reg Bassa"
+Switch Executor_Ordre_Encesa_Bomba_Bassa "Executa ordre encesa bomba reg Bassa"
+Switch Comprovador_Alarma_Bomba_Bassa "Comprova alarma bomba Bassa"
+Switch Estat_Bomba_Bassa "Estat encesa bomba reg Bassa"
+DateTime Darrer_Canvi_Bomba_Bassa "Instant darrer canvi bomba Bassa"
+DateTime Intent_Canvi_Bomba_Bassa "Instant intent canvi bomba Bassa"
+
+Switch Ordre_Encesa_Bomba_Diposit "Rep ordre encesa bomba reg diposit"
+Switch Executor_Ordre_Encesa_Bomba_Diposit "Executa ordre encesa bomba reg diposit"
+Switch Comprovador_Alarma_Bomba_Diposit "Comprova alarma bomba diposit"
+Switch Estat_Bomba_Diposit "Estat encesa bomba reg diposit"
+DateTime Darrer_Canvi_Bomba_Diposit "Instant darrer canvi bomba diposit"
+DateTime Intent_Canvi_Bomba_Diposit "Instant intent canvi bomba diposit"
+
+Number Durada_Reg_Router "Durada encesa (minuts)"
+Number Encesa_Reg_Router "Decisor bomba reg" //decideix a quina bomba fa regar
+
+String Bomba_Activa "Bomba activa pel reg" //per a que l'usuari decideixi quina bomba vol usar
 
 String RegTitle "Reg i aigua"

@@ -2,32 +2,351 @@ import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 import java.lang.Math
 
-var Timer apagarBombaTimer = null
+//RULES MANAGING Reg from DIPOSIT
 
-rule "Encesa proxy bomba reg"
+rule "Ordre encesa bomba diposit"
 when
-    Item Encesa_Bomba_Proxy received command
+    Item Ordre_Encesa_Bomba_Diposit changed
+then
+    val novaOrdre = newState
+    logDebug("BombaReg", "Ordre diposit received command "+novaOrdre+". Updating intent and sending to executor")
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+
+    Intent_Canvi_Bomba_Diposit.postUpdate(nowDateType) 
+    logDebug("BombaReg", "Updated Intent_Canvi_Bomba_Diposit")
+
+    if(novaOrdre == ON){
+        Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(ON)
+    }else{
+        Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)
+    }
+
+    logDebug("BombaReg", "Send command to Executor_Ordre_Encesa_Bomba_Diposit")
+end
+
+rule "Executor ordre encesa bomba diposit"
+when
+    Item Executor_Ordre_Encesa_Bomba_Diposit received command
+then
+    val ordre = receivedCommand
+    logDebug("BombaReg", "Executor Diposit received "+ordre)
+    if(ordre == ON){
+        //comprova si status bassa es diposit
+        var bassaStatus = "circulacio"
+        val bassaStatusItem = BassaCirculacioStatus.state
+        if(bassaStatusItem != NULL){
+            bassaStatus = bassaStatusItem.toString
+        }
+        //if it is not, send command to start the pump
+        if(bassaStatus != "diposit"){
+            logDebug("BombaReg", "bassa is not diposit, so turning on bomba ")
+            Encesa_Bomba.sendCommand(ON)    //when it is run via MQTT, change here to send the message to command topic
+        }else{
+            logDebug("BombaReg", "bassa is in diposit state, so waiting")
+        }
+        //if not, then do nothing as it will be retried by the checker
+    }else{
+        Encesa_Bomba.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
+    }
+
+end
+
+rule "Encesa diposit ha succeit"
+when
+    Item Encesa_Bomba changed    //when it is run via MQTT, change here to read the status
+then
+    val nouEstat = newState
+    logDebug("BombaReg", "Diposit changed to "+nouEstat+". Updating darrer canvi")
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+
+    Darrer_Canvi_Bomba_Diposit.postUpdate(nowDateType)
+    if(nouEstat == ON){
+        Estat_Bomba_Diposit.sendCommand(ON)
+    }else{
+        Estat_Bomba_Diposit.sendCommand(OFF)
+    }
+end
+
+rule "Comprova alarma bomba diposit"
+when
+    Item Comprovador_Alarma_Bomba_Diposit received command
+then
+    logDebug("BombaReg", "Checking alarma for diposit")
+    val minutsItem = AlarmReg_Seconds.state
+    var timeForReceivingResponse = 15L
+    if(minutsItem != NULL){
+        timeForReceivingResponse = (minutsItem as Number).intValue
+        logDebug("BombaReg", "setting the time for diposit reg not in sync alert to "+timeForReceivingResponse+"s") 
+    }else{
+        AlarmReg_Seconds.sendCommand(15)
+        logWarn("BombaReg", "setting the time for diposit reg not in sync alert to the default "+timeForReceivingResponse+"s") 
+    }
+
+    var minutsAgo = timeForReceivingResponse + 1L
+    val ultimaConnexioState = Intent_Canvi_Bomba_Diposit.state
+    logDebug("BombaReg", "Ultima ordre sent: "+ultimaConnexioState)
+    if(ultimaConnexioState != NULL){
+        val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
+        logDebug("BombaReg", "Ultima ordre sent time is "+lastConnection)
+            minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+        logDebug("BombaReg", "Ultima ordre sent is "+minutsAgo+"m ago.")
+    }else{
+        logError("BombaReg", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
+            "), assuming already passed the time.")
+    }
+
+    if(minutsAgo > timeForReceivingResponse){
+        AlarmReg.postUpdate(ON)
+    }
+end
+
+rule "Comprova canvi encesa bomba diposit"
+when
+    Time cron "0/15 * * * * * *" //every 15 secs
+then
+    val ordre = Ordre_Encesa_Bomba_Diposit.state
+    val state = Estat_Bomba_Diposit.state
+
+    if(state == ON && ordre == ON){
+        logDebug("BombaReg", "Checking status of reg diposit and both are ON")
+        //if there was an alert, solve it as now it is in sync
+        AlarmReg.postUpdate(OFF)
+
+        var minutesToRun = 0L
+        val minutesToRunState = Durada_Reg_Router.state
+        if(minutesToRunState != NULL){
+            minutesToRun = (minutesToRunState as Number).longValue
+        }else{
+            logError("BombaReg","Durada_Reg_Router is null, assuming 0 so reg will stop now")
+        }
+        var minutesAgo = minutesToRun + 1L
+        val now = ZonedDateTime::now
+        val intentEncesa = Darrer_Canvi_Bomba_Diposit.state
+        logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit obtained: "+intentEncesa)
+        if(intentEncesa != NULL){
+            val intent = (intentEncesa as DateTimeType).getZonedDateTime()
+            logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit time is "+intent)
+                minutesAgo = ChronoUnit.MINUTES.between(intent, now);
+            logDebug("BombaReg", "Darrer_Canvi_Bomba_Diposit time is "+minutesAgo+"s ago.")
+        }else{
+            logError("BombaReg", "Can not read Darrer_Canvi_Bomba_Diposit (state is "+intentEncesa+
+            "), assuming already passed the time.")
+        }
+        if(minutesAgo > minutesToRun){
+            logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
+                minutesToRun+"m so truning off")
+            Encesa_Bomba_Manual.sendCommand(OFF) 
+        }else{
+            logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
+                minutesToRun+"m so not changing anything")
+        }
+    }else if(state == OFF && ordre == ON){
+        logDebug("BombaReg", "Checking status of reg diposit and state is OFF and ordre is ON")
+
+        Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(ON)
+
+        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Comprovador_Alarma_Bomba_Diposit.sendCommand(ON)
+        
+    }else if(state == OFF && ordre == OFF){
+        logDebug("BombaReg", "Checking status of reg diposit and both are OFF")
+        //if there was an alert, solve it as now it is in sync
+        AlarmReg.postUpdate(OFF)
+    }else if(state == ON && ordre == OFF){
+        logDebug("BombaReg", "Checking status of reg Diposit and state is ON and ordre is OFF")
+        Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
+
+        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Comprovador_Alarma_Bomba_Diposit.sendCommand(ON)
+    }else{
+        logWarn("BombaReg", "Checking status of reg Diposit and some state is null: Ordre-> "+ordre+", State -> "+state)
+    }
+end
+
+
+//RULES MANAGING Reg from BASSA
+
+rule "Ordre encesa bomba Bassa"
+when
+    Item Ordre_Encesa_Bomba_Bassa changed
+then
+    val novaOrdre = newState
+    logDebug("BombaReg", "Ordre Bassa received command "+novaOrdre+". Updating intent and sending to executor")
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+
+    Intent_Canvi_Bomba_Bassa.postUpdate(nowDateType) 
+
+    if(novaOrdre == ON)
+        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(ON)
+    else
+        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)
+end
+
+rule "Executor ordre encesa bomba Bassa"
+when
+    Item Executor_Ordre_Encesa_Bomba_Bassa received command
+then
+    val ordre = receivedCommand
+    logDebug("BombaReg", "Executor Bassa received "+ordre)
+    if(ordre == ON){
+        BassaRegProxy.sendCommand("start")
+    }else{
+        BassaRegProxy.sendCommand("stop")
+    }
+    
+end
+
+rule "Encesa Bassa ha succeit"
+when
+    Item BassaRegStatus changed
+then
+    val nouEstat = newState
+    logDebug("BombaReg", "Bassa changed to "+nouEstat+". Updating darrer canvi")
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+
+    Darrer_Canvi_Bomba_Bassa.postUpdate(nowDateType)
+    if(nouEstat == ON){
+        Estat_Bomba_Bassa.sendCommand(ON)
+    }else{
+        Estat_Bomba_Bassa.sendCommand(OFF)
+    }
+    
+end
+
+rule "Comprova alarma bomba Bassa"
+when
+    Item Comprovador_Alarma_Bomba_Bassa received command
+then
+    logDebug("BombaReg", "Checking alarma for Bassa")
+    val minutsItem = AlarmReg_Seconds.state
+    var timeForReceivingResponse = 15L
+    if(minutsItem != NULL){
+        timeForReceivingResponse = (minutsItem as Number).intValue
+        logDebug("BombaReg", "setting the time for Bassa reg not in sync alert to "+timeForReceivingResponse+"s") 
+    }else{
+        AlarmReg_Seconds.sendCommand(15)
+        logWarn("BombaReg", "setting the time for Bassa reg not in sync alert to the default "+timeForReceivingResponse+"s") 
+    }
+
+    var minutsAgo = timeForReceivingResponse + 1L
+    val ultimaConnexioState = Intent_Canvi_Bomba_Bassa.state
+    logDebug("BombaReg", "Ultima ordre sent: "+ultimaConnexioState)
+    if(ultimaConnexioState != NULL){
+        val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
+        logDebug("BombaReg", "Ultima ordre sent time is "+lastConnection)
+        minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+        logDebug("BombaReg", "Ultima ordre sent is "+minutsAgo+"m ago.")
+    }else{
+        logError("BombaReg", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
+            "), assuming already passed the time.")
+    }
+
+    if(minutsAgo > timeForReceivingResponse){
+        AlarmReg.postUpdate(ON)
+    }
+end
+
+rule "Comprova canvi encesa bomba Bassa"
+when
+    Time cron "0/15 * * * * * *" //every 15 secs
+then
+    val ordre = Ordre_Encesa_Bomba_Bassa.state
+    val state = Estat_Bomba_Bassa.state
+
+    if(state == ON && ordre == ON){
+        logDebug("BombaReg", "Checking status of reg Bassa and both are ON")
+        //if there was an alert, solve it as now it is in sync
+        AlarmReg.postUpdate(OFF)
+
+        var minutesToRun = 0L
+        val minutesToRunState = Durada_Reg_Router.state
+        if(minutesToRunState != NULL){
+            minutesToRun = (minutesToRunState as Number).longValue
+        }else{
+            logError("BombaReg","Durada_Reg_Router is null, assuming 0 so reg will stop now")
+        }
+        var minutesAgo = minutesToRun + 1L
+        val now = ZonedDateTime::now
+        val intentEncesa = Darrer_Canvi_Bomba_Bassa.state
+        logDebug("BombaReg", "Darrer_Canvi_Bomba_Bassa obtained: "+intentEncesa)
+        if(intentEncesa != NULL){
+            val intent = (intentEncesa as DateTimeType).getZonedDateTime()
+            logDebug("BombaReg", "Darrer_Canvi_Bomba_Bassa time is "+intent)
+            minutesAgo = ChronoUnit.MINUTES.between(intent, now);
+            logDebug("BombaReg", "Darrer_Canvi_Bomba_Bassa time is "+minutesAgo+"s ago.")
+        }else{
+            logError("BombaReg", "Can not read Darrer_Canvi_Bomba_Bassa (state is "+intentEncesa+
+                "), assuming already passed the time.")
+        }
+
+        if(minutesAgo > minutesToRun){
+            logDebug("BombaReg", "Intent encesa bomba Bassa time is "+minutesAgo+"m ago, and limit is "+
+                minutesToRun+"m so truning off")
+            Encesa_Bomba_Manual.sendCommand(OFF) 
+        }else{
+            logDebug("BombaReg", "Intent encesa bomba Bassa time is "+minutesAgo+"m ago, and limit is "+
+                minutesToRun+"m so not changing anything")
+        }
+    }else if(state == OFF && ordre == ON){
+        logDebug("BombaReg", "Checking status of reg Bassa and state is OFF and ordre is ON")
+
+        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(ON)
+
+        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
+        
+    }else if(state == OFF && ordre == OFF){
+        logDebug("BombaReg", "Checking status of reg Bassa and both are OFF")
+        //if there was an alert, solve it as now it is in sync
+        AlarmReg.postUpdate(OFF)
+    }else if(state == ON && ordre == OFF){
+        logDebug("BombaReg", "Checking status of reg Bassa and state is ON and ordre is OFF")
+        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
+
+        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
+    }else{
+        logWarn("BombaReg", "Checking status of reg Bassa and some state is null: Ordre-> "+ordre+", State -> "+state)
+        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
+    }
+end
+
+// General rules for REG
+
+
+rule "Decsio encesa bomba reg"
+when
+    Item Encesa_Reg_Router received command
 then
     val minutesToRun = (receivedCommand as Number).longValue
-    if(apagarBombaTimer!==null){
-        logDebug("BombaReg","timer not null, cancelling it")
-        apagarBombaTimer.cancel()
-        apagarBombaTimer=null
-    }
-    if(minutesToRun > 0){
-        logInfo("BombaReg","Turning on bomba reg for "+minutesToRun+" minutes")
-        Encesa_Bomba.sendCommand(ON)
-        logDebug("BombaReg","Setting timer")
-        val now = ZonedDateTime::now
-        apagarBombaTimer = createTimer(now.plusMinutes(minutesToRun), [|
-                logDebug("BombaReg","Timer reached, turning off bomba")
-                apagarBombaTimer = null
-                Encesa_Bomba_Manual.sendCommand(OFF)
-            ])
+
+    Durada_Reg_Router.sendCommand(minutesToRun)
+
+    if(minutesToRun == 0L){
+        logDebug("BombaReg","In router, minutes to run is 0 so switching both pumps off")
+        Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)
+        Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)
     }else{
-        logInfo("BombaReg","Turning off bomba reg")
-        Encesa_Bomba.sendCommand(OFF)
+        val bombaToUse = Bomba_Activa.state
+        var bombaToUseString = "diposit"
+        if(bombaToUse != NULL){
+            bombaToUseString = bombaToUse.toString
+        }
+        logDebug("BombaReg","In router, the pump to use is "+bombaToUseString+" for "+minutesToRun+" min")
+        if(bombaToUseString == "diposit"){
+            Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)
+            Ordre_Encesa_Bomba_Diposit.sendCommand(ON)
+        }else{
+            Ordre_Encesa_Bomba_Bassa.sendCommand(ON)
+            Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)
+        }
     }
+    
 end
 
 rule "Encesa manual bomba reg"
@@ -35,13 +354,12 @@ when
     Item Encesa_Bomba_Manual received command ON
 then
     logInfo("BombaReg","Manually turning on bomba reg")
-    logDebug("BombaReg","Getting the minutes to run")
     val minutesToRunState = Durada_Encesa_Manual.state
     var minutesToRun = 0
     if(minutesToRunState != NULL){
         minutesToRun = (minutesToRunState as Number).intValue
     }
-    Encesa_Bomba_Proxy.sendCommand(minutesToRun)
+    Encesa_Reg_Router.sendCommand(minutesToRun)
 end
 
 rule "Apagada manual bomba reg"
@@ -49,7 +367,7 @@ when
     Item Encesa_Bomba_Manual received command OFF
 then
     logInfo("BombaReg","Bomba manually turned off")
-    Encesa_Bomba_Proxy.sendCommand(0)
+    Encesa_Reg_Router.sendCommand(0)
     logDebug("BombaReg","Done turning off")
 end
 
@@ -91,7 +409,7 @@ then
         logDebug("BombaReg","currentHour is "+currentHour)
 
         var daysAgo = 0L
-        val lastRegItemState = Darrera_Encesa_Bomba.state
+        val lastRegItemState = Darrera_Encesa_Reg.state
         logDebug("BombaReg", "Last reg item state is "+lastRegItemState)
         if(lastRegItemState != NULL){
             logDebug("BombaReg", "Going to convert last reg time")
@@ -105,8 +423,8 @@ then
         logDebug("BombaReg", "shouldWater is "+shouldWater)
         
         if(shouldWater){
-            Encesa_Bomba_Proxy.sendCommand(minutesToRun)
-            Darrera_Encesa_Bomba.postUpdate(nowDateType)
+            Encesa_Reg_Router.sendCommand(minutesToRun)
+            Darrera_Encesa_Reg.postUpdate(nowDateType)
         }
 
     }else{
@@ -120,6 +438,6 @@ when
     Item DipositPercentNumber received update
 then
     val current = DipositPercentNumber.state.toString
-    logInfo("BombaReg", "Going to update reg title to "+current)
+    //logInfo("BombaReg", "Going to update reg title to "+current)
     RegTitle.sendCommand(current)
 end

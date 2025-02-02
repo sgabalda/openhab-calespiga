@@ -40,19 +40,20 @@ sitemap default label="Ca l'espiga" {
     {
         Frame label="Reg de l'hort" {
             Text item=Encesa_Bomba label="Estat reg: [%s]" icon="hydrant"
+            Selection item=Bomba_Activa label="Bomba usada pel reg: [%s]" icon="pump" mappings=["diposit"="Diposit", "bassa"="Bassa"]
             Switch item=Encesa_Bomba_Manual icon="sprinkler"
             Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
             Switch item=Encesa_Bomba_Auto icon="sprinkler"
             Setpoint item=Durada_Encesa_Auto icon="stopwatch" label="Durada [%.1f min]" minValue=1 maxValue=30 step=1
             Setpoint item=Hora_Encesa_Auto icon="time" label="Hora [%.1f h]" minValue=0 maxValue=24 step=1
             Setpoint item=Periode_Encesa_Auto icon="stopwatch" label="Cada [%.1f h]" minValue=2 maxValue=72 step=1
-            Text icon="time" item=Darrera_Encesa_Bomba label="Darrer reg [%1$td/%1$tm/%1$tY %1$tT]"            
+            Text icon="time" item=Darrera_Encesa_Reg label="Darrer reg auto [%1$td/%1$tm/%1$tY %1$tT]"            
         }
         Frame label="Diposit" {
             Text icon="wassertank" item=DipositPercentNumber label="Nivell diposit: [%d %%]"
             Text icon="water" item=DipositLitres label="Litres diposit: [%d L]"
             Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
-            Text icon="time" item=Darrera_Encesa_Bomba label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=Darrer_Canvi_Bomba_Diposit label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
             Text item=Diposit_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
         }
         Frame label="Bassa" {
@@ -60,6 +61,7 @@ sitemap default label="Ca l'espiga" {
             Text icon="water" item=BassaLitres label="Litres bassa: [%d L]"
             Text icon="flow" item=BassaAltura label="Profunditat bassa: [%d cm]"
             Text icon="hydrant" item=BassaRegStatus label="Bomba reg: [%s]"
+            Text icon="time" item=Darrer_Canvi_Bomba_Bassa label="Darrera encesa reg [%1$td/%1$tm/%1$tY %1$tT]"
             Text icon="faucet" item=BassaCirculacioStatus label="Estat circulacio: [%s]"
             Selection icon="switch_on_off" item=BassaModeCirculacio label="Mode circulacio: [%s]"  mappings=["hores"="Hores", "unusedPower"="Pot. sobrant"]
             Setpoint icon="time" item=BassaCirculacioHoraEncesa label="Hora inici [%.1f h]" minValue=0 maxValue=24 step=1
@@ -164,6 +166,14 @@ sitemap default label="Ca l'espiga" {
             Switch item=AlarmDipositComunicacioNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
             Setpoint item=AlarmDipositComunicacioTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
             Setpoint item=AlarmDipositComunicacio_Seconds icon="stopwatch" label="Temps limit [%.1f s]" minValue=30 maxValue=120 step=10
+        }
+        Frame label="Reg no executat" {
+            Text item=AlarmReg label="Estat [%s]" icon="alert"
+            Text icon="time" item=AlarmRegTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=AlarmRegTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=AlarmRegNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
+            Setpoint item=AlarmRegTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
+            Setpoint item=AlarmReg_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
         }
     }
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"

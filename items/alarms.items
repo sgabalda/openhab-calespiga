@@ -38,3 +38,12 @@ DateTime AlarmDipositComunicacioLastNotificationTime "Darrera notif."
 Number AlarmDipositComunicacioTimeNotifications "Min. entre notif."
 String AlarmDipositComunicacioText "La comunicació amb el diposit s'ha perdut! Cal comprovar que està tot bé."
 Number AlarmDipositComunicacio_Seconds "Segons limit comunicació"
+
+Switch AlarmReg "Reg" (Alarms)
+DateTime AlarmRegTimeOn "Com. diposit activada"
+DateTime AlarmRegTimeOff "Com. diposit desact."
+Switch AlarmRegNotification "Notificacio Com. diposit"
+DateTime AlarmRegNotificationTime "Darrera notif."
+Number AlarmRegTimeNotifications "Min. entre notif."
+String AlarmRegText "La bomba de reg no respon, pot ser que no s'hagi regat o no s'hagi pogut aturar"
+Number AlarmReg_Seconds "Minuts limit comunicació"
