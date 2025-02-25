@@ -1,4 +1,4 @@
-Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput) //this is the actual item tant turns on or off the pump of the tank
+Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput, GPIOOutputInverted) //this is the actual item tant turns on or off the pump of the tank
 String Encesa_BombaNumber "2" // Item required with the GPIO number
 
 DateTime Darrera_Encesa_Reg "Instant darrera encesa"
