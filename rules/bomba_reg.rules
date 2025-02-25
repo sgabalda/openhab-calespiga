@@ -134,7 +134,7 @@ then
             logError("BombaReg", "Can not read Darrer_Canvi_Bomba_Diposit (state is "+intentEncesa+
             "), assuming already passed the time.")
         }
-        if(minutesAgo > minutesToRun){
+        if(minutesAgo >= minutesToRun){
             logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
                 minutesToRun+"m so truning off")
             Encesa_Bomba_Manual.sendCommand(OFF) 
@@ -209,10 +209,12 @@ then
     val nowDateType = new DateTimeType(now) 
 
     Darrer_Canvi_Bomba_Bassa.postUpdate(nowDateType)
-    if(nouEstat == ON){
+    if(nouEstat == "on"){
         Estat_Bomba_Bassa.sendCommand(ON)
+        logDebug("BombaReg", "Bassa estat set to ON")
     }else{
         Estat_Bomba_Bassa.sendCommand(OFF)
+        logDebug("BombaReg", "Bassa estat set to OFF")
     }
     
 end
@@ -283,7 +285,7 @@ then
                 "), assuming already passed the time.")
         }
 
-        if(minutesAgo > minutesToRun){
+        if(minutesAgo >= minutesToRun){
             logDebug("BombaReg", "Intent encesa bomba Bassa time is "+minutesAgo+"m ago, and limit is "+
                 minutesToRun+"m so truning off")
             Encesa_Bomba_Manual.sendCommand(OFF) 
