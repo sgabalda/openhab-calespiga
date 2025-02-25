@@ -96,8 +96,8 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=BateriesTemperaturaObjectiu icon="dial_heater" label="T. objectiu bat. [%.1f]" minValue=5 maxValue=30 step=1
             Selection item=VentiladorGestioElect icon="thermostat_heater" mappings=["auto"="Auto (bat)", "autotemp"="Auto (temp)", "manual"="Manual"]
             
-            Text item=VentiladorBateries label="Vent. bateries: [%s]" icon="fan"
-            Text item=VentiladorElectronica label="Vent. electr.: [%s]" icon="fan"
+            Text item=VentiladorBateriesStatus label="Vent. bateries: [%s]" icon="fan"
+            Text item=VentiladorElectronicaStatus label="Vent. electr.: [%s]" icon="fan"
 
             Switch item=VentiladorBateriesManual icon="fan"
             Switch item=VentiladorElectronicaManual icon="fan"

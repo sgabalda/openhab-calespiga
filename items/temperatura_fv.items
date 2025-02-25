@@ -6,12 +6,15 @@ Number:Temperature BateriesTemperaturaAdosada      "T. bateries: [%.2f %unit%]" 
 
 Number:Temperature BateriesTemperaturaObjectiu      "T. objectiu bat."
 
+String VentiladorBateriesStatus "Estat ventilador bateria" {channel="mqtt:topic:bassa:FanBatteriesStatus"}
+String VentiladorBateriesSet "Commanda ventilador bateria" {channel="mqtt:topic:bassa:FanBatteriesSet"}
+String VentiladorElectronicaStatus "Estat ventilador electronica" {channel="mqtt:topic:bassa:FanElectronicsStatus"}
+String VentiladorElectronicaSet "Commanda ventilador electronica" {channel="mqtt:topic:bassa:FanElectronicsSet"}
+
 Switch VentiladorBateries "Ventilador bat." (GPIOOutput) //this is the actual item tant turns on or off the fan
 String VentiladorBateriesNumber "20" // Item required with the GPIO number
 Switch VentiladorElectronica "Ventilador electr." (GPIOOutput) //this is the actual item tant turns on or off the fan
 String VentiladorElectronicaNumber "21" // Item required with the GPIO number
-//Switch VentiladorBateries "Ventilador bat." {channel="gpio:pigpio-remote:local-pigpio:gpioControlVentiladorBateries"}
-//Switch VentiladorElectronica "Ventilador electr." {channel="gpio:pigpio-remote:local-pigpio:gpioControlVentiladorElectronica"}
 
 String VentiladorGestioElect "Gestió dels ventiladors"      //pot ser "auto" o "manual"
 

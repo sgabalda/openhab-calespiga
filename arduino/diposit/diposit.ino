@@ -5,17 +5,47 @@
 #include <DallasTemperature.h>
 
 #define ARDUINO_CLIENT_ID "arduino_diposit1"
+
+//tank sensor
 #define TOPIC_MEASUREMENTS_TANK_PERCENT "diposit1/percentage"
 #define TOPIC_MEASUREMENTS_TANK_LITERS "diposit1/liters"
 #define TOPIC_MEASUREMENTS_TANK_HEIGHT "diposit1/height"
 #define TOPIC_MEMORY "diposit1/memory"
+
+//temp sensors
 #define TOPIC_TEMPERATURE_ELECTRONICS "diposit1/temperature/electronics"
 #define TOPIC_TEMPERATURE_BATTERIES "diposit1/temperature/batteries"
 #define TOPIC_TEMPERATURE_BATTERIES_CLOSET "diposit1/temperature/batteriescloset"
 #define TOPIC_TEMPERATURE_OUTDOOR "diposit1/temperature/outdoor"
 
-// Data wire is conntec to the Arduino digital pin 4
+//relays
+#define TOPIC_FAN_BATTERIES_SET "fan/batteries/set"
+#define TOPIC_FAN_BATTERIES_STATUS "fan/batteries/status"
+#define TOPIC_FAN_ELECTRONICS_SET "fan/electronics/set"
+#define TOPIC_FAN_ELECTRONICS_STATUS "fan/electronics/status"
+#define TOPIC_TANK1_PUMP_SET "diposit1/pump/set"
+#define TOPIC_TANK1_PUMP_STATUS "diposit1/pump/status"
+
+//MQTT messages received
+#define COMMAND_START "start"
+#define COMMAND_STOP "stop"
+//MQTT messages sent
+#define STATUS_ON "on"
+#define STATUS_OFF "off"
+
+//Relay levels
+#define RELAY_ON HIGH
+#define RELAY_OFF LOW
+
+//Used relays
+#define RELAY_FAN_BATTERIES 5
+#define RELAY_FAN_ELECTRONICS 6
+#define RELAY_PUMP 7
+
+// Data wire is conntected to the Arduino digital pin 4
 #define ONE_WIRE_BUS 2
+
+#define MAX_TIME_BETWEEN_ORDERS 3*60*1000   // 3 minutes
 
 OneWire oneWire(ONE_WIRE_BUS);
 
@@ -34,6 +64,8 @@ int previousLiters = 0;
 int maxHeightCm = 180;
 bool mqttEnabled = true;
 
+long lastOrder = 0;     //to store the last time when an order was received
+
 void reconnect() {
   while (!client.connected()) {
     if (client.connect(ARDUINO_CLIENT_ID)) {
@@ -47,7 +79,9 @@ void reconnect() {
     }
   }
 }
-//TODO to be removed when the addresses are identified
+
+//this is not totally required, can be removed if more memory is needed.
+//but is useful to identify the 1-wire devices connected.
 void printAddress(DeviceAddress deviceAddress)
 { 
   for (uint8_t i = 0; i < 8; i++)
@@ -88,7 +122,7 @@ void setup()
     IPAddress server(192, 168, 2, 114);
 
     client.setServer(server, 1883);
-    //client.setCallback(callback);
+    client.setCallback(callback);
 
     Ethernet.begin(mac, ip);
     // Check for Ethernet hardware present
@@ -227,6 +261,114 @@ void reportMemory(){
   Serial.println(freeMem);
 }
 
+void checkMaxTime(){
+  Serial.print(F("ms since last order: "));
+  Serial.println(millis()-lastOrder);
+  if(millis()-lastOrder > MAX_TIME_BETWEEN_ORDERS){
+    Serial.println(F("Too much time between orders, turning off all pumps"));
+    turnAllOff();
+    lastOrder=millis();
+  }
+}
+
+// sub callback function
+void callback(char* topic, byte* payload, unsigned int length)
+{
+
+  lastOrder = millis();
+  Serial.print(F("[sub: "));
+  Serial.print(topic);
+  Serial.print(F("] "));
+  char message[length + 1] = "";
+  for (int i = 0; i < length; i++)
+    message[i] = (char)payload[i];
+  message[length] = '\0';
+  Serial.println(message);
+  if (strcmp(topic, TOPIC_FAN_BATTERIES_SET) == 0){
+    if (strcmp(message, COMMAND_START) == 0){
+      turnFanBatteries(true);
+    }else if (strcmp(message, COMMAND_STOP) == 0){
+      turnFanBatteries(false);
+    }else{
+      Serial.print(F("-> Error, message not valid. Setting off: "));
+      Serial.println(message);
+      turnFanBatteries(false);
+    }  
+  }else if (strcmp(topic, TOPIC_FAN_ELECTRONICS_SET) == 0){
+    if (strcmp(message, COMMAND_START) == 0){
+      turnFanElectronics(true);
+    }else if (strcmp(message, COMMAND_STOP) == 0){
+      turnFanElectronics(false);
+    }else{
+      Serial.print(F("-> Error, message not valid. Setting off: "));
+      Serial.println(message);
+      turnFanElectronics(false);
+    }  
+  }else if (strcmp(topic, TOPIC_TANK1_PUMP_SET) == 0){
+    if (strcmp(message, COMMAND_START) == 0){
+      turnPumpTank1(true);
+    }else if (strcmp(message, COMMAND_STOP) == 0){
+      turnPumpTank1(false);
+    }else{
+      Serial.print(F("-> Error, message not valid. Setting off: "));
+      Serial.println(message);
+      turnPumpTank1(false);
+    }  
+  }else{
+    Serial.println(F("-> Error, topic not valid"));
+    turnAllOff();
+  }
+}
+
+void turnPumpTank1(bool on){
+  if(on){
+    turnRelay(RELAY_PUMP, RELAY_ON);
+    client.publish(TOPIC_TANK1_PUMP_STATUS, STATUS_ON);
+    Serial.print(F("PumpTank1: ON"));
+  }else{
+    turnRelay(RELAY_PUMP, RELAY_OFF);
+    client.publish(TOPIC_TANK1_PUMP_STATUS, STATUS_OFF);
+    Serial.print(F("PumpTank1: OFF"));
+  }
+}
+
+void turnFanElectronics(bool on){
+  if(on){
+    turnRelay(RELAY_FAN_ELECTRONICS, RELAY_ON);
+    client.publish(TOPIC_FAN_ELECTRONICS_STATUS, STATUS_ON);
+    Serial.print(F("FAN electronics: ON"));
+  }else{
+    turnRelay(RELAY_FAN_ELECTRONICS, RELAY_OFF);
+    client.publish(TOPIC_FAN_ELECTRONICS_STATUS, STATUS_OFF);
+    Serial.print(F("FAN electronics: OFF"));
+  }
+}
+
+void turnFanBatteries(bool on){
+  if(on){
+    turnRelay(RELAY_FAN_BATTERIES, RELAY_ON);
+    client.publish(TOPIC_FAN_BATTERIES_STATUS, STATUS_ON);
+    Serial.print(F("FAN batteries: ON"));
+  }else{
+    turnRelay(RELAY_FAN_BATTERIES, RELAY_OFF);
+    client.publish(TOPIC_FAN_BATTERIES_STATUS, STATUS_OFF);
+    Serial.print(F("FAN batteries: OFF"));
+  }
+}
+
+void turnAllOff(){
+  
+  turnPumpTank1(false);
+  turnFanElectronics(false);
+  turnFanBatteries(false);
+  Serial.println(F("All relays to Off"));
+}
+
+void turnRelay(int relay, int status) {
+  digitalWrite(relay, status);
+  delay(100);
+}
+
 void loop()
 {
   if(mqttEnabled){
@@ -238,5 +380,6 @@ void loop()
   measureAndPublishTankLevel();
   readTempSensors();
   reportMemory();
+  checkMaxTime();
   delay(4000);
 }

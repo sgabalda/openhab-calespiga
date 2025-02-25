@@ -5,6 +5,16 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type number : Percentatge [ stateTopic="diposit1/percentage" ]
             Type number : Litres [ stateTopic="diposit1/liters" ]
             Type number : Memoria [ stateTopic="diposit1/memory" ]
+            Type string : PumpStatus "PumpStatus" [ stateTopic="diposit1/pump/status" ]
+            Type string : PumpSet "PumpSet" [ commandTopic="diposit1/pump/set" ]
+    }
+
+    Thing mqtt:topic:fan (mqtt:broker:defaultBroker) {
+        Channels:
+            Type string : FanBatteriesStatus "FanBatteriesStatus" [ stateTopic="fan/batteries/status" ]
+            Type string : FanBatteriesSet "FanBatteriesSet" [ commandTopic="fan/batteries/set" ]
+            Type string : FanElectronicsStatus "FanElectronicsStatus" [ stateTopic="fan/electronics/status" ]
+            Type string : FanElectronicsSet "FanElectronicsSet" [ commandTopic="fan/electronics/set" ]
     }
 
     Thing mqtt:topic:temperatures (mqtt:broker:defaultBroker) {

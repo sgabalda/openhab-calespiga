@@ -41,20 +41,20 @@ then
         //if it is not, send command to start the pump
         if(bassaStatus != "diposit"){
             logDebug("BombaReg", "bassa is not diposit, so turning on bomba ")
-            Encesa_Bomba.sendCommand(ON)    //when it is run via MQTT, change here to send the message to command topic
+            DipositPumpSet.sendCommand("start")    //when it is run via MQTT, change here to send the message to command topic
         }else{
             logDebug("BombaReg", "bassa is in diposit state, so waiting")
         }
         //if not, then do nothing as it will be retried by the checker
     }else{
-        Encesa_Bomba.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
+        DipositPumpSet.sendCommand("stop")    //when it is run via MQTT, change here to send the message to command topic
     }
 
 end
 
 rule "Encesa diposit ha succeit"
 when
-    Item Encesa_Bomba changed    //when it is run via MQTT, change here to read the status
+    Item DipositPumpStatus changed    //when it is run via MQTT, change here to read the status
 then
     val nouEstat = newState
     logDebug("BombaReg", "Diposit changed to "+nouEstat+". Updating darrer canvi")
@@ -62,7 +62,7 @@ then
     val nowDateType = new DateTimeType(now) 
 
     Darrer_Canvi_Bomba_Diposit.postUpdate(nowDateType)
-    if(nouEstat == ON){
+    if(nouEstat == "on"){
         Estat_Bomba_Diposit.sendCommand(ON)
     }else{
         Estat_Bomba_Diposit.sendCommand(OFF)
