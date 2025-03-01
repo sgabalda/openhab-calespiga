@@ -93,6 +93,8 @@ rule "Propaga ventilador bat"
 when
     Item VentiladorBateriesSetProxy changed
 then
+    logDebug("temperatura_fv_elect.rules", 
+        "As proxy changed, propagating to VentiladorBateriesSet "+VentiladorBateriesSetProxy.state)
     VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state)
 end
 
@@ -100,6 +102,8 @@ rule "Propaga ventilador elect"
 when
     Item VentiladorElectronicaSetProxy changed
 then
+    logDebug("temperatura_fv_elect.rules", 
+        "As proxy changed, propagating to VentiladorElectronicaSet "+VentiladorElectronicaSetProxy.state)
     VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state)
 end
 
@@ -107,6 +111,9 @@ rule "Actualitza periodicament MQTT"
 when
     Time cron "0/30 * * * * * *" //every 15 secs
 then
+    logDebug("temperatura_fv_elect.rules", 
+        "Periodic propagation: VentiladorElectronicaSet: "+VentiladorElectronicaSetProxy.state+
+        ", VentiladorBateriesSet: "+VentiladorBateriesSetProxy.state)
     VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state)
     VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state)
 end
