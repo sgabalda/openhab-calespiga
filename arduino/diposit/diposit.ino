@@ -47,6 +47,10 @@
 
 #define MAX_TIME_BETWEEN_ORDERS 3*60*1000   // 3 minutes
 
+byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xEF };
+IPAddress ip(192, 168, 2, 75);
+IPAddress server(192, 168, 2, 114);
+
 OneWire oneWire(ONE_WIRE_BUS);
 
 // Pass our oneWire reference to Dallas Temperature. 
@@ -69,7 +73,10 @@ long lastOrder = 0;     //to store the last time when an order was received
 void reconnect() {
   while (!client.connected()) {
     if (client.connect(ARDUINO_CLIENT_ID)) {
-      Serial.println("connected");
+      Serial.println(F("Connected to MQTT, subscribing"));
+      client.subscribe(TOPIC_FAN_BATTERIES_SET);
+      client.subscribe(TOPIC_FAN_ELECTRONICS_SET);
+      client.subscribe(TOPIC_TANK1_PUMP_SET);
     } else {
       Serial.print(F("failed, rc="));
       Serial.print(client.state());
@@ -97,6 +104,11 @@ void printAddress(DeviceAddress deviceAddress)
 void setup()
 {
 
+    //Setup default pins to off
+  pinMode(RELAY_FAN_BATTERIES, OUTPUT);
+  pinMode(RELAY_FAN_ELECTRONICS, OUTPUT);
+  pinMode(RELAY_PUMP, OUTPUT);
+
   Serial.begin(9600);
   sensors.begin();
 
@@ -117,9 +129,7 @@ void setup()
 
 
   if(mqttEnabled){
-    byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xEF };
-    IPAddress ip(192, 168, 2, 75);
-    IPAddress server(192, 168, 2, 114);
+
 
     client.setServer(server, 1883);
     client.setCallback(callback);
@@ -136,8 +146,10 @@ void setup()
       Serial.println(F("Eth error. 5s retry"));
       delay(5000);
     }
+    Serial.println(F("Connected to Ethernet"));
     delay(1500); // Allow hardware to stabilize 1.5 sec
   }
+  turnAllOff();
 
 }
 
@@ -324,11 +336,11 @@ void turnPumpTank1(bool on){
   if(on){
     turnRelay(RELAY_PUMP, RELAY_ON);
     client.publish(TOPIC_TANK1_PUMP_STATUS, STATUS_ON);
-    Serial.print(F("PumpTank1: ON"));
+    Serial.println(F("PumpTank1: ON"));
   }else{
     turnRelay(RELAY_PUMP, RELAY_OFF);
     client.publish(TOPIC_TANK1_PUMP_STATUS, STATUS_OFF);
-    Serial.print(F("PumpTank1: OFF"));
+    Serial.println(F("PumpTank1: OFF"));
   }
 }
 
@@ -336,11 +348,11 @@ void turnFanElectronics(bool on){
   if(on){
     turnRelay(RELAY_FAN_ELECTRONICS, RELAY_ON);
     client.publish(TOPIC_FAN_ELECTRONICS_STATUS, STATUS_ON);
-    Serial.print(F("FAN electronics: ON"));
+    Serial.println(F("FAN electronics: ON"));
   }else{
     turnRelay(RELAY_FAN_ELECTRONICS, RELAY_OFF);
     client.publish(TOPIC_FAN_ELECTRONICS_STATUS, STATUS_OFF);
-    Serial.print(F("FAN electronics: OFF"));
+    Serial.println(F("FAN electronics: OFF"));
   }
 }
 
@@ -348,11 +360,11 @@ void turnFanBatteries(bool on){
   if(on){
     turnRelay(RELAY_FAN_BATTERIES, RELAY_ON);
     client.publish(TOPIC_FAN_BATTERIES_STATUS, STATUS_ON);
-    Serial.print(F("FAN batteries: ON"));
+    Serial.println(F("FAN batteries: ON"));
   }else{
     turnRelay(RELAY_FAN_BATTERIES, RELAY_OFF);
     client.publish(TOPIC_FAN_BATTERIES_STATUS, STATUS_OFF);
-    Serial.print(F("FAN batteries: OFF"));
+    Serial.println(F("FAN batteries: OFF"));
   }
 }
 

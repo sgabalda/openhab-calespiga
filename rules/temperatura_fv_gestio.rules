@@ -3,7 +3,7 @@ when
     Item VentiladorBateriesProxy received command
 then
     logDebug("temperatura_fv_bat.rules", "VentiladorBateriesProxy received "+receivedCommand)
-    val ventilador = VentiladorBateriesSet   
+    val ventilador = VentiladorBateriesSetProxy   
 
     val gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_bat.rules", "Auto switch of bat. Gestio is "+gestioVentilador)
@@ -23,7 +23,7 @@ when
     Item VentiladorBateriesManual received command
 then
     logInfo("temperatura_fv_bat.rules", "VentiladorBateriesManual received "+receivedCommand) 
-    val ventilador = VentiladorBateriesSet   
+    val ventilador = VentiladorBateriesSetProxy   
     val gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_bat.rules", "Manual switch of bat. Gestio is "+gestioVentilador)
     if(gestioVentilador=="manual"){ 
@@ -42,7 +42,7 @@ when
     Item VentiladorElectronicaProxy received command
 then
     logDebug("temperatura_fv_elect.rules", "VentiladorElectronicaProxy received "+receivedCommand) 
-    var ventilador = VentiladorElectronicaSet    
+    var ventilador = VentiladorElectronicaSetProxy    
 
     var gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_elect.rules", "Auto switch of elect. Gestio is "+gestioVentilador)
@@ -63,7 +63,7 @@ when
     Item VentiladorElectronicaManual received command
 then
     logInfo("temperatura_fv_elect.rules", "VentiladorBateriesManual received "+receivedCommand)
-    var ventilador = VentiladorElectronicaSet   
+    var ventilador = VentiladorElectronicaSetProxy   
     var gestioVentilador = VentiladorGestioElect.state
     logInfo("temperatura_fv_elect.rules", "Manual switch of elec. Gestio is "+gestioVentilador)
     if(gestioVentilador=="manual"){ 
@@ -83,8 +83,30 @@ when
 then
     logInfo("temperatura_fv_elect.rules", "VentiladorGestioElect received "+VentiladorGestioElect.state)
     logInfo("temperatura_fv_bat.rules", "VentiladorGestioElect received "+VentiladorGestioElect.state)
-    VentiladorElectronicaSet.sendCommand("stop")
-    VentiladorBateriesSet.sendCommand("stop")
+    VentiladorElectronicaSetProxy.sendCommand("stop")
+    VentiladorBateriesSetProxy.sendCommand("stop")
     VentiladorElectronicaManual.sendCommand(OFF)
     VentiladorBateriesManual.sendCommand(OFF)
+end
+
+rule "Propaga ventilador bat"
+when
+    Item VentiladorBateriesSetProxy changed
+then
+    VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state)
+end
+
+rule "Propaga ventilador elect"
+when
+    Item VentiladorElectronicaSetProxy changed
+then
+    VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state)
+end
+
+rule "Actualitza periodicament MQTT"
+when
+    Time cron "0/30 * * * * * *" //every 15 secs
+then
+    VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state)
+    VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state)
 end
