@@ -95,7 +95,7 @@ when
 then
     logDebug("temperatura_fv_elect.rules", 
         "As proxy changed, propagating to VentiladorBateriesSet "+VentiladorBateriesSetProxy.state)
-    VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state)
+    VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state.toString)
 end
 
 rule "Propaga ventilador elect"
@@ -104,7 +104,7 @@ when
 then
     logDebug("temperatura_fv_elect.rules", 
         "As proxy changed, propagating to VentiladorElectronicaSet "+VentiladorElectronicaSetProxy.state)
-    VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state)
+    VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state.toString)
 end
 
 rule "Actualitza periodicament MQTT"
@@ -114,6 +114,6 @@ then
     logDebug("temperatura_fv_elect.rules", 
         "Periodic propagation: VentiladorElectronicaSet: "+VentiladorElectronicaSetProxy.state+
         ", VentiladorBateriesSet: "+VentiladorBateriesSetProxy.state)
-    VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state)
-    VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state)
+    VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state.toString)
+    VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state.toString)
 end
