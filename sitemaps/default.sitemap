@@ -52,7 +52,7 @@ sitemap default label="Ca l'espiga" {
         Frame label="Diposit" {
             Text icon="wassertank" item=DipositPercentNumber label="Nivell diposit: [%d %%]"
             Text icon="water" item=DipositLitres label="Litres diposit: [%d L]"
-            Text item=Encesa_Bomba label="Estat bomba: [%s]" icon="hydrant"
+            Text item=DipositPumpStatus label="Estat bomba: [%s]" icon="hydrant"
             Text icon="time" item=Darrer_Canvi_Bomba_Diposit label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
             Text item=Diposit_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
         }
