@@ -1,5 +1,5 @@
-String DipositPumpStatus "Estat bomba diposit" {channel="mqtt:topic:bassa:PumpStatus"}
-String DipositPumpSet "Commanda bomba diposit" {channel="mqtt:topic:bassa:PumpSet"}
+String DipositPumpStatus "Estat bomba diposit" {channel="mqtt:topic:diposit1:PumpStatus"}
+String DipositPumpSet "Commanda bomba diposit" {channel="mqtt:topic:diposit1:PumpSet"}
 
 DateTime Darrera_Encesa_Reg "Instant darrera encesa"
 

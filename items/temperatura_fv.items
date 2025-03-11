@@ -6,10 +6,10 @@ Number:Temperature BateriesTemperaturaAdosada      "T. bateries: [%.2f %unit%]" 
 
 Number:Temperature BateriesTemperaturaObjectiu      "T. objectiu bat."
 
-String VentiladorBateriesStatus "Estat ventilador bateria" {channel="mqtt:topic:bassa:FanBatteriesStatus"}
-String VentiladorBateriesSet "Commanda ventilador bateria" {channel="mqtt:topic:bassa:FanBatteriesSet"}
-String VentiladorElectronicaStatus "Estat ventilador electronica" {channel="mqtt:topic:bassa:FanElectronicsStatus"}
-String VentiladorElectronicaSet "Commanda ventilador electronica" {channel="mqtt:topic:bassa:FanElectronicsSet"}
+String VentiladorBateriesStatus "Estat ventilador bateria" {channel="mqtt:topic:fan:FanBatteriesStatus"}
+String VentiladorBateriesSet "Commanda ventilador bateria" {channel="mqtt:topic:fan:FanBatteriesSet"}
+String VentiladorElectronicaStatus "Estat ventilador electronica" {channel="mqtt:topic:fan:FanElectronicsStatus"}
+String VentiladorElectronicaSet "Commanda ventilador electronica" {channel="mqtt:topic:fan:FanElectronicsSet"}
 
 //Proxies to allow periodic send of the MQTT commands:
 String VentiladorElectronicaSetProxy
