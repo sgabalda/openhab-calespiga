@@ -39,7 +39,7 @@ sitemap default label="Ca l'espiga" {
     Text item=RegTitle label="Reg i aigua" icon="wassertank"
     {
         Frame label="Reg de l'hort" {
-            Text item=Encesa_Bomba label="Estat reg: [%s]" icon="hydrant"
+            Text item=EstatReg label="Estat reg: [%s]" icon="hydrant"
             Selection item=Bomba_Activa label="Bomba usada pel reg: [%s]" icon="pump" mappings=["diposit"="Diposit", "bassa"="Bassa"]
             Switch item=Encesa_Bomba_Manual icon="sprinkler"
             Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
