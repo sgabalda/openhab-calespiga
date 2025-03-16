@@ -363,7 +363,8 @@ then
 
     if(stateBombaBassa == ON){
         EstatReg.postUpdate("on")
-    }else if( stateBombaDiposit == ON && bassaStatus == "diposit"){
+    }else if( stateBombaDiposit == ON && bassaStatus != "diposit"){
+        //the pump is ON and we are not filling in the bassa
         EstatReg.postUpdate("on")
     }else{
         EstatReg.postUpdate("off")
