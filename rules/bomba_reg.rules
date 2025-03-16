@@ -192,11 +192,12 @@ then
 
     Intent_Canvi_Bomba_Bassa.postUpdate(nowDateType) 
 
-    if(novaOrdre == ON)
+    if(novaOrdre == ON){
         Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(ON)
         Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)
-    else
+    }else{
         Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)
+    }
 end
 
 rule "Executor ordre encesa bomba Bassa"
