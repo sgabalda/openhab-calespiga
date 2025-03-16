@@ -34,8 +34,10 @@
 #define STATUS_OFF "off"
 
 //Relay levels
-#define RELAY_ON HIGH
-#define RELAY_OFF LOW
+#define RELAY_PUMP_ON HIGH
+#define RELAY_PUMP_OFF LOW
+#define RELAY_FAN_ON LOW
+#define RELAY_FAN_OFF HIGH
 
 //Used relays
 #define RELAY_FAN_BATTERIES 5
@@ -46,6 +48,8 @@
 #define ONE_WIRE_BUS 2
 
 #define MAX_TIME_BETWEEN_ORDERS 3*60*1000   // 3 minutes
+
+#define TIME_BETWEEN_DATA_PUBLISHED 5 * 1000 //5 seconds
 
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xEF };
 IPAddress ip(192, 168, 2, 75);
@@ -58,6 +62,9 @@ DallasTemperature sensors(&oneWire);
 
 EthernetClient ethClient;
 PubSubClient client(ethClient);
+
+//last sensor data published
+long lastPublished = 0;
 
 double V0 = 0.52; //Volts without liquid
 double V1 = 2.35; //Volts with h1 of liquid
@@ -274,8 +281,8 @@ void reportMemory(){
 }
 
 void checkMaxTime(){
-  Serial.print(F("ms since last order: "));
-  Serial.println(millis()-lastOrder);
+  /*Serial.print(F("ms since last order: "));
+  Serial.println(millis()-lastOrder);*/
   if(millis()-lastOrder > MAX_TIME_BETWEEN_ORDERS){
     Serial.println(F("Too much time between orders, turning off all pumps"));
     turnAllOff();
@@ -334,11 +341,11 @@ void callback(char* topic, byte* payload, unsigned int length)
 
 void turnPumpTank1(bool on){
   if(on){
-    turnRelay(RELAY_PUMP, RELAY_ON);
+    turnRelay(RELAY_PUMP, RELAY_PUMP_ON);
     client.publish(TOPIC_TANK1_PUMP_STATUS, STATUS_ON);
     Serial.println(F("PumpTank1: ON"));
   }else{
-    turnRelay(RELAY_PUMP, RELAY_OFF);
+    turnRelay(RELAY_PUMP, RELAY_PUMP_OFF);
     client.publish(TOPIC_TANK1_PUMP_STATUS, STATUS_OFF);
     Serial.println(F("PumpTank1: OFF"));
   }
@@ -346,11 +353,11 @@ void turnPumpTank1(bool on){
 
 void turnFanElectronics(bool on){
   if(on){
-    turnRelay(RELAY_FAN_ELECTRONICS, RELAY_ON);
+    turnRelay(RELAY_FAN_ELECTRONICS, RELAY_FAN_ON);
     client.publish(TOPIC_FAN_ELECTRONICS_STATUS, STATUS_ON);
     Serial.println(F("FAN electronics: ON"));
   }else{
-    turnRelay(RELAY_FAN_ELECTRONICS, RELAY_OFF);
+    turnRelay(RELAY_FAN_ELECTRONICS, RELAY_FAN_OFF);
     client.publish(TOPIC_FAN_ELECTRONICS_STATUS, STATUS_OFF);
     Serial.println(F("FAN electronics: OFF"));
   }
@@ -358,11 +365,11 @@ void turnFanElectronics(bool on){
 
 void turnFanBatteries(bool on){
   if(on){
-    turnRelay(RELAY_FAN_BATTERIES, RELAY_ON);
+    turnRelay(RELAY_FAN_BATTERIES, RELAY_FAN_ON);
     client.publish(TOPIC_FAN_BATTERIES_STATUS, STATUS_ON);
     Serial.println(F("FAN batteries: ON"));
   }else{
-    turnRelay(RELAY_FAN_BATTERIES, RELAY_OFF);
+    turnRelay(RELAY_FAN_BATTERIES, RELAY_FAN_OFF);
     client.publish(TOPIC_FAN_BATTERIES_STATUS, STATUS_OFF);
     Serial.println(F("FAN batteries: OFF"));
   }
@@ -389,9 +396,12 @@ void loop()
     }
     client.loop();
   }
-  measureAndPublishTankLevel();
-  readTempSensors();
-  reportMemory();
+  if(millis()-lastPublished > TIME_BETWEEN_DATA_PUBLISHED){
+    measureAndPublishTankLevel();
+    readTempSensors();
+    reportMemory();
+    lastPublished=millis();
+  }
   checkMaxTime();
-  delay(4000);
+  delay(100);
 }
