@@ -1,6 +1,7 @@
-Switch Encesa_Bomba "Encesa bomba reg" (GPIOOutput, GPIOOutputInverted) //this is the actual item tant turns on or off the pump of the tank
-String Encesa_BombaNumber "2" // Item required with the GPIO number
+String DipositPumpStatus "Estat bomba diposit" {channel="mqtt:topic:diposit1:PumpStatus"}
+String DipositPumpSet "Commanda bomba diposit" {channel="mqtt:topic:diposit1:PumpSet"}
 
+String EstatReg "Estat bomba reg"
 DateTime Darrera_Encesa_Reg "Instant darrera encesa"
 
 Switch Encesa_Bomba_Manual "Encesa manual bomba reg"
