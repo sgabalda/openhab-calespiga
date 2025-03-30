@@ -26,12 +26,18 @@
 #define TOPIC_TANK1_PUMP_SET "diposit1/pump/set"
 #define TOPIC_TANK1_PUMP_STATUS "diposit1/pump/status"
 
+//PIN SENSORS
+#define TOPIC_BATTERY_LEVEL "battery/level/status"
+
 //MQTT messages received
 #define COMMAND_START "start"
 #define COMMAND_STOP "stop"
 //MQTT messages sent
 #define STATUS_ON "on"
 #define STATUS_OFF "off"
+#define BATTERY_LEVEL_HIGH "high"
+#define BATTERY_LEVEL_MEDIUM "medium"
+#define BATTERY_LEVEL_LOW "low"
 
 //Relay levels
 #define RELAY_PUMP_ON HIGH
@@ -43,6 +49,13 @@
 #define RELAY_FAN_BATTERIES 5
 #define RELAY_FAN_ELECTRONICS 6
 #define RELAY_PUMP 7
+
+//Read pins for battery status
+#define PIN_BATTERY_LEVEL_MED 8
+#define PIN_BATTERY_LEVEL_LOW 9
+
+#define PIN_ACTIVE LOW
+#define PIN_INACTIVE HIGH
 
 // Data wire is conntected to the Arduino digital pin 4
 #define ONE_WIRE_BUS 2
@@ -116,6 +129,10 @@ void setup()
   pinMode(RELAY_FAN_ELECTRONICS, OUTPUT);
   pinMode(RELAY_PUMP, OUTPUT);
 
+  //Setup sensors to input
+  pinMode(PIN_BATTERY_LEVEL_LOW, INPUT);
+  pinMode(PIN_BATTERY_LEVEL_MED, INPUT);
+
   Serial.begin(9600);
   sensors.begin();
 
@@ -134,6 +151,7 @@ void setup()
   }
   //WARNING remove until here
 
+  turnAllOff();
 
   if(mqttEnabled){
 
@@ -156,7 +174,6 @@ void setup()
     Serial.println(F("Connected to Ethernet"));
     delay(1500); // Allow hardware to stabilize 1.5 sec
   }
-  turnAllOff();
 
 }
 
@@ -388,6 +405,22 @@ void turnRelay(int relay, int status) {
   delay(100);
 }
 
+void readBatterySensors(){
+ int batteryLow = digitalRead(PIN_BATTERY_LEVEL_LOW);
+ if(batteryLow == PIN_ACTIVE){
+  Serial.println(F("Battery level is LOW"));
+  client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_LOW);
+ }else{
+  batteryLow = digitalRead(PIN_BATTERY_LEVEL_MED);
+  if(batteryLow == PIN_ACTIVE){
+    Serial.println(F("Battery level is MEDIUM"));
+    client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_MEDIUM);
+  }else{
+    Serial.println(F("Battery level is HIGH"));
+    client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_HIGH);
+  }
+ }
+}
 void loop()
 {
   if(mqttEnabled){
@@ -399,6 +432,7 @@ void loop()
   if(millis()-lastPublished > TIME_BETWEEN_DATA_PUBLISHED){
     measureAndPublishTankLevel();
     readTempSensors();
+    readBatterySensors();
     reportMemory();
     lastPublished=millis();
   }
