@@ -9,6 +9,15 @@ String BassaStatusConnexio "Estat connexió"
 DateTime BassaAiguaGrisaUltimaConnexio "Instant darrera connexio"
 String BassaAiguaGrisaStatusConnexio "Estat connexió"
 
+Switch Ordre_Encesa_Bomba_Depuradora "Ordre encesa bomba depuradora"
+Switch Executor_Ordre_Encesa_Bomba_Depuradora "Executa ordre encesa bomba depuradora"
+Switch Comprovador_Alarma_Bomba_Depuradora "Comprova alarma bomba depuradora"
+DateTime Darrer_Canvi_Bomba_Depuradora "Instant darrer canvi bomba depuradora"
+DateTime Intent_Canvi_Bomba_Depuradora "Instant intent canvi bomba depuradora"
+
+String BassaCirculacioChangeRequest "Peticio control circulacio bassa"
+String BassaCirculacioChangeOwner "Propietari control circulacio bassa"
+
 String BassaAiguagrisaStatus "Estat aigua grisa" {channel="mqtt:topic:bassa:AiguagrisaStatus"}
 String BassaRegStatus "Estat bomba reg" {channel="mqtt:topic:bassa:RegStatus"}
 String BassaCirculacioStatus "Estat circulacio" {channel="mqtt:topic:bassa:CirculacioStatus"}
@@ -20,7 +29,6 @@ String BassaCirculacioCommand "Ordre circulacio" {channel="mqtt:topic:bassa:Circ
 String BassaAiguagrisaProxy "Proxy ordre aigua grisa"
 String BassaRegProxy "Proxy ordre reg"
 String BassaCirculacioProxy "Proxy ordre circulacio"
-String BassaCirculacioCadenciaProxy "Proxy encesa circulacio"     //per controlar l'encesa en base a la cadència
 
 Number BassaCirculacioCadencia "Cadencia de la circulacio de la bassa"
 

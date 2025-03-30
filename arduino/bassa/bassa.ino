@@ -31,6 +31,7 @@
 
 
 #define MAX_TIME_BETWEEN_ORDERS 3*60*1000   // 3 minutes
+#define TIME_BETWEEN_DATA_PUBLISHED 3 * 1000 //3 seconds
 
 #define RELAY_BOMBA_REG 5
 #define RELAY_BOMBA_DEPURADORA 6
@@ -75,6 +76,8 @@ int previousLiters = 0;
 int maxHeightCm = 153;  //max measured height
 
 long lastOrder = 0;     //to store the last time when an order was received
+//last status data published
+long lastPublished = 0;
 
 int status_reg = BOMBA_REG_OFF;
 int status_circulacio = CIRCULACIO_OFF;
@@ -164,11 +167,13 @@ void loop() {
     reconnect();
   }
   client.loop();
-  applyStates();
-  measureAndReportDepthSensor();
+  if(millis()-lastPublished > TIME_BETWEEN_DATA_PUBLISHED){
+    applyStates();
+    measureAndReportDepthSensor();
+    reportMemory();
+    lastPublished=millis();
+  }
   checkMaxTime();
-  reportMemory();
-  delay(2000);
 }
 
 double readHeight() 
@@ -290,8 +295,6 @@ void applyStates(){
 }
 
 void checkMaxTime(){
-  Serial.print(F("ms since last order: "));
-  Serial.println(millis()-lastOrder);
   if(millis()-lastOrder > MAX_TIME_BETWEEN_ORDERS){
     Serial.println(F("Too much time between orders, turning off all pumps"));
     turnAllOff();

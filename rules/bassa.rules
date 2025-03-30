@@ -3,13 +3,7 @@ import java.time.temporal.ChronoUnit
 
 var long lastChangePower = -1
 
-val USED_POWER = 250.0
-
-rule "Set default commmands"    
-when System started
-then
-    BassaRegProxy.sendCommand("stop")   // to be removed when the modes are implemented and controlled via UI
-end
+val USED_POWER = 80.0
 
 rule "forward proxy values"
 when Item BassaRegProxy changed
@@ -97,8 +91,6 @@ then
        logDebug("bassa.rules", "lastConnection was before threshold, so nothing to do ") 
     }
 end
-
-
 
 rule "Aigua grisa encesa per hores"
 when Item BassaAiguagrisaHoraEncesa changed
@@ -251,31 +243,31 @@ then
                 //we are after encesa and apagat, so the latest is the state we should have
                 if(horaApagat > horaEncesa){
                     logDebug("bassa.rules","circulacio: Current hour after encesa & apagat, apagat is later so turning off")
-                    BassaCirculacioProxy.sendCommand("stop")
+                    Ordre_Encesa_Bomba_Depuradora.sendCommand(OFF)
                 }else{
                     logDebug("bassa.rules","circulacio: Current hour after encesa & apagat, encesa is later so turning on depuradora")
-                    BassaCirculacioProxy.sendCommand("depuradora")
+                    Ordre_Encesa_Bomba_Depuradora.sendCommand(ON)
                 }
             }else if( horaApagat > currentHour &&  horaEncesa > currentHour){
                 //we are before encesa and apagat, so the latest is the state we should have
                 if(horaApagat > horaEncesa){
                     logDebug("bassa.rules","circulacio: Current hour before encesa & apagat, apagat is later so turning off")
-                    BassaCirculacioProxy.sendCommand("stop")
+                    Ordre_Encesa_Bomba_Depuradora.sendCommand(OFF)
                 }else{
                     logDebug("bassa.rules","circulacio: Current hour before encesa & apagat, encesa is later so turning on depuradora")
-                    BassaCirculacioProxy.sendCommand("depuradora")
+                    Ordre_Encesa_Bomba_Depuradora.sendCommand(ON)
                 }
             }else if(currentHour >= horaEncesa){
                 //we are after encesa, but before apagat, so turning on
                 logDebug("bassa.rules","circulacio: Current hour between encesa & apagat, encesa is before so turning on depuradora")
-                BassaCirculacioProxy.sendCommand("depuradora")
+                Ordre_Encesa_Bomba_Depuradora.sendCommand(ON)
             }else{
                 logDebug("bassa.rules","circulacio: Current hour between encesa & apagat, apagat is before so turning off")
-                BassaCirculacioProxy.sendCommand("stop")
+                Ordre_Encesa_Bomba_Depuradora.sendCommand(OFF)
             }
         }else{
             logDebug("bassa.rules","Current minute is NOT within cadencia")
-            BassaCirculacioProxy.sendCommand("stop")
+            Ordre_Encesa_Bomba_Depuradora.sendCommand(OFF)
         }
     }else{
         logDebug("bassa.rules","circulacio: The mode is not 'hores', so doing nothing")
@@ -337,43 +329,109 @@ then
     }
     logDebug("bassa.rules","circulacio: the mode is "+modeString)
     if(modeString == "unusedPower"){
-        var circulacioString = "stop"
-        val circulacioState = BassaCirculacioProxy.state
+        var circulacioString = "off"
+        val circulacioState = BassaCirculacioStatus.state
         if(circulacioState != NULL){
             logDebug("bassa.rules","circulacio: the circulacio proxy item is not null")
             circulacioString = circulacioState.toString
         }
 
-        if(circulacioString == "diposit"){
-            logInfo("bassa.rules", "Circulacio set to Diposit, not applying unused power")
+        if(circulacioString != "depuradora"){
+            logInfo("bassa.rules", "Circulacio is not depuradora, so the used power currently is 0")
             Bassa_UsedPower.sendCommand(0)
         }else{
+            logInfo("bassa.rules", "Circulacio is depuradora, so the used powuer currently is "+powerToApply)
+            Bassa_UsedPower.sendCommand(powerToApply)   
+        }
 
-            logInfo("bassa.rules", "Going to apply the required power, as the circulacio is not diposit")
-            val requiredPowerState = Bassa_RequiredPower.state
-            var powerToApply = 0
-            if(requiredPowerState != NULL){
-                powerToApply = (requiredPowerState as Number).intValue
-            }
-            logInfo("bassa.rules", "The required power to apply is "+powerToApply)
+        logInfo("bassa.rules", "Going to apply the required power, to decide if turning it ON or OFF")
+        val requiredPowerState = Bassa_RequiredPower.state
+        var powerToApply = 0
+        if(requiredPowerState != NULL){
+            powerToApply = (requiredPowerState as Number).intValue
+        }
+        logInfo("bassa.rules", "The required power to apply is "+powerToApply)
 
-            if(powerToApply >= USED_POWER){
-                //if the bassa was stopped, put it to depuradora. Otherwise leave it as it is
-                if(circulacioString == "stop"){
-                    BassaCirculacioProxy.sendCommand("depuradora")
-                }
-                Bassa_UsedPower.sendCommand(powerToApply)
-            }else{
-                if(circulacioString == "depuradora"){
-                    BassaCirculacioProxy.sendCommand("stop")
-                }
-                Bassa_UsedPower.sendCommand(0)
-            }    
-        }    
+        if(powerToApply >= USED_POWER){
+            //request to start the depuradora
+            logInfo("bassa.rules", "Enough power to turn depuradora ON, let's do it")
+            Ordre_Encesa_Bomba_Depuradora.sendCommand(ON)
+        }else{
+            logInfo("bassa.rules", "Not enough power to turn depuradora ON, turining it off")
+            Ordre_Encesa_Bomba_Depuradora.sendCommand(OFF)
+        }
+           
         DestinationDeviceApplied.sendCommand("bassa")
     }else{
         logInfo("bassa.rules", "Gestio is not unusedPower, so not applying required power, but notifying as applied")
         Bassa_UsedPower.sendCommand(0)
         DestinationDeviceApplied.sendCommand("bassa")
     }
+end
+
+
+//rules to manage syncronization of bassa status and depuradora
+
+rule "Ordre encesa bomba depuradora"
+when
+    Item Ordre_Encesa_Bomba_Depuradora changed
+then
+    val novaOrdre = newState
+    logDebug("bassa.rules", "Ordre bomba depuradora received command "+novaOrdre+". Updating intent and sending to executor")
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+
+    Intent_Canvi_Bomba_Depuradora.postUpdate(nowDateType) 
+    logDebug("bassa.rules", "Updated Intent_Canvi_Bomba_Depuradora")
+
+    if(novaOrdre == ON){
+        Executor_Ordre_Encesa_Bomba_Depuradora.sendCommand(ON)
+    }else{
+        Executor_Ordre_Encesa_Bomba_Depuradora.sendCommand(OFF)
+    }
+
+    logDebug("bassa.rules", "Send command to Executor_Ordre_Encesa_Bomba_Depuradora")
+end
+
+rule "Executor ordre encesa bomba depuradora"
+when
+    Item Executor_Ordre_Encesa_Bomba_Depuradora received command
+then
+    val ordre = receivedCommand
+    logDebug("bassa.rules", "Executor bomba depuradora received "+ordre)
+    if(ordre == ON){
+        //TODO request the Ownership of the circulacio
+        //if obtained, use it and turn it on
+    }else{
+        //TODO release the ownership of cicrulacio 
+    }
+
+end
+
+rule "Encesa diposit ha succeit"
+when
+    Item BassaCirculacioStatus changed 
+then
+    val nouEstat = newState
+    logDebug("bassa.rules", "BassaCirculacioStatus changed to "+nouEstat+". Updating darrer canvi")
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+
+    Darrer_Canvi_Bomba_Depuradora.postUpdate(nowDateType)
+    //TODO check if any item should be updated for the UI
+end
+
+rule "Comprova alarma bomba diposit"
+when
+    Item Comprovador_Alarma_Bomba_Depuradora received command
+then
+    //TODO create alarm using as a model the one in the reg bassa!
+    
+end
+
+rule "Comprova canvi encesa bomba diposit"
+when
+    Time cron "0/15 * * * * * *" //every 15 secs
+then
+     //TODO check times as a model the one in the reg bassa!
 end
