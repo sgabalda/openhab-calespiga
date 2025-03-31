@@ -25,9 +25,12 @@
 #define TOPIC_FAN_ELECTRONICS_STATUS "fan/electronics/status"
 #define TOPIC_TANK1_PUMP_SET "diposit1/pump/set"
 #define TOPIC_TANK1_PUMP_STATUS "diposit1/pump/status"
+#define TOPIC_GRID_SET "grid/connection/set"  
+#define TOPIC_GRID_RELAY_STATUS "grid/connection/action"
 
 //PIN SENSORS
 #define TOPIC_BATTERY_LEVEL "battery/level/status"
+#define TOPIC_GRID_STATUS "grid/connection/status"
 
 //MQTT messages received
 #define COMMAND_START "start"
@@ -38,21 +41,27 @@
 #define BATTERY_LEVEL_HIGH "high"
 #define BATTERY_LEVEL_MEDIUM "medium"
 #define BATTERY_LEVEL_LOW "low"
+#define GRID_CONNECTED "on"
+#define GRID_DISCONNECTED "off"
 
 //Relay levels
 #define RELAY_PUMP_ON HIGH
 #define RELAY_PUMP_OFF LOW
 #define RELAY_FAN_ON LOW
 #define RELAY_FAN_OFF HIGH
+#define RELAY_GRID_ON LOW
+#define RELAY_GRID_OFF HIGH
 
 //Used relays
 #define RELAY_FAN_BATTERIES 5
 #define RELAY_FAN_ELECTRONICS 6
 #define RELAY_PUMP 7
+#define RELAY_GRID 8
 
-//Read pins for battery status
+//Read pins for battery and grid status
 #define PIN_BATTERY_LEVEL_MED 8
 #define PIN_BATTERY_LEVEL_LOW 9
+#define PIN_GRID_CONNECTED 3
 
 #define PIN_ACTIVE LOW
 #define PIN_INACTIVE HIGH
@@ -97,6 +106,7 @@ void reconnect() {
       client.subscribe(TOPIC_FAN_BATTERIES_SET);
       client.subscribe(TOPIC_FAN_ELECTRONICS_SET);
       client.subscribe(TOPIC_TANK1_PUMP_SET);
+      client.subscribe(TOPIC_GRID_SET);
     } else {
       Serial.print(F("failed, rc="));
       Serial.print(client.state());
@@ -132,6 +142,7 @@ void setup()
   //Setup sensors to input
   pinMode(PIN_BATTERY_LEVEL_LOW, INPUT);
   pinMode(PIN_BATTERY_LEVEL_MED, INPUT);
+  pinMode(PIN_GRID_CONNECTED, INPUT);
 
   Serial.begin(9600);
   sensors.begin();
@@ -326,7 +337,7 @@ void callback(char* topic, byte* payload, unsigned int length)
     }else if (strcmp(message, COMMAND_STOP) == 0){
       turnFanBatteries(false);
     }else{
-      Serial.print(F("-> Error, message not valid. Setting off: "));
+      Serial.print(F("-> Error, message not valid. Setting fan batt. off: "));
       Serial.println(message);
       turnFanBatteries(false);
     }  
@@ -336,7 +347,7 @@ void callback(char* topic, byte* payload, unsigned int length)
     }else if (strcmp(message, COMMAND_STOP) == 0){
       turnFanElectronics(false);
     }else{
-      Serial.print(F("-> Error, message not valid. Setting off: "));
+      Serial.print(F("-> Error, message not valid. Setting fan electr. off: "));
       Serial.println(message);
       turnFanElectronics(false);
     }  
@@ -346,9 +357,19 @@ void callback(char* topic, byte* payload, unsigned int length)
     }else if (strcmp(message, COMMAND_STOP) == 0){
       turnPumpTank1(false);
     }else{
-      Serial.print(F("-> Error, message not valid. Setting off: "));
+      Serial.print(F("-> Error, message not valid. Setting Pump off: "));
       Serial.println(message);
       turnPumpTank1(false);
+    }  
+  }else if (strcmp(topic, TOPIC_GRID_SET) == 0){
+    if (strcmp(message, COMMAND_START) == 0){
+      turnRelayGrid(true);
+    }else if (strcmp(message, COMMAND_STOP) == 0){
+      turnRelayGrid(false);
+    }else{
+      Serial.print(F("-> Error, message not valid. Setting Grid off: "));
+      Serial.println(message);
+      turnRelayGrid(false);
     }  
   }else{
     Serial.println(F("-> Error, topic not valid"));
@@ -392,11 +413,24 @@ void turnFanBatteries(bool on){
   }
 }
 
+void turnRelayGrid(bool on){
+  if(on){
+    turnRelay(RELAY_GRID, RELAY_GRID_ON);
+    client.publish(TOPIC_GRID_RELAY_STATUS, STATUS_ON);
+    Serial.println(F("Relay Grid: ON"));
+  }else{
+    turnRelay(RELAY_GRID, RELAY_GRID_OFF);
+    client.publish(TOPIC_GRID_RELAY_STATUS, STATUS_OFF);
+    Serial.println(F("Relay Grid: OFF"));
+  }
+}
+
 void turnAllOff(){
   
   turnPumpTank1(false);
   turnFanElectronics(false);
   turnFanBatteries(false);
+  turnRelayGrid(false);
   Serial.println(F("All relays to Off"));
 }
 
@@ -405,22 +439,29 @@ void turnRelay(int relay, int status) {
   delay(100);
 }
 
-void readBatterySensors(){
- int batteryLow = digitalRead(PIN_BATTERY_LEVEL_LOW);
- if(batteryLow == PIN_ACTIVE){
-  Serial.println(F("Battery level is LOW"));
-  client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_LOW);
- }else{
-  batteryLow = digitalRead(PIN_BATTERY_LEVEL_MED);
-  if(batteryLow == PIN_ACTIVE){
-    Serial.println(F("Battery level is MEDIUM"));
-    client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_MEDIUM);
+void readBatteryAndGridSensors(){
+  int pinValue = digitalRead(PIN_BATTERY_LEVEL_LOW);
+  if(pinValue == PIN_ACTIVE){
+    Serial.println(F("Battery level is LOW"));
+    client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_LOW);
   }else{
-    Serial.println(F("Battery level is HIGH"));
-    client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_HIGH);
+    pinValue = digitalRead(PIN_BATTERY_LEVEL_MED);
+    if(pinValue == PIN_ACTIVE){
+      Serial.println(F("Battery level is MEDIUM"));
+      client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_MEDIUM);
+    }else{
+      Serial.println(F("Battery level is HIGH"));
+      client.publish(TOPIC_BATTERY_LEVEL, BATTERY_LEVEL_HIGH);
+    }
   }
- }
+  pinValue = digitalRead(PIN_GRID_CONNECTED);
+  if(pinValue == PIN_ACTIVE){
+    client.publish(TOPIC_GRID_STATUS, GRID_CONNECTED);
+  }else{
+    client.publish(TOPIC_GRID_STATUS, GRID_DISCONNECTED);
+  }
 }
+
 void loop()
 {
   if(mqttEnabled){
@@ -432,7 +473,7 @@ void loop()
   if(millis()-lastPublished > TIME_BETWEEN_DATA_PUBLISHED){
     measureAndPublishTankLevel();
     readTempSensors();
-    readBatterySensors();
+    readBatteryAndGridSensors();
     reportMemory();
     lastPublished=millis();
   }
