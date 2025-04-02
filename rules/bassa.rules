@@ -533,8 +533,8 @@ then
     if(splits.length != 2){
         logError("bassa.candidate", "The command for ownership has not two parts: "+ordre)
     }else{
-        val candidate = splits[0]
-        val command = splits[1]
+        val candidate = splits.get(0)
+        val command = splits.get(1)
         if(candidate == circulacioOwner || circulacioOwner == ""){
             logDebug("bassa.candidate", "The owner is the candidate, or there was no owner"+
                 candidate+" vs "+circulacioOwner)
