@@ -424,6 +424,7 @@ then
     }else{
         logError("bassa.rules", "Unexpected command when ownership is obrained")
     }
+end
 
 rule "Encesa diposit ha succeit"
 when
@@ -534,7 +535,7 @@ then
     }else{
         val candidate = splits[0]
         val command = splits[1]
-        if(candidate == circulacioOwner || circulacioOwner = ""){
+        if(candidate == circulacioOwner || circulacioOwner == ""){
             logDebug("bassa.candidate", "The owner is the candidate, or there was no owner"+
                 candidate+" vs "+circulacioOwner)
             if(command == ""){
