@@ -33,9 +33,30 @@ then
     val ordre = receivedCommand
     logDebug("BombaReg", "Executor Diposit received "+ordre)
     if(ordre == ON){
+        logDebug("BombaReg", "Trying to get ownership of the circulacio bassa")
+        //try to get ownership of the BassaCirculacioChangeRequest
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Diposit_Reg.name+",off")
+    }else{
+        //release the BassaCirculacioChangeOwner
+        logDebug("BombaReg", "Releasing ownership of the circulacio bassa")
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Diposit_Reg.name+",")
+        //and stop the pump
+        logDebug("BombaReg", "Stopping diposit pump")
+        DipositPumpSet.sendCommand("stop")    
+    }
+
+end
+
+rule "Ownership obtingut"
+when
+    Item Circulacio_Leader_Bomba_Diposit_Reg received command 
+then
+    val ordre = receivedCommand
+    if(ordre == "off"){
+        logDebug("BombaReg", "Ownership of circulacio ours, going to check if watering can start")
         //comprova que bassa no esta ences
         var bombaBassaStatus = "on"
-        val bombaBassaStatusItem = DipositPumpStatus.state
+        val bombaBassaStatusItem = BassaRegStatus.state
         if(bombaBassaStatusItem != NULL){
             bombaBassaStatus = bombaBassaStatusItem.toString
         }
@@ -43,6 +64,7 @@ then
             //if it is, then do nothing as it will be retried by the checker
             logWarn("BombaReg", "Bomba bassa is ON, waiting to turn on bomba diposit")
         }else{
+
             logDebug("BombaReg", "Bomba bassa is OFF, checking circulacio")
             //comprova si status bassa es diposit
             var bassaStatus = "off"
@@ -60,9 +82,8 @@ then
             //if not, then do nothing as it will be retried by the checker
         }
     }else{
-        DipositPumpSet.sendCommand("stop")    
+        logDebug("BombaReg", "Ownership of circulacio not ours, not doing anything")
     }
-
 end
 
 rule "Encesa diposit ha succeit"

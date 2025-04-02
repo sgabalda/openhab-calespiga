@@ -15,8 +15,11 @@ Switch Comprovador_Alarma_Bomba_Depuradora "Comprova alarma bomba depuradora"
 DateTime Darrer_Canvi_Bomba_Depuradora "Instant darrer canvi bomba depuradora"
 DateTime Intent_Canvi_Bomba_Depuradora "Instant intent canvi bomba depuradora"
 
+Switch Estat_Bomba_Depuradora "Estat encesa bomba depuradora"
+
+String Circulacio_Leader_Bomba_Depuradora "Recepció senyal obtenció de leader de la circulacio"
+
 String BassaCirculacioChangeRequest "Peticio control circulacio bassa"
-String BassaCirculacioChangeOwner "Propietari control circulacio bassa"
 
 String BassaAiguagrisaStatus "Estat aigua grisa" {channel="mqtt:topic:bassa:AiguagrisaStatus"}
 String BassaRegStatus "Estat bomba reg" {channel="mqtt:topic:bassa:RegStatus"}

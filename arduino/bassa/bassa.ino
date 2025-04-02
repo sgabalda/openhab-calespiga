@@ -279,6 +279,7 @@ void applyStates(){
       Serial.println(F("Finished transition to DEPURADORA/OFF"));
       if(status_circulacio == CIRCULACIO_PREPARING_DEPURADORA){
         status_circulacio = CIRCULACIO_DEPURADORA;
+        turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_ON); //turn on the pump for depuradora
         client.publish(TOPIC_CIRCULACIO_STATUS, MESSAGE_CIRCULACIO_DEPURADORA);
       }else{
         status_circulacio = CIRCULACIO_OFF;

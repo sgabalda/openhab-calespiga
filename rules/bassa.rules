@@ -5,6 +5,8 @@ var long lastChangePower = -1
 
 val USED_POWER = 80.0
 
+var String circulacioOwner = ""
+
 rule "forward proxy values"
 when Item BassaRegProxy changed
     or Item BassaAiguagrisaProxy changed
@@ -400,38 +402,160 @@ then
     val ordre = receivedCommand
     logDebug("bassa.rules", "Executor bomba depuradora received "+ordre)
     if(ordre == ON){
-        //TODO request the Ownership of the circulacio
-        //if obtained, use it and turn it on
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Depuradora.name+",depuradora")
     }else{
-        //TODO release the ownership of cicrulacio 
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Depuradora.name+",off")
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Depuradora.name+",")
     }
-
 end
+
+rule "Ownership obtingut"
+when
+    Item Circulacio_Leader_Bomba_Depuradora received command 
+then
+    val ordre = receivedCommand
+    if(ordre == "depuradora"){
+        logDebug("bassa.rules", "Depuradora is the owner, and command is depuradora")
+        //no need to do anything as the rule for succeit will update statuses
+    }else if(ordre == "off"){
+        logDebug("bassa.rules", "Depuradora is the owner, and command is off")
+    }else if(ordre == ""){
+        logDebug("bassa.rules", "Depuradora is not anymore the owner")
+    }else{
+        logError("bassa.rules", "Unexpected command when ownership is obrained")
+    }
 
 rule "Encesa diposit ha succeit"
 when
     Item BassaCirculacioStatus changed 
 then
     val nouEstat = newState
-    logDebug("bassa.rules", "BassaCirculacioStatus changed to "+nouEstat+". Updating darrer canvi")
-    val now = ZonedDateTime::now
-    val nowDateType = new DateTimeType(now) 
-
-    Darrer_Canvi_Bomba_Depuradora.postUpdate(nowDateType)
-    //TODO check if any item should be updated for the UI
+    val ordre = Ordre_Encesa_Bomba_Depuradora.state
+    //only update time if new state is "depuradora" or "off" and matches the order
+    if(
+        (ordre == ON && nouEstat == "depuradora") ||
+        (ordre == OFF && nouEstat == "off")
+    ){
+        logDebug("bassa.rules", "BassaCirculacioStatus changed to "+nouEstat+". Updating darrer canvi")
+        val now = ZonedDateTime::now
+        val nowDateType = new DateTimeType(now) 
+        Estat_Bomba_Depuradora.sendCommand(ordre)
+        Darrer_Canvi_Bomba_Depuradora.postUpdate(nowDateType)
+    }
 end
 
-rule "Comprova alarma bomba diposit"
+rule "Comprova alarma circulacio bassa"
 when
     Item Comprovador_Alarma_Bomba_Depuradora received command
 then
-    //TODO create alarm using as a model the one in the reg bassa!
+    logDebug("bassa.rules", "Checking alarma for circulacio")
+    val minutsItem = AlarmBassaCirculacio_Seconds.state
+    var timeForReceivingResponse = 15L
+    if(minutsItem != NULL){
+        timeForReceivingResponse = (minutsItem as Number).intValue
+        logDebug("bassa.rules", "setting the time for circulacio bassa not in sync alert to "+timeForReceivingResponse+"s") 
+    }else{
+        AlarmBassaCirculacio_Seconds.sendCommand(15)
+        logWarn("bassa.rules", "setting the time for circulacio bassa not in sync alert to the default "+timeForReceivingResponse+"s") 
+    }
+
+    var minutsAgo = timeForReceivingResponse + 1L
+    val ultimaConnexioState = Intent_Canvi_Bomba_Depuradora.state
+    logDebug("bassa.rules", "Ultima ordre sent: "+ultimaConnexioState)
+    if(ultimaConnexioState != NULL){
+        val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
+        logDebug("bassa.rules", "Ultima ordre sent time is "+lastConnection)
+            minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+        logDebug("bassa.rules", "Ultima ordre sent is "+minutsAgo+"m ago.")
+    }else{
+        logError("bassa.rules", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
+            "), assuming already passed the time.")
+    }
+
+    if(minutsAgo > timeForReceivingResponse){
+        AlarmBassaCirculacio.postUpdate(ON)
+    }
     
 end
 
-rule "Comprova canvi encesa bomba diposit"
+rule "Comprova canvi encesa bomba bassa circulacio"
 when
     Time cron "0/15 * * * * * *" //every 15 secs
 then
-     //TODO check times as a model the one in the reg bassa!
+    val ordre = Ordre_Encesa_Bomba_Depuradora.state
+    val state = Estat_Bomba_Depuradora.state
+
+    if(state == ON && ordre == ON){
+        logDebug("bassa.rules", "Checking status of bassa circulacio and both are ON")
+        //if there was an alert, solve it as now it is in sync
+        AlarmBassaCirculacio.postUpdate(OFF)
+
+    }else if(state == OFF && ordre == ON){
+        logDebug("bassa.rules", "Checking status of bassa circulacio and state is OFF and ordre is ON")
+
+        Executor_Ordre_Encesa_Bomba_Depuradora.sendCommand(ON)
+        Comprovador_Alarma_Bomba_Depuradora.sendCommand(ON)
+        
+    }else if(state == OFF && ordre == OFF){
+        logDebug("bassa.rules", "Checking status of bassa circulacio and both are OFF")
+        //if there was an alert, solve it as now it is in sync
+        AlarmBassaCirculacio.postUpdate(OFF)
+    }else if(state == ON && ordre == OFF){
+        logDebug("bassa.rules", "Checking status of bassa circulacio and state is ON and ordre is OFF")
+        Executor_Ordre_Encesa_Bomba_Depuradora.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
+        Comprovador_Alarma_Bomba_Depuradora.sendCommand(ON)
+    }else{
+        logWarn("bassa.rules", "Checking status of bassa circulacio and some state is null: Ordre-> "+ordre+", State -> "+state)
+    }
 end
+
+//Bassa Circulacio Leader election
+//if an item wants to get the lead it should send a STRING command to BassaCirculacioChangeRequest with the following format:
+/*
+<item_name>,<desired_command>
+
+<item_name> must be unique for each owner, and <desired_command> must be one of the valid commands for BassaCirculacioCommand
+if there is no owner or the onwer is the given <item_name>, the <desired_command> will be forwarded, and the <item_name> 
+will be sent a command with <desired_command> to signal leader has been granted. If <desired_command> is "", then leadership will be released
+and the <item_name> will be sent a command with "" to signal leader has been released.
+*/
+
+rule "Peticio obtencio leader"
+when
+    Item BassaCirculacioChangeRequest received command
+then
+    val ordre = receivedCommand
+    val splits = ordre.split(",")
+
+    logDebug("bassa.candidate", "Received a request for ownership in the circulacio: "+ordre)
+
+    if(splits.lenght != 2){
+        logError("bassa.candidate", "The command for ownership has not two parts: "+ordre)
+    }else{
+        val candidate = splits[0]
+        val command = splits[1]
+        if(candidate == circulacioOwner || circulacioOwner = ""){
+            logDebug("bassa.candidate", "The owner is the candidate, or there was no owner"+
+                candidate+" vs "+circulacioOwner)
+            if(command == ""){
+                logDebug("bassa.candidate", "Owner releasing the ownership")
+                circulacioOwner = ""
+            }else{
+                circulacioOwner = candidate
+                val ownerItem = ScriptServiceUtil.getItemRegistry.getItem(candidate)
+                if(ownerItem !=null){
+                    logDebug("bassa.candidate", "Owner sending the command "+command)
+                    BassaCirculacioCommand.sendCommand(command)
+                    ownerItem.sendCommand(command)
+                }else{
+                    logError("bassa.candidate", "The owner for the circulacio is "
+                        +"not a valid item, releasing ownership: "+candidate)
+                    circulacioOwner = ""
+                }
+            }
+        }else{
+            logDebug("bassa.candidate", "the candidate is not the owner, doing nothing: "+
+                candidate+" vs "+circulacioOwner)
+        }
+    }
+end 

@@ -26,6 +26,8 @@ Switch Estat_Bomba_Diposit "Estat encesa bomba reg diposit"
 DateTime Darrer_Canvi_Bomba_Diposit "Instant darrer canvi bomba diposit"
 DateTime Intent_Canvi_Bomba_Diposit "Instant intent canvi bomba diposit"
 
+String Circulacio_Leader_Bomba_Diposit_Reg "Recepció senyal obtenció de leader de la circulacio"
+
 Number Durada_Reg_Router "Durada encesa (minuts)"
 Number Encesa_Reg_Router "Decisor bomba reg" //decideix a quina bomba fa regar
 
