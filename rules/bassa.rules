@@ -530,7 +530,7 @@ then
 
     logDebug("bassa.candidate", "Received a request for ownership in the circulacio: "+ordre)
 
-    if(splits.lenght != 2){
+    if(splits.length != 2){
         logError("bassa.candidate", "The command for ownership has not two parts: "+ordre)
     }else{
         val candidate = splits[0]
