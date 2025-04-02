@@ -528,7 +528,7 @@ when
 then
     val ordre = receivedCommand
     val ordreString = ordre.toString
-    val splits = .split(",", -1)
+    val splits = ordreString.split(",", -1)
 
     logDebug("bassa.candidate", "Received a request for ownership in the circulacio: "+ordre)
 
