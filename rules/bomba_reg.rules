@@ -342,10 +342,7 @@ then
         }
     }else if(state == OFF && ordre == ON){
         logDebug("BombaReg", "Checking status of reg Bassa and state is OFF and ordre is ON")
-
         Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(ON)
-
-        //In any case, check the Alarm is not to be triggered, the value sent does not matter
         Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
         
     }else if(state == OFF && ordre == OFF){
@@ -354,9 +351,7 @@ then
         AlarmReg.postUpdate(OFF)
     }else if(state == ON && ordre == OFF){
         logDebug("BombaReg", "Checking status of reg Bassa and state is ON and ordre is OFF")
-        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
-
-        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)
         Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
     }else{
         logWarn("BombaReg", "Checking status of reg Bassa and some state is null: Ordre-> "+ordre+", State -> "+state)
