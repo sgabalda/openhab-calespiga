@@ -526,7 +526,7 @@ when
     Item BassaCirculacioChangeRequest received command
 then
     val ordre = receivedCommand
-    val splits = ordre.split(",")
+    val splits = ordre.toString.split(",")
 
     logDebug("bassa.candidate", "Received a request for ownership in the circulacio: "+ordre)
 
