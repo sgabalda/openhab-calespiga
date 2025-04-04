@@ -153,9 +153,13 @@ when
     Time cron "0/15 * * * * * *" //every 15 secs
 then
     val ordre = Ordre_Encesa_Bomba_Diposit.state
-    val state = Estat_Bomba_Diposit.state
+    val stateBomba = Estat_Bomba_Diposit.state
+    val stateReg = EstatReg.state
+    val stateRegDipositOn = stateBomba == ON && stateReg == ON
 
-    if(state == ON && ordre == ON){
+    logDebug("BombaReg", "The current status of reg diposit is: Ordre-> "+ordre+", State -> Bomba:"+stateBomba+", Reg:"+stateReg)
+
+    if(stateRegDipositOn && ordre == ON){
         logDebug("BombaReg", "Checking status of reg diposit and both are ON")
         //if there was an alert, solve it as now it is in sync
         AlarmReg.postUpdate(OFF)
@@ -188,7 +192,7 @@ then
             logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
                 minutesToRun+"m so not changing anything")
         }
-    }else if(state == OFF && ordre == ON){
+    }else if(!stateRegDipositOn && ordre == ON){
         logDebug("BombaReg", "Checking status of reg diposit and state is OFF and ordre is ON")
 
         Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(ON)
@@ -196,18 +200,18 @@ then
         //In any case, check the Alarm is not to be triggered, the value sent does not matter
         Comprovador_Alarma_Bomba_Diposit.sendCommand(ON)
         
-    }else if(state == OFF && ordre == OFF){
+    }else if(!stateRegDipositOn && ordre == OFF){
         logDebug("BombaReg", "Checking status of reg diposit and both are OFF")
         //if there was an alert, solve it as now it is in sync
         AlarmReg.postUpdate(OFF)
-    }else if(state == ON && ordre == OFF){
+    }else if(stateRegDipositOn && ordre == OFF){
         logDebug("BombaReg", "Checking status of reg Diposit and state is ON and ordre is OFF")
         Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
 
         //In any case, check the Alarm is not to be triggered, the value sent does not matter
         Comprovador_Alarma_Bomba_Diposit.sendCommand(ON)
     }else{
-        logWarn("BombaReg", "Checking status of reg Diposit and some state is null: Ordre-> "+ordre+", State -> "+state)
+        logWarn("BombaReg", "Checking status of reg Diposit and some state is null: Ordre-> "+ordre+", State -> Bomba:"+stateBomba+", Reg:"+stateReg)
     }
 end
 
