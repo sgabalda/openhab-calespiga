@@ -66,10 +66,16 @@ sitemap default label="Ca l'espiga" {
             Selection icon="switch_on_off" item=BassaModeCirculacio label="Mode circulacio: [%s]"  mappings=["hores"="Hores", "unusedPower"="Pot. sobrant"]
             Setpoint icon="time" item=BassaCirculacioHoraEncesa label="Hora inici [%.1f h]" minValue=0 maxValue=24 step=1
             Setpoint icon="time" item=BassaCirculacioHoraApagat label="Hora fi [%.1f h]" minValue=0 maxValue=24 step=1
-            Setpoint icon="time" item=BassaCirculacioCadencia label="Cadència encesa: [%d %%]" minValue=10 maxValue=100 step=10
+            Setpoint icon="time" item=BassaCirculacioCadencia label="Cadència encesa: [%d %%]" minValue=10 maxValue=90 step=10
             Text icon="time" item=BassaCirculacioDescripcio label="Programació: [%s]"
             Text icon="network" item=BassaStatusConnexio label="Connexió: [%s]"
             Text icon="time" item=BassaUltimaConnexio label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+        }
+        Frame label="Transvassament" {
+            Text item=Estat_Transvassament label="Estat transvassament: [%s]" icon="water"
+            Switch item=Trasvassament_Diposit_Bassa_Encesa icon="sprinkler" label="Activar transvassament"
+            Setpoint item=Trasvassament_Diposit_Bassa_Durada icon="stopwatch" label="Durada transvassament [%.1f min]" minValue=1 maxValue=30 step=1
+            Text icon="time" item=Trasvassament_Diposit_Bassa_Darrer label="Últim transvassament [%1$td/%1$tm/%1$tY %1$tT]"
         }
         Frame label="Aigua grisa" {
             Text icon="hydrant" item=BassaAiguagrisaStatus label="Estat: [%s]"
@@ -174,6 +180,22 @@ sitemap default label="Ca l'espiga" {
             Switch item=AlarmRegNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
             Setpoint item=AlarmRegTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
             Setpoint item=AlarmReg_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
+        }
+        Frame label="Circulacio bloquejada" {
+            Text item=AlarmBassaCirculacio label="Estat [%s]" icon="alert"
+            Text icon="time" item=AlarmBassaCirculacioTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=AlarmBassaCirculacioTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=AlarmBassaCirculacioNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
+            Setpoint item=AlarmBassaCirculacioTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
+            Setpoint item=AlarmBassaCirculacio_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
+        }
+        Frame label="Transvassament no executat" {
+            Text item=AlarmTransvassament label="Estat [%s]" icon="alert"
+            Text icon="time" item=AlarmTransvassamentTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=AlarmTransvassamentTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=AlarmTransvassamentNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
+            Setpoint item=AlarmTransvassamentTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
+            Setpoint item=AlarmTransvassament_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
         }
     }
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"

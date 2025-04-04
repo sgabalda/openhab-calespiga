@@ -546,7 +546,7 @@ then
             }else{
                 circulacioOwner = candidate
                 val ownerItem = ScriptServiceUtil.getItemRegistry.getItem(candidate)
-                if(ownerItem !=null){
+                if(ownerItem !== null){
                     logDebug("bassa.candidate", "Owner sending the command "+command)
                     BassaCirculacioProxy.sendCommand(command)
                     ownerItem.sendCommand(command)

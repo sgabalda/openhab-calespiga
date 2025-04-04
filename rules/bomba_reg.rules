@@ -91,15 +91,27 @@ when
     Item DipositPumpStatus changed 
 then
     val nouEstat = newState
-    logDebug("BombaReg", "Diposit changed to "+nouEstat+". Updating darrer canvi")
-    val now = ZonedDateTime::now
-    val nowDateType = new DateTimeType(now) 
+    //check the change is when the status for circulacio is the one we require
+    var statusCirculacio = "off"
+    val statusItem = BassaCirculacioStatus.state
+    if(statusItem != NULL){
+        statusCirculacio = statusItem.toString
+    }
+    if(statusCirculacio == "off"){
+        logDebug("BombaReg", "Diposit changed to "+nouEstat+". Updating darrer canvi")
+        val now = ZonedDateTime::now
+        val nowDateType = new DateTimeType(now) 
 
-    Darrer_Canvi_Bomba_Diposit.postUpdate(nowDateType)
-    if(nouEstat == "on"){
-        Estat_Bomba_Diposit.sendCommand(ON)
+        Darrer_Canvi_Bomba_Diposit.postUpdate(nowDateType)
+        if(nouEstat == "on"){
+            Estat_Bomba_Diposit.sendCommand(ON)
+        }else{
+            Estat_Bomba_Diposit.sendCommand(OFF)
+        }
     }else{
-        Estat_Bomba_Diposit.sendCommand(OFF)
+        logDebug("BombaReg", "Diposit changed to "+nouEstat+
+        " but status for bassa is "+
+        statusCirculacio+" which means we are not the owners, so not doing anything")
     }
 end
 

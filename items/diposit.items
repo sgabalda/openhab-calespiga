@@ -5,5 +5,18 @@ DateTime Diposit_Ultima_Connexio "Instant darrera connexio"
 
 Number Diposit_Controlador_Memoria "Memòria controlador dipòsit" {channel="mqtt:topic:diposit1:Memoria"}
 
-Number TrasvassamentDipositBassaDurada "Durada trasvassament (minuts)"
-Switch TrasvassamentDipositBassaEncesa "Encesa trasvassament"
+Number Trasvassament_Diposit_Bassa_Durada "Durada trasvassament (minuts)"
+Switch Trasvassament_Diposit_Bassa_Encesa "Encesa trasvassament"
+String Trasvassament_Diposit_Bassa_Estat "Estat transvassament"
+DateTime Trasvassament_Diposit_Bassa_Darrer "Últim transvassament"
+
+//Private items, do not use outside transvassament.rules
+Switch Ordre_Encesa_Transvassament "Ordre encesa transvassament"
+Switch Executor_Ordre_Encesa_Transvassament "Executa ordre encesa transvassament"
+Switch Comprovador_Alarma_Transvassament "Comprova alarma transvassament"
+DateTime Darrer_Canvi_Transvassament "Instant darrer canvi transvassament"
+DateTime Intent_Canvi_Transvassament "Instant intent canvi transvassament"
+
+Switch Estat_Transvassament "Estat encesa Transvassament"
+
+String Circulacio_Leader_Transvassament "Recepció senyal obtenció de leader de la circulacio"

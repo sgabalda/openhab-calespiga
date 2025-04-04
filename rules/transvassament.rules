@@ -1,0 +1,215 @@
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+
+rule "Ordre encesa transvassament"
+when
+    Item Ordre_Encesa_Transvassament changed
+then
+    val novaOrdre = newState
+    logDebug("transvassament", "Ordre transvassament received command "+novaOrdre+". Updating intent and sending to executor")
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+
+    Intent_Canvi_Transvassament.postUpdate(nowDateType) 
+    logDebug("transvassament", "Updated Intent_Canvi_Transvassament")
+
+    if(novaOrdre == ON){
+        Executor_Ordre_Encesa_Transvassament.sendCommand(ON)
+        Trasvassament_Diposit_Bassa_Estat.postUpdate("Iniciant...")
+    }else{
+        Executor_Ordre_Encesa_Transvassament.sendCommand(OFF)
+        Trasvassament_Diposit_Bassa_Estat.postUpdate("Aturant...")
+    }
+
+    logDebug("transvassament", "Send command to Executor_Ordre_Encesa_Transvassament")
+end
+
+rule "Executor ordre encesa transvassament"
+when
+    Item Executor_Ordre_Encesa_Transvassament received command
+then
+    val ordre = receivedCommand
+    logDebug("transvassament", "Executor transvassament received "+ordre)
+    if(ordre == ON){
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",diposit")
+    }else{
+        DipositPumpSet.sendCommand("stop")
+        Trasvassament_Diposit_Bassa_Estat.postUpdate("Aturant bomba...")
+        //stop the pump, then the off to circulacio will be sent afterwards
+    }
+end
+
+rule "Ownership obtingut"
+when
+    Item Circulacio_Leader_Transvassament received command 
+then
+    val ordre = receivedCommand
+    if(ordre == "diposit"){
+        logDebug("transvassament", "Transvassament is the owner, and command is diposit")
+        //check if the circulacio is to diposit
+        var bassaStatus = "off"
+        val bassaStatusItem = BassaCirculacioStatus.state
+        if(bassaStatusItem != NULL){
+            bassaStatus = bassaStatusItem.toString
+        }
+        //if it is, start the pump
+        if(bassaStatus == "diposit" ){
+            Trasvassament_Diposit_Bassa_Estat.postUpdate("Activant bomba...")
+            logDebug("transvassament", "bassa is diposit, so turning on bomba ")
+            DipositPumpSet.sendCommand("start")    
+        }else{
+            Trasvassament_Diposit_Bassa_Estat.postUpdate("Canviant circulacio bassa...")
+            logDebug("transvassament", "bassa is NOT in diposit state, so waiting")
+        }
+    }else if(ordre == "off"){
+        logDebug("transvassament", "Transvassament is the owner, and command is off")
+        Trasvassament_Diposit_Bassa_Estat.postUpdate("Aturat")
+        Estat_Bomba_Diposit.sendCommand(OFF)
+        Estat_Transvassament.sendCommand(OFF)
+    }else if(ordre == ""){
+        logDebug("transvassament", "Transvassament is not anymore the owner")
+    }else{
+        logError("transvassament", "Transvassament command when ownership is unexpected: "+ordre)
+    }
+end
+
+rule "Encesa bomba diposit ha succeit, potser per transvassament"
+when
+    Item DipositPumpStatus changed 
+then
+    val nouEstat = newState
+    //check the change is because we have the ownership
+    var statusCirculacio = "off"
+    val statusItem = BassaCirculacioStatus.state
+    if(statusItem != NULL){
+        statusCirculacio = statusItem.toString
+    }
+    if(statusCirculacio == "diposit"){
+        logDebug("transvassament", "Diposit bomba changed to "+nouEstat+". Updating darrer canvi")
+        val now = ZonedDateTime::now
+        val nowDateType = new DateTimeType(now) 
+
+        Darrer_Canvi_Transvassament.postUpdate(nowDateType)
+        if(nouEstat == "on"){
+            Estat_Bomba_Diposit.sendCommand(ON)
+            Estat_Transvassament.sendCommand(ON)
+            Trasvassament_Diposit_Bassa_Estat.postUpdate("Transvassant")
+            Trasvassament_Diposit_Bassa_Darrer.postUpdate(nowDateType)
+        }else{
+            BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",off")
+            BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",")
+            Trasvassament_Diposit_Bassa_Estat.postUpdate("Posant circulacio off...")
+        }
+    }else{
+        Trasvassament_Diposit_Bassa_Estat.postUpdate("Aturat")
+        Estat_Bomba_Diposit.sendCommand(OFF)
+        Estat_Transvassament.sendCommand(OFF)
+        logDebug("transvassament", "Diposit bomba changed to "+nouEstat+
+        " but bassa status is"+
+        statusCirculacio+" which means we are not the owners, so not doing anything")
+    }
+end
+
+rule "Comprova alarma transvassament"
+when
+    Item Comprovador_Alarma_Transvassament received command
+then
+    logDebug("transvassament", "Checking alarma for transvassament")
+    val minutsItem = AlarmTransvassament_Seconds.state
+    var timeForReceivingResponse = 15L
+    if(minutsItem != NULL){
+        timeForReceivingResponse = (minutsItem as Number).intValue
+        logDebug("transvassament", "setting the time for transvassament not in sync alert to "+timeForReceivingResponse+"s") 
+    }else{
+        AlarmTransvassament_Seconds.sendCommand(15)
+        logWarn("transvassament", "setting the time for transvassament not in sync alert to the default "+timeForReceivingResponse+"s") 
+    }
+
+    var minutsAgo = timeForReceivingResponse + 1L
+    val ultimaConnexioState = Intent_Canvi_Transvassament.state
+    logDebug("transvassament", "Ultima ordre sent: "+ultimaConnexioState)
+    if(ultimaConnexioState != NULL){
+        val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
+        logDebug("transvassament", "Ultima ordre sent time is "+lastConnection)
+            minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+        logDebug("transvassament", "Ultima ordre sent is "+minutsAgo+"m ago.")
+    }else{
+        logError("transvassament", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
+            "), assuming already passed the time.")
+    }
+
+    if(minutsAgo > timeForReceivingResponse){
+        AlarmTransvassament.postUpdate(ON)
+    }
+end
+
+rule "Comprova canvi encesa transvassament"
+when
+    Time cron "0/15 * * * * * *" //every 15 secs
+then
+    val ordre = Ordre_Encesa_Transvassament.state
+    val state = Estat_Transvassament.state
+
+    if(state == ON && ordre == ON){
+        logDebug("transvassament", "Checking status of transvassament and both are ON")
+        //if there was an alert, solve it as now it is in sync
+        AlarmTransvassament.postUpdate(OFF)
+
+        var minutesToRun = 0L
+        val minutesToRunState = Durada_ReTrasvassament_Diposit_Bassa_Duradag_Router.state
+        if(minutesToRunState != NULL){
+            minutesToRun = (minutesToRunState as Number).longValue
+        }else{
+            logError("transvassament","Trasvassament_Diposit_Bassa_Durada is null, assuming 0 so reg will stop now")
+        }
+        var minutesAgo = minutesToRun + 1L
+        val now = ZonedDateTime::now
+        val intentEncesa = Darrer_Canvi_Transvassament.state
+        logDebug("transvassament", "Darrer_Canvi_Transvassament obtained: "+intentEncesa)
+        if(intentEncesa != NULL){
+            val intent = (intentEncesa as DateTimeType).getZonedDateTime()
+            logDebug("transvassament", "Darrer_Canvi_Transvassament time is "+intent)
+            minutesAgo = ChronoUnit.MINUTES.between(intent, now);
+            logDebug("transvassament", "Darrer_Canvi_Transvassament time is "+minutesAgo+"s ago.")
+        }else{
+            logError("transvassament", "Can not read Darrer_Canvi_Transvassament (state is "+intentEncesa+
+            "), assuming already passed the time.")
+        }
+        if(minutesAgo >= minutesToRun){
+            logDebug("transvassament", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
+                minutesToRun+"m so truning off")
+            Trasvassament_Diposit_Bassa_Encesa.sendCommand(OFF) 
+        }else{
+            logDebug("transvassament", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
+                minutesToRun+"m so not changing anything")
+        }
+    }else if(state == OFF && ordre == ON){
+        logDebug("transvassament", "Checking status of transvassament and state is OFF and ordre is ON")
+
+        Executor_Ordre_Encesa_Transvassament.sendCommand(ON)
+
+        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Comprovador_Alarma_Transvassament.sendCommand(ON)
+        
+    }else if(state == OFF && ordre == OFF){
+        logDebug("transvassament", "Checking status of transvassament and both are OFF")
+        //if there was an alert, solve it as now it is in sync
+        AlarmTransvassament.postUpdate(OFF)
+    }else if(state == ON && ordre == OFF){
+        logDebug("transvassament", "Checking status of transvassament and state is ON and ordre is OFF")
+        Executor_Ordre_Encesa_Transvassament.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
+
+        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Comprovador_Alarma_Transvassament.sendCommand(ON)
+    }else{
+        logWarn("transvassament", "Checking status of transvassament and some state is null: Ordre-> "+ordre+", State -> "+state)
+    }
+end
+
+//Rule to start the transvassament
+rule "Inicia transvassament"
+when
+    Item Trasvassament_Diposit_Bassa_Encesa received command
+then
+    Ordre_Encesa_Transvassament.sendCommand(receivedCommand)
+end
