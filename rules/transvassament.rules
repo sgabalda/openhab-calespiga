@@ -1,6 +1,17 @@
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
 
+
+rule "Items inicialització"
+when   
+    System started
+then
+    val stateTr = Estat_Transvassament.state
+    if(stateTr == NULL){
+        Estat_Transvassament.postUpdate(OFF)
+    }
+end
+
 rule "Ordre encesa transvassament"
 when
     Item Ordre_Encesa_Transvassament changed
