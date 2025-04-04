@@ -156,7 +156,7 @@ then
         AlarmTransvassament.postUpdate(OFF)
 
         var minutesToRun = 0L
-        val minutesToRunState = Durada_ReTrasvassament_Diposit_Bassa_Duradag_Router.state
+        val minutesToRunState = Trasvassament_Diposit_Bassa_Durada.state
         if(minutesToRunState != NULL){
             minutesToRun = (minutesToRunState as Number).longValue
         }else{
