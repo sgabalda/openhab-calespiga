@@ -91,11 +91,13 @@ then
 
         Darrer_Canvi_Transvassament.postUpdate(nowDateType)
         if(nouEstat == "on"){
+            logDebug("transvassament", "As diposit bomba was set to ON, update estat bomba and trasnvassament")
             Estat_Bomba_Diposit.sendCommand(ON)
             Estat_Transvassament.sendCommand(ON)
             Trasvassament_Diposit_Bassa_Estat.postUpdate("Transvassant")
             Trasvassament_Diposit_Bassa_Darrer.postUpdate(nowDateType)
         }else{
+            logDebug("transvassament", "As diposit bomba was set to OFF, return bassa to off and release leadership")
             BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",off")
             BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",")
             Trasvassament_Diposit_Bassa_Estat.postUpdate("Posant circulacio off...")
