@@ -66,6 +66,8 @@ then
         Trasvassament_Diposit_Bassa_Estat.postUpdate("Aturat")
         Estat_Bomba_Diposit.sendCommand(OFF)
         Estat_Transvassament.sendCommand(OFF)
+        logDebug("transvassament", "Releasing leadership")
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",")
     }else if(ordre == ""){
         logDebug("transvassament", "Transvassament is not anymore the owner")
     }else{
@@ -97,9 +99,8 @@ then
             Trasvassament_Diposit_Bassa_Estat.postUpdate("Transvassant")
             Trasvassament_Diposit_Bassa_Darrer.postUpdate(nowDateType)
         }else{
-            logDebug("transvassament", "As diposit bomba was set to OFF, return bassa to off and release leadership")
+            logDebug("transvassament", "As diposit bomba was set to OFF, return bassa to off")
             BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",off")
-            BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",")
             Trasvassament_Diposit_Bassa_Estat.postUpdate("Posant circulacio off...")
         }
     }else{
