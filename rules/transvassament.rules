@@ -121,10 +121,10 @@ then
     var timeForReceivingResponse = 15L
     if(minutsItem != NULL){
         timeForReceivingResponse = (minutsItem as Number).intValue
-        logDebug("transvassament", "setting the time for transvassament not in sync alert to "+timeForReceivingResponse+"s") 
+        logDebug("transvassament", "setting the time for transvassament not in sync alert to "+timeForReceivingResponse+"m") 
     }else{
         AlarmTransvassament_Seconds.sendCommand(15)
-        logWarn("transvassament", "setting the time for transvassament not in sync alert to the default "+timeForReceivingResponse+"s") 
+        logWarn("transvassament", "setting the time for transvassament not in sync alert to the default "+timeForReceivingResponse+"m") 
     }
 
     var minutsAgo = timeForReceivingResponse + 1L
@@ -133,7 +133,7 @@ then
     if(ultimaConnexioState != NULL){
         val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
         logDebug("transvassament", "Ultima ordre sent time is "+lastConnection)
-            minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+            minutsAgo = ChronoUnit.MINUTES.between(lastConnection, now);
         logDebug("transvassament", "Ultima ordre sent is "+minutsAgo+"m ago.")
     }else{
         logError("transvassament", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+

@@ -455,10 +455,10 @@ then
     var timeForReceivingResponse = 15L
     if(minutsItem != NULL){
         timeForReceivingResponse = (minutsItem as Number).intValue
-        logDebug("bassa.rules", "setting the time for circulacio bassa not in sync alert to "+timeForReceivingResponse+"s") 
+        logDebug("bassa.rules", "setting the time for circulacio bassa not in sync alert to "+timeForReceivingResponse+"m") 
     }else{
         AlarmBassaCirculacio_Seconds.sendCommand(15)
-        logWarn("bassa.rules", "setting the time for circulacio bassa not in sync alert to the default "+timeForReceivingResponse+"s") 
+        logWarn("bassa.rules", "setting the time for circulacio bassa not in sync alert to the default "+timeForReceivingResponse+"m") 
     }
 
     var minutsAgo = timeForReceivingResponse + 1L
@@ -467,7 +467,7 @@ then
     if(ultimaConnexioState != NULL){
         val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
         logDebug("bassa.rules", "Ultima ordre sent time is "+lastConnection)
-            minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+            minutsAgo = ChronoUnit.MINUTES.between(lastConnection, now);
         logDebug("bassa.rules", "Ultima ordre sent is "+minutsAgo+"m ago.")
     }else{
         logError("bassa.rules", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+

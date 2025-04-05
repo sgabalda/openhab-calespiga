@@ -124,10 +124,10 @@ then
     var timeForReceivingResponse = 15L
     if(minutsItem != NULL){
         timeForReceivingResponse = (minutsItem as Number).intValue
-        logDebug("BombaReg", "setting the time for diposit reg not in sync alert to "+timeForReceivingResponse+"s") 
+        logDebug("BombaReg", "setting the time for diposit reg not in sync alert to "+timeForReceivingResponse+"m") 
     }else{
         AlarmReg_Seconds.sendCommand(15)
-        logWarn("BombaReg", "setting the time for diposit reg not in sync alert to the default "+timeForReceivingResponse+"s") 
+        logWarn("BombaReg", "setting the time for diposit reg not in sync alert to the default "+timeForReceivingResponse+"m") 
     }
 
     var minutsAgo = timeForReceivingResponse + 1L
@@ -136,7 +136,7 @@ then
     if(ultimaConnexioState != NULL){
         val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
         logDebug("BombaReg", "Ultima ordre sent time is "+lastConnection)
-            minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+            minutsAgo = ChronoUnit.MINUTES.between(lastConnection, now);
         logDebug("BombaReg", "Ultima ordre sent is "+minutsAgo+"m ago.")
     }else{
         logError("BombaReg", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
