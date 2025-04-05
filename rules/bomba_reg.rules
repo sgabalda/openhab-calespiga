@@ -155,7 +155,7 @@ then
     val ordre = Ordre_Encesa_Bomba_Diposit.state
     val stateBomba = Estat_Bomba_Diposit.state
     val stateReg = EstatReg.state
-    val stateRegDipositOn = stateBomba == ON && stateReg == ON
+    val stateRegDipositOn = stateBomba == ON && stateReg == "on"
 
     logDebug("BombaReg", "The current status of reg diposit is: Ordre-> "+ordre+", State -> Bomba:"+stateBomba+", Reg:"+stateReg)
 
