@@ -56,7 +56,7 @@
 #define RELAY_FAN_BATTERIES 5
 #define RELAY_FAN_ELECTRONICS 6
 #define RELAY_PUMP 7
-#define RELAY_GRID 8
+#define RELAY_GRID 4
 
 //Read pins for battery and grid status
 #define PIN_BATTERY_LEVEL_MED 8
