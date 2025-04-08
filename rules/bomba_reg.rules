@@ -33,9 +33,30 @@ then
     val ordre = receivedCommand
     logDebug("BombaReg", "Executor Diposit received "+ordre)
     if(ordre == ON){
+        logDebug("BombaReg", "Trying to get ownership of the circulacio bassa")
+        //try to get ownership of the BassaCirculacioChangeRequest
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Diposit_Reg.name+",off")
+    }else{
+        //release the BassaCirculacioChangeOwner
+        logDebug("BombaReg", "Releasing ownership of the circulacio bassa")
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Diposit_Reg.name+",")
+        //and stop the pump
+        logDebug("BombaReg", "Stopping diposit pump")
+        DipositPumpSet.sendCommand("stop")    
+    }
+
+end
+
+rule "Ownership obtingut"
+when
+    Item Circulacio_Leader_Bomba_Diposit_Reg received command 
+then
+    val ordre = receivedCommand
+    if(ordre == "off"){
+        logDebug("BombaReg", "Ownership of circulacio ours, going to check if watering can start")
         //comprova que bassa no esta ences
         var bombaBassaStatus = "on"
-        val bombaBassaStatusItem = DipositPumpStatus.state
+        val bombaBassaStatusItem = BassaRegStatus.state
         if(bombaBassaStatusItem != NULL){
             bombaBassaStatus = bombaBassaStatusItem.toString
         }
@@ -43,42 +64,54 @@ then
             //if it is, then do nothing as it will be retried by the checker
             logWarn("BombaReg", "Bomba bassa is ON, waiting to turn on bomba diposit")
         }else{
+
             logDebug("BombaReg", "Bomba bassa is OFF, checking circulacio")
             //comprova si status bassa es diposit
-            var bassaStatus = "circulacio"
+            var bassaStatus = "off"
             val bassaStatusItem = BassaCirculacioStatus.state
             if(bassaStatusItem != NULL){
                 bassaStatus = bassaStatusItem.toString
             }
             //if it is not, send command to start the pump
-            if(bassaStatus != "diposit"){
-                logDebug("BombaReg", "bassa is not diposit, so turning on bomba ")
-                DipositPumpSet.sendCommand("start")    //when it is run via MQTT, change here to send the message to command topic
+            if(bassaStatus == "off" || bassaStatus == "depuradora" ){
+                logDebug("BombaReg", "bassa is not diposit or transitioning, so turning on bomba ")
+                DipositPumpSet.sendCommand("start")    
             }else{
                 logDebug("BombaReg", "bassa is in diposit state, so waiting")
             }
             //if not, then do nothing as it will be retried by the checker
         }
     }else{
-        DipositPumpSet.sendCommand("stop")    //when it is run via MQTT, change here to send the message to command topic
+        logDebug("BombaReg", "Ownership of circulacio not ours, not doing anything")
     }
-
 end
 
 rule "Encesa diposit ha succeit"
 when
-    Item DipositPumpStatus changed    //when it is run via MQTT, change here to read the status
+    Item DipositPumpStatus changed 
 then
     val nouEstat = newState
-    logDebug("BombaReg", "Diposit changed to "+nouEstat+". Updating darrer canvi")
-    val now = ZonedDateTime::now
-    val nowDateType = new DateTimeType(now) 
+    //check the change is when the status for circulacio is the one we require
+    var statusCirculacio = "off"
+    val statusItem = BassaCirculacioStatus.state
+    if(statusItem != NULL){
+        statusCirculacio = statusItem.toString
+    }
+    if(statusCirculacio == "off"){
+        logDebug("BombaReg", "Diposit changed to "+nouEstat+". Updating darrer canvi")
+        val now = ZonedDateTime::now
+        val nowDateType = new DateTimeType(now) 
 
-    Darrer_Canvi_Bomba_Diposit.postUpdate(nowDateType)
-    if(nouEstat == "on"){
-        Estat_Bomba_Diposit.sendCommand(ON)
+        Darrer_Canvi_Bomba_Diposit.postUpdate(nowDateType)
+        if(nouEstat == "on"){
+            Estat_Bomba_Diposit.sendCommand(ON)
+        }else{
+            Estat_Bomba_Diposit.sendCommand(OFF)
+        }
     }else{
-        Estat_Bomba_Diposit.sendCommand(OFF)
+        logDebug("BombaReg", "Diposit changed to "+nouEstat+
+        " but status for bassa is "+
+        statusCirculacio+" which means we are not the owners, so not doing anything")
     }
 end
 
@@ -91,10 +124,10 @@ then
     var timeForReceivingResponse = 15L
     if(minutsItem != NULL){
         timeForReceivingResponse = (minutsItem as Number).intValue
-        logDebug("BombaReg", "setting the time for diposit reg not in sync alert to "+timeForReceivingResponse+"s") 
+        logDebug("BombaReg", "setting the time for diposit reg not in sync alert to "+timeForReceivingResponse+"m") 
     }else{
         AlarmReg_Seconds.sendCommand(15)
-        logWarn("BombaReg", "setting the time for diposit reg not in sync alert to the default "+timeForReceivingResponse+"s") 
+        logWarn("BombaReg", "setting the time for diposit reg not in sync alert to the default "+timeForReceivingResponse+"m") 
     }
 
     var minutsAgo = timeForReceivingResponse + 1L
@@ -103,7 +136,7 @@ then
     if(ultimaConnexioState != NULL){
         val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
         logDebug("BombaReg", "Ultima ordre sent time is "+lastConnection)
-            minutsAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+            minutsAgo = ChronoUnit.MINUTES.between(lastConnection, now);
         logDebug("BombaReg", "Ultima ordre sent is "+minutsAgo+"m ago.")
     }else{
         logError("BombaReg", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
@@ -120,9 +153,13 @@ when
     Time cron "0/15 * * * * * *" //every 15 secs
 then
     val ordre = Ordre_Encesa_Bomba_Diposit.state
-    val state = Estat_Bomba_Diposit.state
+    val stateBomba = Estat_Bomba_Diposit.state
+    val stateReg = EstatReg.state
+    val stateRegDipositOn = stateBomba == ON && stateReg == "on"
 
-    if(state == ON && ordre == ON){
+    logDebug("BombaReg", "The current status of reg diposit is: Ordre-> "+ordre+", State -> Bomba:"+stateBomba+", Reg:"+stateReg)
+
+    if(stateRegDipositOn && ordre == ON){
         logDebug("BombaReg", "Checking status of reg diposit and both are ON")
         //if there was an alert, solve it as now it is in sync
         AlarmReg.postUpdate(OFF)
@@ -155,7 +192,7 @@ then
             logDebug("BombaReg", "Intent encesa bomba diposit time is "+minutesAgo+"m ago, and limit is "+
                 minutesToRun+"m so not changing anything")
         }
-    }else if(state == OFF && ordre == ON){
+    }else if(!stateRegDipositOn && ordre == ON){
         logDebug("BombaReg", "Checking status of reg diposit and state is OFF and ordre is ON")
 
         Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(ON)
@@ -163,18 +200,18 @@ then
         //In any case, check the Alarm is not to be triggered, the value sent does not matter
         Comprovador_Alarma_Bomba_Diposit.sendCommand(ON)
         
-    }else if(state == OFF && ordre == OFF){
+    }else if(!stateRegDipositOn && ordre == OFF){
         logDebug("BombaReg", "Checking status of reg diposit and both are OFF")
         //if there was an alert, solve it as now it is in sync
         AlarmReg.postUpdate(OFF)
-    }else if(state == ON && ordre == OFF){
+    }else if(stateRegDipositOn && ordre == OFF){
         logDebug("BombaReg", "Checking status of reg Diposit and state is ON and ordre is OFF")
         Executor_Ordre_Encesa_Bomba_Diposit.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
 
         //In any case, check the Alarm is not to be triggered, the value sent does not matter
         Comprovador_Alarma_Bomba_Diposit.sendCommand(ON)
     }else{
-        logWarn("BombaReg", "Checking status of reg Diposit and some state is null: Ordre-> "+ordre+", State -> "+state)
+        logWarn("BombaReg", "Checking status of reg Diposit and some state is null: Ordre-> "+ordre+", State -> Bomba:"+stateBomba+", Reg:"+stateReg)
     }
 end
 
@@ -243,7 +280,6 @@ then
         Estat_Bomba_Bassa.sendCommand(OFF)
         logDebug("BombaReg", "Bassa estat set to OFF")
     }
-    
 end
 
 rule "Comprova alarma bomba Bassa"
@@ -322,10 +358,7 @@ then
         }
     }else if(state == OFF && ordre == ON){
         logDebug("BombaReg", "Checking status of reg Bassa and state is OFF and ordre is ON")
-
         Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(ON)
-
-        //In any case, check the Alarm is not to be triggered, the value sent does not matter
         Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
         
     }else if(state == OFF && ordre == OFF){
@@ -334,9 +367,7 @@ then
         AlarmReg.postUpdate(OFF)
     }else if(state == ON && ordre == OFF){
         logDebug("BombaReg", "Checking status of reg Bassa and state is ON and ordre is OFF")
-        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)    //when it is run via MQTT, change here to send the message to command topic
-
-        //In any case, check the Alarm is not to be triggered, the value sent does not matter
+        Executor_Ordre_Encesa_Bomba_Bassa.sendCommand(OFF)
         Comprovador_Alarma_Bomba_Bassa.sendCommand(ON)
     }else{
         logWarn("BombaReg", "Checking status of reg Bassa and some state is null: Ordre-> "+ordre+", State -> "+state)

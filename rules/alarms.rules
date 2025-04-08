@@ -60,7 +60,7 @@ then
                         logDebug("Alarms", "Last notified item state is "+alarmLastNotifItemState+" for alarm "+alarmItem.name)
                         if(alarmLastNotifItemState != NULL){
                             val lastConnection = (alarmLastNotifItemState as DateTimeType).getZonedDateTime()
-                            lastNotifiedMinutesAgo = ChronoUnit.SECONDS.between(lastConnection, now);
+                            lastNotifiedMinutesAgo = ChronoUnit.MINUTES.between(lastConnection, now);
                             logDebug("Alarms", "Last notified time is "+lastNotifiedMinutesAgo+"m ago, for alarm "+alarmItem.name)
                         }else{
                             logWarn("Alarms", "Last notified time is NULL, if it is not the first time maybe it is not properly updating for alarm "+alarmItem.name)

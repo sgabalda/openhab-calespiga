@@ -43,7 +43,25 @@ Switch AlarmReg "Reg" (Alarms)
 DateTime AlarmRegTimeOn "Com. diposit activada"
 DateTime AlarmRegTimeOff "Com. diposit desact."
 Switch AlarmRegNotification "Notificacio Com. diposit"
-DateTime AlarmRegNotificationTime "Darrera notif."
+DateTime AlarmRegLastNotificationTime "Darrera notif."
 Number AlarmRegTimeNotifications "Min. entre notif."
 String AlarmRegText "La bomba de reg no respon, pot ser que no s'hagi regat o no s'hagi pogut aturar"
 Number AlarmReg_Seconds "Minuts limit comunicació"
+
+Switch AlarmBassaCirculacio "Circulacio bassa" (Alarms)
+DateTime AlarmBassaCirculacioTimeOn "Circulacio bassa activada"
+DateTime AlarmBassaCirculacioTimeOff "Circulacio bassa desact."
+Switch AlarmBassaCirculacioNotification "Notificacio Circulacio bassa"
+DateTime AlarmBassaCirculacioLastNotificationTime "Darrera notif."
+Number AlarmBassaCirculacioTimeNotifications "Min. entre notif."
+String AlarmBassaCirculacioText "La circulacio de la bassa no respon. Pot ser que no funcioni o no s'hagi pogut aturar"
+Number AlarmBassaCirculacio_Seconds "Minuts limit comunicació"
+
+Switch AlarmTransvassament "Circulacio bassa" (Alarms)
+DateTime AlarmTransvassamentTimeOn "Circulacio bassa activada"
+DateTime AlarmTransvassamentTimeOff "Circulacio bassa desact."
+Switch AlarmTransvassamentNotification "Notificacio Circulacio bassa"
+DateTime AlarmTransvassamentLastNotificationTime "Darrera notif."
+Number AlarmTransvassamentTimeNotifications "Min. entre notif."
+String AlarmTransvassamentText "La circulacio de la bassa no respon. Pot ser que no funcioni o no s'hagi pogut aturar"
+Number AlarmTransvassament_Seconds "Minuts limit comunicació"
