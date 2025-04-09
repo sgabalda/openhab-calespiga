@@ -1,0 +1,37 @@
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+
+rule "Actualitza tarifa xarxa"
+when
+    Time cron "0 0 * * * * *" //every 1 hour
+    or System started
+then
+    val now = ZonedDateTime::now
+    val currentHour = now.getHour()
+    //TODO check also if it is sunday or saturday
+    if(currentHour >= 0 && currentHour <= 7){
+        GridPriceCurrent.postUpdate("vall")
+    }else if(currentHour >= 10 && currentHour <= 13){
+        GridPriceCurrent.postUpdate("punta")
+    }else if(currentHour >= 18 && currentHour <= 21){
+        GridPriceCurrent.postUpdate("punta")
+    }else{
+        GridPriceCurrent.postUpdate("pla")
+    }
+end
+
+rule "Actualitza estat connexio xarxa"
+when
+    Item GridConnectionAction changed //TODO change this to use GridConnectionStatus when optocoupler is set
+then
+    val currentStatus = GridConnectionAction.state
+    var current = "off"
+    if(currentStatus != NULL){
+        current = currentStatus.toString
+    }
+    if(current == "on"){
+        GridStatus.postUpdate(ON)
+    }else{
+        GridStatus.postUpdate(OFF)
+    }
+end

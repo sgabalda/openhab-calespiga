@@ -214,6 +214,16 @@ sitemap default label="Ca l'espiga" {
             Webview height=14 url="http://calespiga.ddns.net:3000/d/HIpApQWRk/potencia-sobrant"
         }
     }
+    Text item=XarxaBateriaTitle label="Xarxa i bateria" icon="grid"
+    {
+        Frame label="Estat de la xarxa" {
+            Text item=GridStatus icon="switch" label="Estat connexió [%s]"
+            Text item=GridPriceCurrent icon="receiver" label="Tarifa actual [%s]"
+        }
+        Frame label="Bateria" {
+            Text item=BatteryLevelStatus icon="battery" label="Nivell bateria"
+        }
+    }
     Text item=SystemTitle label="Sistema" icon="settings"
     {
         Frame label="Sistema operatiu" {

@@ -1,0 +1,7 @@
+String BatteryLevelStatus "Nivell Bateria" {channel="mqtt:topic:grid:BatteryLevelStatus"}
+String GridConnectionAction "Estat relé xarxa" {channel="mqtt:topic:grid:GridConnectionAction"}
+String GridConnectionStatus "Estat connexió xarxa" {channel="mqtt:topic:grid:GridConnectionStatus"}
+String GridConnectionSet "Ordre relé xarxa" {channel="mqtt:topic:grid:GridConnectionSet"}
+
+String GridPriceCurrent "Tram actual de la tarifa"
+Switch GridStatus "Estat de la xarxa"

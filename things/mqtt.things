@@ -9,6 +9,14 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type string : PumpSet "PumpSet" [ commandTopic="diposit1/pump/set" ]
     }
 
+    Thing mqtt:topic:grid (mqtt:broker:defaultBroker) {
+        Channels:
+            Type string : BatteryLevelStatus "BatteryLevelStatus" [ stateTopic="battery/level/status" ]
+            Type string : GridConnectionAction "GridConnectionAction" [ stateTopic="grid/connection/action" ]
+            Type string : GridConnectionStatus "GridConnectionStatus" [ stateTopic="grid/connection/status" ]
+            Type string : GridConnectionSet "GridConnectionSet" [ commandTopic="grid/connection/set" ]
+    }
+
     Thing mqtt:topic:fan (mqtt:broker:defaultBroker) {
         Channels:
             Type string : FanBatteriesStatus "FanBatteriesStatus" [ stateTopic="fan/batteries/status" ]
