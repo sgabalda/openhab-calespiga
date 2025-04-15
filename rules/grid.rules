@@ -62,7 +62,7 @@ then
     logDebug("grid", "La gestio es: "+gestio)
     if(gestio == "manual"){
         logDebug("grid", "Gestio manual, comprovant switch")
-        val switchItem = newState
+        val switchItem = GridManualSwitch
         var sw = OFF
         if(switchItem != NULL){
             sw = switchItem.state
