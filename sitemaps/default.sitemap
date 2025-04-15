@@ -147,7 +147,7 @@ sitemap default label="Ca l'espiga" {
             Switch item=GridManualSwitch icon="wallswitch"
         }
         Frame label="Bateria" {
-            Text item=BatteryLevelStatus icon="battery" label="Nivell bateria" mappings=["low"="Baix", "medium"="Mig", "high"="Alt"]
+            Text item=BatteryLevelStatus icon="battery" label="Nivell bateria" //mappings=["low"="Baix", "medium"="Mig", "high"="Alt"]
         }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"

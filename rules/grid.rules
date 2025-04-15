@@ -102,7 +102,7 @@ end
 
 rule "Executor ordre encesa Grid Connection"
 when
-    Item Executor_Ordre_Encesa_Grid Connection received command
+    Item Executor_Ordre_Encesa_Grid_Connection received command
 then
     val ordre = receivedCommand
     logDebug("grid", "Executor Grid Connection received "+ordre)
