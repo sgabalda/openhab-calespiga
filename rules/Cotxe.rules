@@ -207,7 +207,7 @@ then
     val tarifa = GridPriceCurrent.state
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
     if(gestioAutoCotxe == "grid"){
-        if(tarifa  == "vall"){
+        if(tarifa  == "pla"){
             logDebug("Cotxe.rules", "Tarifa changed to "+tarifa+", gestio is grid, so starting to turn on carregador")
             CotxeEncesa_Xarxa_Proxy.sendCommand(ON) 
         }else{
