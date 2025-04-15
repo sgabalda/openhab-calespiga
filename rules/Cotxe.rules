@@ -177,6 +177,8 @@ end
 
 //RULES FOR MANUAL CHARGING
 
+//TODO make the manual also set a limit on the battery level.
+
 rule "Canvi manual Cotxe"
 when 
     Item CotxeEncesaManual received command
@@ -199,6 +201,8 @@ end
 
 //RULES FOR GRID CHARGING
 
+//TODO allow to configure if charging can go with PLA and VALL, or always
+
 rule "Grid connected and charge car"
 when
     Item GridPriceCurrent changed
@@ -207,7 +211,7 @@ then
     val tarifa = GridPriceCurrent.state
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
     if(gestioAutoCotxe == "grid"){
-        if(tarifa  == "pla"){
+        if(tarifa  == "vall"){
             logDebug("Cotxe.rules", "Tarifa changed to "+tarifa+", gestio is grid, so starting to turn on carregador")
             CotxeEncesa_Xarxa_Proxy.sendCommand(ON) 
         }else{

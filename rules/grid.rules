@@ -49,6 +49,8 @@ then
     }
 end
 
+//TODO add logic for using gird if battery level is low
+
 //NOTE: In case the grid is to be activated (e.g. to load batteries if low, or to heat the water), use a new 
 // item and add an OR to enable the grid here.
 rule "Activació connexio xarxa"
