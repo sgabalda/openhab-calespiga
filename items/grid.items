@@ -14,3 +14,5 @@ Switch Executor_Ordre_Encesa_Grid_Connection "Executa ordre encesa bomba depurad
 Switch Comprovador_Alarma_Grid_Connection "Comprova alarma bomba depuradora"
 DateTime Darrer_Canvi_Grid_Connection "Instant darrer canvi bomba depuradora"
 DateTime Intent_Canvi_Grid_Connection "Instant intent canvi bomba depuradora"
+
+String XarxaBateriaTitle "Títol secció"

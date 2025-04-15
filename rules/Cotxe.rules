@@ -115,31 +115,37 @@ then
         logDebug("Cotxe.rules", "CotxeEncesa_FV_Proxy is ON, so doing nothing and just forwarding.")
         CotxeEncesa_FV_Decisor.sendCommand(ON)
     }else{
-        logDebug("Cotxe.rules", "CotxeEncesa_FV_Proxy is OFF, checking time ")
-        val now = ZonedDateTime::now
-        val nowMillis = now.toInstant().toEpochMilli()
-        if(chargingWithoutExtraPowerTimeStart == 0){
-            logDebug("Cotxe.rules", "Just happened now, starting timer")
-            chargingWithoutExtraPowerTimeStart = nowMillis
-        }else{
-            val minutsState = Cotxe_Temps_Bateria.state
-            var minuts = 1
-            if(minutsState != NULL){
-                minuts = (minutsState as Number).intValue
-            }
-            logDebug("Cotxe.rules", "The limit is set to "+minuts+" minutes")
-            val maxChargingWithoutExtraPowerTime = 1000L * 60 * minuts
-
-            if(nowMillis - chargingWithoutExtraPowerTimeStart >= maxChargingWithoutExtraPowerTime){
-                logInfo("Cotxe.rules", "The time using batteries exceeded, turning off")
-                CotxeEncesa_FV_Decisor.sendCommand(OFF)
-                chargingWithoutExtraPowerTimeStart = 0L
+        val isCurrentlyOn = CotxeEncesa_FV_Decisor.status == ON
+        if(isCurrentlyOn){
+            logDebug("Cotxe.rules", "CotxeEncesa_FV_Proxy is set to OFF, but the FV decisor was ON, checking time ")
+            val now = ZonedDateTime::now
+            val nowMillis = now.toInstant().toEpochMilli()
+            if(chargingWithoutExtraPowerTimeStart == 0){
+                logDebug("Cotxe.rules", "Just happened now, starting timer")
+                chargingWithoutExtraPowerTimeStart = nowMillis
             }else{
-                logInfo("Cotxe.rules", "The time using batteries has not been reached yet, turning off")
-                CotxeEncesa_FV_Decisor.sendCommand(ON)
+                val minutsState = Cotxe_Temps_Bateria.state
+                var minuts = 1
+                if(minutsState != NULL){
+                    minuts = (minutsState as Number).intValue
+                }
+                logDebug("Cotxe.rules", "The limit is set to "+minuts+" minutes")
+                val maxChargingWithoutExtraPowerTime = 1000L * 60 * minuts
+
+                if(nowMillis - chargingWithoutExtraPowerTimeStart >= maxChargingWithoutExtraPowerTime){
+                    logInfo("Cotxe.rules", "The time using batteries exceeded, turning off")
+                    CotxeEncesa_FV_Decisor.sendCommand(OFF)
+                    chargingWithoutExtraPowerTimeStart = 0L
+                }else{
+                    logInfo("Cotxe.rules", "The time using batteries has not been reached yet, keeping ON")
+                    CotxeEncesa_FV_Decisor.sendCommand(ON)
+                }
             }
+        }else{
+            logDebug("Cotxe.rules", "CotxeEncesa_FV_Proxy is set to OFF, and the FV decisor was OFF, so nothing to do")
+            CotxeEncesa_FV_Decisor.sendCommand(OFF)
+            chargingWithoutExtraPowerTimeStart = 0L
         }
-        
     }
     
 end
