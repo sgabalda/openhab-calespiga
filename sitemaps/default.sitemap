@@ -120,7 +120,7 @@ sitemap default label="Ca l'espiga" {
             Text item=Cotxe_Energia_Avui label="Energia avui [%.1f Wh]" icon="battery"
             Text item=CotxeEncesa_Control_Proxy label="Encesa carregador [%s]" icon="connect"
             Setpoint item=Cotxe_Temps_Bateria icon="stopwatch" label="Temps consumint bateria [%.1f min]" minValue=1 maxValue=60 step=1
-            Switch item=GestioAutomaticaCotxe icon="remote_control" label="Gestió carregador" mappings=["auto"="Automatic", "manual"="Manual"]
+            Selection item=GestioAutomaticaCotxe icon="remote_control" label="Gestió carregador" mappings=["auto"="FV sobrant", "grid"="FV sob. + Xarxa", "manual"="Manual"]
             Switch item=CotxeEncesaManual icon="switch_on_off"
         }
         Frame{
@@ -136,6 +136,18 @@ sitemap default label="Ca l'espiga" {
             Selection item=EstufaInfrarrojos_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "600"="600W", "1200"="1200W"]
             Setpoint item=EstufaInfrarrojos_Durada_Encesa_Auto icon="stopwatch" label="Durada manual [%.1f min]" minValue=1 maxValue=120 step=1
             Text item=EstufaInfrarrojos_Energia_Avui icon="energy" label="Energia avui: [%.3f kWh]" 
+        }
+    }
+    Text item=XarxaBateriaTitle label="Xarxa i bateria" icon="poweroutlet"
+    {
+        Frame label="Estat de la xarxa" {
+            Text item=GridStatus icon="switch" label="Estat connexió [%s]"
+            Text item=GridPriceCurrent icon="chart" label="Tarifa actual [%s]"
+            Switch item=GridManagement icon="remote_control" label="Gestió connexio" mappings=["auto"="Automatic", "manual"="Manual"]
+            Switch item=GridManualSwitch icon="wallswitch"
+        }
+        Frame label="Bateria" {
+            Text item=BatteryLevelStatus icon="battery" label="Nivell bateria" mappings=["low"="Baix", "medium"="Mig", "high"="Alt"]
         }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"
@@ -197,6 +209,14 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmTransvassamentTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
             Setpoint item=AlarmTransvassament_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
         }
+        Frame label="Problema de connexio a xarxa" {
+            Text item=AlarmGridConnection label="Estat [%s]" icon="alert"
+            Text icon="time" item=AlarmGridConnectionTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
+            Text icon="time" item=AlarmGridConnectionTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
+            Switch item=AlarmGridConnectionNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
+            Setpoint item=AlarmGridConnectionTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
+            Setpoint item=AlarmGridConnection_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
+        }
     }
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
     {
@@ -212,16 +232,6 @@ sitemap default label="Ca l'espiga" {
         }
         Frame{
             Webview height=14 url="http://calespiga.ddns.net:3000/d/HIpApQWRk/potencia-sobrant"
-        }
-    }
-    Text item=XarxaBateriaTitle label="Xarxa i bateria" icon="grid"
-    {
-        Frame label="Estat de la xarxa" {
-            Text item=GridStatus icon="switch" label="Estat connexió [%s]"
-            Text item=GridPriceCurrent icon="receiver" label="Tarifa actual [%s]"
-        }
-        Frame label="Bateria" {
-            Text item=BatteryLevelStatus icon="battery" label="Nivell bateria"
         }
     }
     Text item=SystemTitle label="Sistema" icon="settings"

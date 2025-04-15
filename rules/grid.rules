@@ -1,5 +1,8 @@
 import java.time.ZonedDateTime
+import java.time.DayOfWeek
 import java.time.temporal.ChronoUnit
+
+val useWeekends = false
 
 rule "Actualitza tarifa xarxa"
 when
@@ -7,31 +10,170 @@ when
     or System started
 then
     val now = ZonedDateTime::now
-    val currentHour = now.getHour()
-    //TODO check also if it is sunday or saturday
-    if(currentHour >= 0 && currentHour <= 7){
+    val day = now.getDayOfWeek()
+    if((day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) && useWeekends ){
+        logDebug("grid", "La hora es vall pq es finde: "+currentHour)
         GridPriceCurrent.postUpdate("vall")
-    }else if(currentHour >= 10 && currentHour <= 13){
-        GridPriceCurrent.postUpdate("punta")
-    }else if(currentHour >= 18 && currentHour <= 21){
-        GridPriceCurrent.postUpdate("punta")
     }else{
-        GridPriceCurrent.postUpdate("pla")
+        val currentHour = now.getHour()
+        if(currentHour >= 0 && currentHour <= 7){
+            logDebug("grid", "La hora es vall: "+currentHour)
+            GridPriceCurrent.postUpdate("vall")
+        }else if(currentHour >= 10 && currentHour <= 13){
+            logDebug("grid", "La hora es punta: "+currentHour)
+            GridPriceCurrent.postUpdate("punta")
+        }else if(currentHour >= 18 && currentHour <= 21){
+            GridPriceCurrent.postUpdate("punta")
+            logDebug("grid", "La hora es punta: "+currentHour)
+        }else{
+            GridPriceCurrent.postUpdate("pla")
+            logDebug("grid", "La hora es pla: "+currentHour)
+        }
     }
 end
 
 rule "Actualitza estat connexio xarxa"
 when
-    Item GridConnectionAction changed //TODO change this to use GridConnectionStatus when optocoupler is set
+    Item GridConnectionStatus changed
 then
-    val currentStatus = GridConnectionAction.state
+    val currentStatus = GridConnectionStatus.state
     var current = "off"
     if(currentStatus != NULL){
         current = currentStatus.toString
     }
+    logDebug("grid", "L'estat de la connexio es : "+current)
     if(current == "on"){
         GridStatus.postUpdate(ON)
     }else{
         GridStatus.postUpdate(OFF)
+    }
+end
+
+rule "Activació manual connexio xarxa"
+when
+    Item GridManualSwitch changed
+then
+    val gestioItem = GridManagement.state
+    var gestio = "auto"
+    if(gestioItem != NULL){
+        gestio = gestioItem.toString
+    }
+    logDebug("grid", "La gestio es: "+gestio)
+    if(current == "manual"){
+        logDebug("grid", "Gestio manual, comprovant switch")
+        val switchItem = newState
+        var sw = OFF
+        if(switchItem != NULL){
+            sw = switchItem.state
+        }
+        if(sw == ON){
+            logDebug("grid", "Gestio manual i switch ON, encenent")
+            Ordre_Encesa_Grid_Connection.sendCommand(ON)
+        }else{
+            logDebug("grid", "Gestio manual i switch OFF, apagant")
+            Ordre_Encesa_Grid_Connection.sendCommand(OFF)
+        }       
+    }else{
+        logDebug("grid", "Gestio automatica, apagant switch")
+        GridManualSwitch.postUpdate(OFF)
+    }
+end
+
+rule "Ordre encesa Grid Connection"
+when
+    Item Ordre_Encesa_Grid_Connection changed
+then
+    val novaOrdre = newState
+    logDebug("grid", "Ordre Grid Connection received command "+novaOrdre+". Updating intent and sending to executor")
+    val now = ZonedDateTime::now
+    val nowDateType = new DateTimeType(now) 
+
+    Intent_Canvi_Grid_Connection.postUpdate(nowDateType) 
+    logDebug("grid", "Updated Intent_Canvi_Grid_Connection")
+
+    if(novaOrdre == ON){
+        Executor_Ordre_Encesa_Grid_Connection.sendCommand(ON)
+    }else{
+        Executor_Ordre_Encesa_Grid_Connection.sendCommand(OFF)
+    }
+
+    logDebug("grid", "Send command to Executor_Ordre_Encesa_Grid_Connection")
+end
+
+rule "Executor ordre encesa Grid Connection"
+when
+    Item Executor_Ordre_Encesa_Grid Connection received command
+then
+    val ordre = receivedCommand
+    logDebug("grid", "Executor Grid Connection received "+ordre)
+    if(ordre == ON){
+        GridConnectionSet.sendCommand("on")
+    }else{
+        GridConnectionSet.sendCommand("off")
+    }
+end
+
+rule "Comprova alarma Grid Connection"
+when
+    Item Comprovador_Alarma_Grid_Connection received command
+then
+    logDebug("grid", "Checking alarma for Grid connection")
+    val minutsItem = AlarmGridConnection_Seconds.state
+    var timeForReceivingResponse = 15L
+    if(minutsItem != NULL){
+        timeForReceivingResponse = (minutsItem as Number).intValue
+        logDebug("grid", "setting the time for Grid Connection not in sync alert to "+timeForReceivingResponse+"m") 
+    }else{
+        AlarmGridConnection_Seconds.sendCommand(15)
+        logWarn("grid", "setting the time for Grid Connection not in sync alert to the default "+timeForReceivingResponse+"m") 
+    }
+
+    var minutsAgo = timeForReceivingResponse + 1L
+    val ultimaConnexioState = Intent_Canvi_Grid_Connection.state
+    logDebug("grid", "Ultima ordre sent: "+ultimaConnexioState)
+    if(ultimaConnexioState != NULL){
+        val lastConnection = (ultimaConnexioState as DateTimeType).getZonedDateTime()
+        logDebug("grid", "Ultima ordre sent time is "+lastConnection)
+            minutsAgo = ChronoUnit.MINUTES.between(lastConnection, now);
+        logDebug("grid", "Ultima ordre sent is "+minutsAgo+"m ago.")
+    }else{
+        logError("grid", "Can not read Ultima ordre sent (state is "+ultimaConnexioState+
+            "), assuming already passed the time.")
+    }
+
+    if(minutsAgo > timeForReceivingResponse){
+        AlarmGridConnection.postUpdate(ON)
+    }
+    
+end
+
+rule "Comprova canvi encesa Grid Connection"
+when
+    Time cron "0/15 * * * * * *" //every 15 secs
+then
+    val ordre = Ordre_Encesa_Grid_Connection.state
+    val state = GridStatus.state
+
+    if(state == ON && ordre == ON){
+        logDebug("grid", "Checking status of Grid Connection and both are ON")
+        //if there was an alert, solve it as now it is in sync
+        AlarmGridConnection.postUpdate(OFF)
+
+    }else if(state == OFF && ordre == ON){
+        logDebug("grid", "Checking status of Grid Connection and state is OFF and ordre is ON")
+
+        Executor_Ordre_Encesa_Grid_Connection.sendCommand(ON)
+        Comprovador_Alarma_Grid_Connection.sendCommand(ON)
+        
+    }else if(state == OFF && ordre == OFF){
+        logDebug("grid", "Checking status of Grid Connection and both are OFF")
+        //if there was an alert, solve it as now it is in sync
+        AlarmGridConnection.postUpdate(OFF)
+    }else if(state == ON && ordre == OFF){
+        logDebug("grid", "Checking status of Grid Connection and state is ON and ordre is OFF")
+        Executor_Ordre_Encesa_Grid_Connection.sendCommand(OFF)   
+        Comprovador_Alarma_Grid_Connection.sendCommand(ON)
+    }else{
+        logWarn("grid", "Checking status of Grid Connection and some state is null: Ordre-> "+ordre+", State -> "+state)
     }
 end
