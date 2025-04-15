@@ -49,34 +49,33 @@ then
     }
 end
 
-rule "Activació manual connexio xarxa"
+//NOTE: In case the grid is to be activated (e.g. to load batteries if low, or to heat the water), use a new 
+// item and add an OR to enable the grid here.
+rule "Activació connexio xarxa"
 when
     Item GridManualSwitch changed
-    or Item GridManagement changed
+    or Item GridAutomaticCarSwitch changed
 then
-    val gestioItem = GridManagement.state
-    var gestio = "auto"
-    if(gestioItem != NULL){
-        gestio = gestioItem.toString
-    }
-    logDebug("grid", "La gestio es: "+gestio)
-    if(gestio == "manual"){
-        logDebug("grid", "Gestio manual, comprovant switch")
-        val switchItem = GridManualSwitch
-        var sw = OFF
-        if(switchItem != NULL){
-            sw = switchItem.state
+    val manual = GridManualSwitch.state == ON
+    val cotxeAutomatic = GridAutomaticCarSwitch.state == ON
+    val encendre = manual || cotxeAutomatic
+    
+    logDebug("grid", "Els controls per la xarxa son: Manual->"+manual+", CotxeAutomatic->"+cotxeAutomatic)
+    if(encendre){
+        logDebug("grid", "Connectant xarxa")
+        Ordre_Encesa_Grid_Connection.sendCommand(ON)
+        var rao = " "
+        if(manual){
+            rao = rao + "Manual "
         }
-        if(sw == ON){
-            logDebug("grid", "Gestio manual i switch ON, encenent")
-            Ordre_Encesa_Grid_Connection.sendCommand(ON)
-        }else{
-            logDebug("grid", "Gestio manual i switch OFF, apagant")
-            Ordre_Encesa_Grid_Connection.sendCommand(OFF)
-        }       
+        if(cotxeAutomatic){
+            rao = rao + "Cotxe "
+        }
+        GridReasonOn.postUpdate(rao)
     }else{
-        logDebug("grid", "Gestio automatica, apagant switch")
-        GridManualSwitch.postUpdate(OFF)
+        logDebug("grid", "Apagant switch")
+        Ordre_Encesa_Grid_Connection.sendCommand(OFF)
+        GridReasonOn.postUpdate("Desconnectada")
     }
 end
 

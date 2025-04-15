@@ -1,12 +1,12 @@
-import java.util.Date
+import java.time.ZonedDateTime
 
 //rules to manage unused power
 var test = false     //set to true to use the test items instead of the real ones
 val MAX_POWER = 2000.0
-val IDLE_POWER = 10 //an estimation of what it uses if the car is not connected, in W
-val TURN_OFF_POWER = 4.0 //below this power, the plug is considered not to be working, and therefore is switched off. Has to be less than IDLE_POWER
+val IDLE_POWER = 1 //an estimation of what it uses if the car is not connected, in W
+val BLOCKED_POWER = 5.0 //below this power, the plug is considered not to be working, and therefore is switched off and ON after a few seconds
 var long chargingWithoutExtraPowerTimeStart = 0
-var long maxChargingWithoutExtraPowerTime = 10L * 60 * 1000
+
 
 rule "Potencia disponible cotxe"
 when
@@ -14,7 +14,7 @@ when
 then
 	val gestioAutoCotxe = GestioAutomaticaCotxe.state
 	var requiredPower = 0.0
-	if(gestioAutoCotxe == "auto"){
+	if(gestioAutoCotxe == "auto" || gestioAutoCotxe == "grid"){
 		logDebug("Cotxe.rules", "Received new power available for Cotxe auto")
 	    val oldPowerState = Cotxe_AvailablePower.state
 	    var availablePower = 0.0
@@ -29,7 +29,7 @@ then
 	    }
 
 	    var isCurrentlyOn = false
-	    val switchState = CotxeEncesa_Control_Proxy.state
+	    val switchState = CotxeEncesa_FV_Proxy.state
 	    if(switchState ==ON ){
 	        isCurrentlyOn = true
 	    }
@@ -39,26 +39,9 @@ then
             if(availablePower >= currentPower){
                 logDebug("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is enough available power ("+availablePower+")")
                 requiredPower = currentPower
-                chargingWithoutExtraPowerTimeStart = 0L               
             }else{
                 logDebug("Cotxe.rules", "The switch is currently on (using "+currentPower+"), there is NOT enough available power ("+availablePower+")")
-                val now_millis = (new Date()).time
-                if(chargingWithoutExtraPowerTimeStart == 0L){
-                    //we used to be with enough extra power, this is the first time we have not enough
-                    chargingWithoutExtraPowerTimeStart = now_millis
-                    logDebug("Cotxe.rules", "This is the first time without enough power")
-                }
-                val long limitWithoutExtraPower = chargingWithoutExtraPowerTimeStart + maxChargingWithoutExtraPowerTime
-                if(now_millis >= limitWithoutExtraPower){
-                    logDebug("Cotxe.rules", "Reached the limit without extra power, turning off")
-                    requiredPower = 0.0
-                }else{
-                    val remainingTimeToLimit = limitWithoutExtraPower - now_millis
-                    logDebug("Cotxe.rules", "Not yet reached the limit without extra power(remaining "+ 
-                            (remainingTimeToLimit) +"), keeping on")
-                    requiredPower = currentPower
-                }
-                
+                requiredPower = 0.0
             }
         }else{
             //then the IDLE_POWER is what we are going to use (or more, if the car is connected)
@@ -95,7 +78,7 @@ when
 then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
     logDebug("Cotxe.rules", "Received command to apply the power")
-    if(gestioAutoCotxe == "auto"){
+    if(gestioAutoCotxe == "auto" || gestioAutoCotxe == "grid"){
         logDebug("Cotxe.rules", "Going to apply the required power")
         val requiredPowerState = Cotxe_RequiredPower.state
         var powerToApply = 0.0
@@ -103,12 +86,12 @@ then
             powerToApply = (requiredPowerState as Number).intValue
         }
         logDebug("Cotxe.rules", "The required power to apply is "+powerToApply)
-        if(powerToApply > TURN_OFF_POWER){
+        if(powerToApply > 0.0){
             logDebug("Cotxe.rules", "Turning ON the cotxe charger")
-            CotxeEncesa_Control_Proxy.sendCommand(ON)
+            CotxeEncesa_FV_Proxy.sendCommand(ON)
         }else{
-            logDebug("Cotxe.rules", "Turning OFF the cotxe charger, as power to apply is below TURN_OFF_POWER: "+TURN_OFF_POWER)
-            CotxeEncesa_Control_Proxy.sendCommand(OFF)
+            logDebug("Cotxe.rules", "Turning OFF the cotxe charger, as power to apply is 0.0")
+            CotxeEncesa_FV_Proxy.sendCommand(OFF)
         }
         DestinationDeviceApplied.sendCommand("Cotxe")
     }else{
@@ -118,13 +101,47 @@ then
     }
 end
 
-rule "Canvi minuts descarregant bateria"
+rule "Minuts descarregant bateria FV"
 when 
     Item Cotxe_Temps_Bateria changed
+    or Item CotxeEncesa_FV_Proxy received command
 then
-    val minuts = (Cotxe_Temps_Bateria.state as DecimalType).intValue
-    logDebug("Cotxe.rules", "Changed the time without extra power to "+minuts+" minutes")
-    maxChargingWithoutExtraPowerTime = 1000L * 60 * minuts
+    var ordreFV = receivedCommand
+    if(ordreFV == null){
+        ordreFV = CotxeEncesa_FV_Proxy.state
+    }
+    logDebug("Cotxe.rules", "Checking FV charge without extra power.")
+    if(ordreFV == ON){
+        logDebug("Cotxe.rules", "CotxeEncesa_FV_Proxy is ON, so doing nothing and just forwarding.")
+        CotxeEncesa_FV_Decisor.sendCommand(ON)
+    }else{
+        logDebug("Cotxe.rules", "CotxeEncesa_FV_Proxy is OFF, checking time ")
+        val now = ZonedDateTime::now
+        val nowMillis = now.toInstant().toEpochMilli()
+        if(chargingWithoutExtraPowerTimeStart == 0){
+            logDebug("Cotxe.rules", "Just happened now, starting timer")
+            chargingWithoutExtraPowerTimeStart = nowMillis
+        }else{
+            val minutsState = Cotxe_Temps_Bateria.state
+            var minuts = 1
+            if(minutsState != NULL){
+                minuts = (minutsState as Number).intValue
+            }
+            logDebug("Cotxe.rules", "The limit is set to "+minuts+" minutes")
+            val maxChargingWithoutExtraPowerTime = 1000L * 60 * minuts
+
+            if(nowMillis - chargingWithoutExtraPowerTimeStart >= maxChargingWithoutExtraPowerTime){
+                logInfo("Cotxe.rules", "The time using batteries exceeded, turning off")
+                CotxeEncesa_FV_Decisor.sendCommand(OFF)
+                chargingWithoutExtraPowerTimeStart = 0L
+            }else{
+                logInfo("Cotxe.rules", "The time using batteries has not been reached yet, turning off")
+                CotxeEncesa_FV_Decisor.sendCommand(ON)
+            }
+        }
+        
+    }
+    
 end
 
 //rules not to manage unused power
@@ -133,15 +150,16 @@ when
     Item GestioAutomaticaCotxe received command
 then
     val gestioAutoCotxe = receivedCommand
-    if(gestioAutoCotxe != "auto"){
+    if(gestioAutoCotxe == "manual"){
+        chargingWithoutExtraPowerTimeStart = 0L //this restarts the counter for keeping the switch ON without for some time
         logDebug("Cotxe.rules", "Gestio Cotxe changed to manual. Currently switched off")
-        CotxeEncesa_Control_Proxy.sendCommand(OFF)
+        CotxeEncesa_Manual_Proxy.sendCommand(OFF)
         //we are not using unused power, because all is manual.
         Cotxe_UsedPower.sendCommand(0)
     }else{
-        logDebug("Cotxe.rules", "Gestio Cotxe changed to auto, starting from current used power")
-        CotxeEncesaManual.postUpdate(OFF)
         chargingWithoutExtraPowerTimeStart = 0L //this restarts the counter for keeping the switch ON without unused power
+        logDebug("Cotxe.rules", "Gestio Cotxe changed to auto or grid, starting from current used power")
+        CotxeEncesaManual.postUpdate(OFF)
         var currentPower = 0.0
         val currentPowerItem = Cotxe_Potencia_UserDisplay.state
         if(currentPowerItem != NULL){
@@ -151,45 +169,206 @@ then
     }
 end
 
+//RULES FOR MANUAL CHARGING
+
 rule "Canvi manual Cotxe"
 when 
     Item CotxeEncesaManual received command
 then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
-    if(gestioAutoCotxe != "auto"){
+    if(gestioAutoCotxe != "manual"){
+        logDebug("Cotxe.rules", "Gestio Cotxe is auto. Changing the power has no effects")
+        CotxeEncesaManual.postUpdate(OFF)
+    }else{
         logDebug("Cotxe.rules", "Gestio Cotxe is manual. Changing the cotxe charger to " + receivedCommand)
         if (receivedCommand == ON) {
-            CotxeEncesa_Control_Proxy.sendCommand(ON)  //turn it on or off
+            CotxeEncesa_Manual_Proxy.sendCommand(ON)  //turn it on or off
         }else{
-            CotxeEncesa_Control_Proxy.sendCommand(OFF) 
+            CotxeEncesa_Manual_Proxy.sendCommand(OFF) 
         }
         //we are not using unused power, because all is manual.
         Cotxe_UsedPower.sendCommand(0+"")
+    }
+end
+
+//RULES FOR GRID CHARGING
+
+rule "Grid connected and charge car"
+when
+    Item GridPriceCurrent changed
+    or Item GestioAutomaticaCotxe changed
+then
+    val tarifa = GridPriceCurrent.state
+    val gestioAutoCotxe = GestioAutomaticaCotxe.state
+    if(gestioAutoCotxe == "grid"){
+        if(tarifa  == "vall"){
+            logDebug("Cotxe.rules", "Tarifa changed to "+tarifa+", gestio is grid, so starting to turn on carregador")
+            CotxeEncesa_Xarxa_Proxy.sendCommand(ON) 
+        }else{
+            logDebug("Cotxe.rules", "Tarifa changed to "+tarifa+", gestio is grid, so stopping carregador")
+            CotxeEncesa_Xarxa_Proxy.sendCommand(OFF) 
+        }
     }else{
-        logDebug("Cotxe.rules", "Gestio Cotxe is auto. Changing the power has no effects")
-        CotxeEncesaManual.postUpdate(OFF)
+       logDebug("Cotxe.rules", "Tarifa changed to "+tarifa+" but as gestio is not grid, turning charging from grid off")
+       CotxeEncesa_Xarxa_Proxy.sendCommand(OFF)
+    }
+end
+
+rule "Start Grid car charging"
+when
+    Item CotxeEncesa_Xarxa_Proxy changed
+    or Item GridStatus changed
+    or Item CotxeConnexio_Status changed
+    or Item AlarmGridConnection changed
+then
+    val encesaXarxa = CotxeEncesa_Xarxa_Proxy.state == ON
+
+    logDebug("Cotxe.rules", "Grid proxy or grid status changed, checking what to do")
+    //si el cotxe no s'ha d'encendre per xarxa, posa'l a off
+    if(!encesaXarxa){
+        logDebug("Cotxe.rules", "Grid proxy is off so turning off charger and disconnectig grid for this reason")
+        CotxeEncesa_Xarxa_Decisor.sendCommand(OFF)
+        GridAutomaticCarSwitch.sendCommand(OFF)
+    }else{
+        logDebug("Cotxe.rules", "Grid proxy is ON, checking grid and charger connection")
+        val xarxaConnectada = GridStatus.state == ON
+
+        val statusItem = CotxeConnexio_Status.state
+        var statusCarregador = "disabled"
+        if(statusItem != NULL){
+            statusCarregador = statusItem.toString
+        }
+
+        if(statusCarregador == "disabled"){
+            logDebug("Cotxe.rules", "The charger is not enabled, so first enable it without grid")
+            GridAutomaticCarSwitch.sendCommand(OFF)
+            CotxeEncesa_Xarxa_Decisor.sendCommand(ON)
+        }else if(statusCarregador == "no_car"){
+            logDebug("Cotxe.rules", "The charger is without car, so keep it without grid")
+            GridAutomaticCarSwitch.sendCommand(OFF)
+            CotxeEncesa_Xarxa_Decisor.sendCommand(ON)
+        }else{
+            logDebug("Cotxe.rules", "The charger is blocked or charging. Check the grid")
+            if(xarxaConnectada){
+                logDebug("Cotxe.rules", "Grid connected and proxy ON, turing ON charger")
+                CotxeEncesa_Xarxa_Decisor.sendCommand(ON)
+            }else{
+                logDebug("Cotxe.rules", "Grid NOT connected and charger charging or blocked, checking alarm for connection")
+                val alarmGridConnection = AlarmGridConnection.state == ON
+                if(alarmGridConnection){
+                    logWarn("Cotxe.rules", "Alarm is ON for grid connection, so disconnecting just in case")
+                    CotxeEncesa_Xarxa_Decisor.sendCommand(OFF)
+                }else{
+                    logDebug("Cotxe.rules", "Grid NOT connected and charger charging or blocked, alarm is off, so turning on grid")
+                    GridAutomaticCarSwitch.sendCommand(ON)
+                }
+            }
+        }
+        
+    }
+end
+
+
+rule "Activar o desactivar carregador per alguna de les 3 vies"
+when
+    Item CotxeEncesa_Xarxa_Decisor changed
+    or Item CotxeEncesa_Manual_Proxy changed
+    or Item CotxeEncesa_FV_Decisor changed
+then
+    logDebug("Cotxe.rules", "Changed one of the ways to plug the car, checking if to turn it")
+    if(CotxeEncesa_Manual_Proxy.state == ON){
+        logDebug("Cotxe.rules", "Manual is ON, turning it on")
+        CotxeEncesa_Restart_Proxy.sendCommand(ON)
+    }else if(CotxeEncesa_Xarxa_Decisor.state == ON){
+        logDebug("Cotxe.rules", "Xarxa is ON, turning it on")
+        CotxeEncesa_Restart_Proxy.sendCommand(ON)
+    }else if(CotxeEncesa_FV_Decisor.state == ON){
+        logDebug("Cotxe.rules", "FV is ON, turning it on")
+        CotxeEncesa_Restart_Proxy.sendCommand(ON)
+    }else{
+        logDebug("Cotxe.rules", "None is ON, turning it OFF")
+        CotxeEncesa_Restart_Proxy.sendCommand(OFF)
+    }
+end
+
+//RULES TO MANAGE BLOCKED CHARGER
+
+rule "Update car charging status"
+when
+    Item Cotxe_Potencia_Sensor changed
+then
+    val potenciaSensor = Cotxe_Potencia_Sensor.state
+    var potencia = 0.0
+    if(potenciaSensor != NULL){
+        potencia = (potenciaSensor as Number).doubleValue
+    }
+    logDebug("Cotxe.rules", "Going to check connexio status")
+    if(potencia <= 0.0){
+        logDebug("Cotxe.rules", "Connexio status to disabled as power is 0.0")
+        CotxeConnexio_Status.sendCommand("disabled")
+    }else if(potencia <= IDLE_POWER){
+        logDebug("Cotxe.rules", "Connexio status to no_car as power is < IDLE_POWER ("+potencia+")")
+        CotxeConnexio_Status.sendCommand("no_car")
+    }else if(potencia <= BLOCKED_POWER){
+        logInfo("Cotxe.rules", "Connexio status to blocked as power is < BLOCKED_POWER ("+potencia+")")
+        CotxeConnexio_Status.sendCommand("blocked")
+    }else{
+        logDebug("Cotxe.rules", "Connexio status to charging as power is ("+potencia+")")
+        CotxeConnexio_Status.sendCommand("charging")  
+    }
+end 
+
+rule "Restart blocked charger"
+when
+    Item CotxeEncesa_Restart_Proxy changed 
+    or Item CotxeConnexio_Status changed
+then
+    logDebug("Cotxe.rules", "Restart proxy or used power changed. Cheking if it needs restart")
+    val status = CotxeEncesa_Restart_Proxy.status
+    if(status == ON){
+        logDebug("Cotxe.rules", "Restart proxy: Status is ON, so checking the status to decide if to restart")
+        val statusItem = CotxeConnexio_Status.state
+        var status = "disabled"
+        if(statusItem != NULL){
+            status = statusItem.toString
+        }
+    
+        if(status == "disabled"){
+            logInfo("Cotxe.rules", "Restart proxy: Status is ON and connection is disabled, so probably just turned OFF. Turning it ON now")
+            CotxeEncesa_Control_Proxy.sendCommand(ON)
+        }else if(status == "no_car"){
+            logInfo("Cotxe.rules", "Restart proxy: Status is ON and connection is no_car, keeping it ON as car is not connected")
+            CotxeEncesa_Control_Proxy.sendCommand(ON)
+        }else if(status == "blocked"){
+            logInfo("Cotxe.rules", "Restart proxy: Status is ON and connection is blocked, turning it OFF")
+            CotxeEncesa_Control_Proxy.sendCommand(OFF)
+        }else{
+            logInfo("Cotxe.rules", "Restart proxy: Status is ON and connection is charging, keeping it ON")
+            CotxeEncesa_Control_Proxy.sendCommand(ON)   
+        }
+    }else{
+        logDebug("Cotxe.rules", "Restart proxy: As status is not ON turning it OFF")
+        CotxeEncesa_Control_Proxy.sendCommand(OFF)
     }
 end
 
 rule "Activar o desactivar carregador Cotxe"
 when
-    Item CotxeEncesa_Control_Proxy received command
+    Item CotxeEncesa_Control_Proxy changed
 then
-    logDebug("Cotxe.rules", "The cotxe plug will be set to "+ receivedCommand)
-    if(test){
-        CotxeEncesa_Control_Fake.sendCommand(receivedCommand)
+    logDebug("Cotxe.rules", "The cotxe plug will be set to "+ newState)
+    if (newState == ON) {
+        logDebug("Cotxe.rules", "The cotxe title changed to ON as it has been turned on")
+        CotxeTitle.sendCommand("ON")
+        CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
     }else{
-        if (receivedCommand == ON) {
-            logDebug("Cotxe.rules", "The cotxe title changed to ON as it has been turned on")
-            CotxeTitle.sendCommand("ON")
-            CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
-        }else{
-            logDebug("Cotxe.rules", "The cotxe title changed to OFF as it has been turned off")
-            CotxeTitle.sendCommand("OFF")
-            CotxeEncesa_Control.sendCommand(OFF) 
-        }
-    }
+        logDebug("Cotxe.rules", "The cotxe title changed to OFF as it has been turned off")
+        CotxeTitle.sendCommand("OFF")
+        CotxeEncesa_Control.sendCommand(OFF) 
+    }  
 end
+
+//RULES FOR MANAGING SENSOR DATA OF THE CHARGER
 
 rule "Canvi potencia cotxe"
 when
@@ -214,24 +393,8 @@ then
             logDebug("Cotxe.rules", "The cotxe title NOT changed to CHARGING as there is NOT potencia : "+potencia)
         }
     }
-    if(!test){
-        logDebug("Cotxe.rules", "The cotxe power sensor received "+ potencia)
-        Cotxe_Potencia_UserDisplay.sendCommand(potencia)
-    }else{
-        logDebug("Cotxe.rules", "In test, but the cotxe power sensor received "+ potencia)
-    }
-end
-
-rule "Canvi potencia cotxe sensor Fake"
-when
-    Item Cotxe_Potencia_Sensor_Fake received command
-then
-    if(test){
-        logDebug("Cotxe.rules", "The FAKE cotxe power sensor received "+ receivedCommand)
-        Cotxe_Potencia_UserDisplay.sendCommand(receivedCommand)
-    }else{
-        logDebug("Cotxe.rules", "In test, but the cotxe power sensor received "+ receivedCommand)
-    }
+    logDebug("Cotxe.rules", "The cotxe power sensor received "+ potencia)
+    Cotxe_Potencia_UserDisplay.sendCommand(potencia)
 end
 
 rule "lectura sensor cotxe"
@@ -294,8 +457,6 @@ then
         logInfo("Cotxe.rules", "Calculated energia avui "+energiaAvui+": total = "+ energiaTotal + ", ahir = "+ energiaAhir)
         Cotxe_Energia_Avui.postUpdate(energiaAvui)
     }
-    
-
 end
 
 rule "Reset energy today cotxe"

@@ -122,6 +122,7 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=Cotxe_Temps_Bateria icon="stopwatch" label="Temps consumint bateria [%.1f min]" minValue=1 maxValue=60 step=1
             Selection item=GestioAutomaticaCotxe icon="remote_control" label="Gestió carregador" mappings=["auto"="FV sobrant", "grid"="FV sob. + Xarxa", "manual"="Manual"]
             Switch item=CotxeEncesaManual icon="switch_on_off"
+            Text item=CotxeConnexio_Status label="Estat del carregador [%s]"
         }
         Frame{
             Webview height=14 url="http://calespiga.ddns.net:3000/d/euckLcRRz/cotxe?orgId=1"
@@ -143,8 +144,8 @@ sitemap default label="Ca l'espiga" {
         Frame label="Estat de la xarxa" {
             Text item=GridStatus icon="switch" label="Estat connexió [%s]"
             Text item=GridPriceCurrent icon="chart" label="Tarifa actual [%s]"
-            Switch item=GridManagement icon="remote_control" label="Gestió connexio" mappings=["auto"="Automatic", "manual"="Manual"]
             Switch item=GridManualSwitch icon="wallswitch"
+            Text item=GridReasonOn icon="switch" label="Raó encesa [%s]"
         }
         Frame label="Bateria" {
             Text item=BatteryLevelStatus icon="battery" label="Nivell bateria" //mappings=["low"="Baix", "medium"="Mig", "high"="Alt"]
@@ -215,7 +216,7 @@ sitemap default label="Ca l'espiga" {
             Text icon="time" item=AlarmGridConnectionTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
             Switch item=AlarmGridConnectionNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
             Setpoint item=AlarmGridConnectionTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
-            Setpoint item=AlarmGridConnection_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
+            Setpoint item=AlarmGridConnection_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=5 maxValue=60 step=5
         }
     }
     Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
