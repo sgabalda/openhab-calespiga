@@ -457,8 +457,10 @@ void readBatteryAndGridSensors(){
   }
   pinValue = digitalRead(PIN_GRID_CONNECTED);
   if(pinValue == PIN_ACTIVE){
+    Serial.println(F("Grid is connected"));
     client.publish(TOPIC_GRID_STATUS, GRID_CONNECTED);
   }else{
+    Serial.println(F("Grid is NOT connected"));
     client.publish(TOPIC_GRID_STATUS, GRID_DISCONNECTED);
   }
 }

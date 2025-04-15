@@ -108,9 +108,9 @@ then
     val ordre = receivedCommand
     logDebug("grid", "Executor Grid Connection received "+ordre)
     if(ordre == ON){
-        GridConnectionSet.sendCommand("on")
+        GridConnectionSet.sendCommand("start")
     }else{
-        GridConnectionSet.sendCommand("off")
+        GridConnectionSet.sendCommand("stop")
     }
 end
 
