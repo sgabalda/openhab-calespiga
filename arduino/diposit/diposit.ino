@@ -138,6 +138,7 @@ void setup()
   pinMode(RELAY_FAN_BATTERIES, OUTPUT);
   pinMode(RELAY_FAN_ELECTRONICS, OUTPUT);
   pinMode(RELAY_PUMP, OUTPUT);
+  pinMode(RELAY_GRID, OUTPUT);
 
   //Setup sensors to input
   pinMode(PIN_BATTERY_LEVEL_LOW, INPUT);
