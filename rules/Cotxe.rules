@@ -115,7 +115,7 @@ then
         logDebug("Cotxe.rules", "CotxeEncesa_FV_Proxy is ON, so doing nothing and just forwarding.")
         CotxeEncesa_FV_Decisor.sendCommand(ON)
     }else{
-        val isCurrentlyOn = CotxeEncesa_FV_Decisor.status == ON
+        val isCurrentlyOn = CotxeEncesa_FV_Decisor.state == ON
         if(isCurrentlyOn){
             logDebug("Cotxe.rules", "CotxeEncesa_FV_Proxy is set to OFF, but the FV decisor was ON, checking time ")
             val now = ZonedDateTime::now
