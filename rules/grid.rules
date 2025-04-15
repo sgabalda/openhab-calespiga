@@ -52,7 +52,7 @@ end
 rule "Activació manual connexio xarxa"
 when
     Item GridManualSwitch changed
-    or GridManagement changed
+    or Item GridManagement changed
 then
     val gestioItem = GridManagement.state
     var gestio = "auto"
