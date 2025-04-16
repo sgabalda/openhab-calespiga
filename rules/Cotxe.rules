@@ -210,7 +210,6 @@ when
     or Item CotxeEncesa_Xarxa_Tarifes changed
 then
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
-    val tarifaActivacio = CotxeEncesa_Xarxa_Tarifes.state
     if(gestioAutoCotxe == "grid"){
         val tarifa = GridPriceCurrent.state
         if(tarifa  == "vall"){
