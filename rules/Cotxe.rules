@@ -343,7 +343,7 @@ when
     Item CotxeConnexio_Status changed
 then
     val status = newState
-    CotxeTitle.sendCommand("newState")
+    CotxeTitle.sendCommand(newState)
 end
 
 rule "Restart blocked charger"
@@ -352,8 +352,8 @@ when
     or Item CotxeConnexio_Status changed
 then
     logDebug("Cotxe.rules", "Restart proxy or used power changed. Cheking if it needs restart")
-    val status = CotxeEncesa_Restart_Proxy.state
-    if(status == ON){
+    val statusProxy = CotxeEncesa_Restart_Proxy.state
+    if(statusProxy == ON){
         logDebug("Cotxe.rules", "Restart proxy: Status is ON, so checking the status to decide if to restart")
         val statusItem = CotxeConnexio_Status.state
         var status = "disabled"
