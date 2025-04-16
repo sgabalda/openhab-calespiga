@@ -319,7 +319,7 @@ end
 
 rule "Update car charging status"
 when
-    Item Cotxe_Potencia_Sensor changed
+    Item Cotxe_Potencia_Sensor received update
 then
     val potenciaSensor = Cotxe_Potencia_Sensor.state
     var potencia = 0.0
