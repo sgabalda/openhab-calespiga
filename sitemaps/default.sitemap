@@ -122,7 +122,8 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=Cotxe_Temps_Bateria icon="stopwatch" label="Temps consumint bateria [%.1f min]" minValue=1 maxValue=60 step=1
             Selection item=GestioAutomaticaCotxe icon="remote_control" label="Gestió carregador" mappings=["auto"="FV sobrant", "grid"="FV sob. + Xarxa", "manual"="Manual"]
             Switch item=CotxeEncesaManual icon="switch_on_off"
-            Text item=CotxeConnexio_Status label="Estat del carregador [%s]"
+            Text item=CotxeConnexio_Status label="Estat del carregador [%s]" icon="electric_car"
+            Selection item=CotxeEncesa_Xarxa_Tarifes icon="chart" label="Tarifa carrega per xarxa" mappings=["vall"="Només vall", "pla"="Vall + pla", "all"="Totes"]
         }
         Frame{
             Webview height=14 url="http://calespiga.ddns.net:3000/d/euckLcRRz/cotxe?orgId=1"

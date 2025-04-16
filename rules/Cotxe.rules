@@ -207,19 +207,30 @@ rule "Grid connected and charge car"
 when
     Item GridPriceCurrent changed
     or Item GestioAutomaticaCotxe changed
+    or Item CotxeEncesa_Xarxa_Tarifes changed
 then
-    val tarifa = GridPriceCurrent.state
     val gestioAutoCotxe = GestioAutomaticaCotxe.state
+    val tarifaActivacio = CotxeEncesa_Xarxa_Tarifes.state
     if(gestioAutoCotxe == "grid"){
+        val tarifa = GridPriceCurrent.state
         if(tarifa  == "vall"){
-            logDebug("Cotxe.rules", "Tarifa changed to "+tarifa+", gestio is grid, so starting to turn on carregador")
+            logDebug("Cotxe.rules", "Tarifa is "+tarifa+", gestio is grid, so starting to turn on carregador")
             CotxeEncesa_Xarxa_Proxy.sendCommand(ON) 
         }else{
-            logDebug("Cotxe.rules", "Tarifa changed to "+tarifa+", gestio is grid, so stopping carregador")
-            CotxeEncesa_Xarxa_Proxy.sendCommand(OFF) 
+            val tarifaActivacio = CotxeEncesa_Xarxa_Tarifes.state
+            if(tarifaActivacio == "all"){
+                logDebug("Cotxe.rules", "Tarifa enabled is "+tarifaActivacio+", gestio is grid, so starting to turn on carregador")
+                CotxeEncesa_Xarxa_Proxy.sendCommand(ON) 
+            }else if(tarifaActivacio == "pla" && tarifa == "pla"){
+                logDebug("Cotxe.rules", "Tarifa is "+tarifa+" and enabled is "+tarifaActivacio+", gestio is grid, so starting to turn on carregador")
+                CotxeEncesa_Xarxa_Proxy.sendCommand(ON) 
+            }else{
+                logDebug("Cotxe.rules", "Tarifa is "+tarifa+" and enabled is "+tarifaActivacio+", gestio is grid, so stopping carregador")
+                CotxeEncesa_Xarxa_Proxy.sendCommand(OFF) 
+            }
         }
     }else{
-       logDebug("Cotxe.rules", "Tarifa changed to "+tarifa+" but as gestio is not grid, turning charging from grid off")
+       logDebug("Cotxe.rules", "Tarifa or tarifa to enable gird changed, but gestio is not grid, turning charging from grid off")
        CotxeEncesa_Xarxa_Proxy.sendCommand(OFF)
     }
 end
@@ -244,16 +255,16 @@ then
         val xarxaConnectada = GridStatus.state == ON
 
         val statusItem = CotxeConnexio_Status.state
-        var statusCarregador = "disabled"
+        var statusCarregador = "apagat"
         if(statusItem != NULL){
             statusCarregador = statusItem.toString
         }
 
-        if(statusCarregador == "disabled"){
+        if(statusCarregador == "apagat"){
             logDebug("Cotxe.rules", "The charger is not enabled, so first enable it without grid")
             GridAutomaticCarSwitch.sendCommand(OFF)
             CotxeEncesa_Xarxa_Decisor.sendCommand(ON)
-        }else if(statusCarregador == "no_car"){
+        }else if(statusCarregador == "connectat"){
             logDebug("Cotxe.rules", "The charger is without car, so keep it without grid")
             GridAutomaticCarSwitch.sendCommand(OFF)
             CotxeEncesa_Xarxa_Decisor.sendCommand(ON)
@@ -315,18 +326,26 @@ then
     logDebug("Cotxe.rules", "Going to check connexio status")
     if(potencia <= 0.0){
         logDebug("Cotxe.rules", "Connexio status to disabled as power is 0.0")
-        CotxeConnexio_Status.sendCommand("disabled")
+        CotxeConnexio_Status.sendCommand("apagat")
     }else if(potencia <= IDLE_POWER){
         logDebug("Cotxe.rules", "Connexio status to no_car as power is < IDLE_POWER ("+potencia+")")
-        CotxeConnexio_Status.sendCommand("no_car")
+        CotxeConnexio_Status.sendCommand("connectat")
     }else if(potencia <= BLOCKED_POWER){
         logInfo("Cotxe.rules", "Connexio status to blocked as power is < BLOCKED_POWER ("+potencia+")")
-        CotxeConnexio_Status.sendCommand("blocked")
+        CotxeConnexio_Status.sendCommand("bloquejat")
     }else{
         logDebug("Cotxe.rules", "Connexio status to charging as power is ("+potencia+")")
-        CotxeConnexio_Status.sendCommand("charging")  
+        CotxeConnexio_Status.sendCommand("carregant")  
     }
 end 
+
+rule "Update car icon"
+when
+    Item CotxeConnexio_Status changed
+then
+    val status = newState
+    CotxeTitle.sendCommand("newState")
+end
 
 rule "Restart blocked charger"
 when
@@ -343,13 +362,13 @@ then
             status = statusItem.toString
         }
     
-        if(status == "disabled"){
+        if(status == "apagat"){
             logInfo("Cotxe.rules", "Restart proxy: Status is ON and connection is disabled, so probably just turned OFF. Turning it ON now")
             CotxeEncesa_Control_Proxy.sendCommand(ON)
-        }else if(status == "no_car"){
+        }else if(status == "connectat"){
             logInfo("Cotxe.rules", "Restart proxy: Status is ON and connection is no_car, keeping it ON as car is not connected")
             CotxeEncesa_Control_Proxy.sendCommand(ON)
-        }else if(status == "blocked"){
+        }else if(status == "bloquejat"){
             logInfo("Cotxe.rules", "Restart proxy: Status is ON and connection is blocked, turning it OFF")
             CotxeEncesa_Control_Proxy.sendCommand(OFF)
         }else{
@@ -369,11 +388,9 @@ then
     logDebug("Cotxe.rules", "The cotxe plug will be set to "+ newState)
     if (newState == ON) {
         logDebug("Cotxe.rules", "The cotxe title changed to ON as it has been turned on")
-        CotxeTitle.sendCommand("ON")
         CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
     }else{
         logDebug("Cotxe.rules", "The cotxe title changed to OFF as it has been turned off")
-        CotxeTitle.sendCommand("OFF")
         CotxeEncesa_Control.sendCommand(OFF) 
     }  
 end

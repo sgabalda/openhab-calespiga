@@ -21,6 +21,8 @@ Switch CotxeEncesa_Xarxa_Proxy "Encesa cotxe per xarxa"
 Switch CotxeEncesa_FV_Decisor "Encesa cotxe per FV despres de comprovacions"
 Switch CotxeEncesa_Xarxa_Decisor "Encesa cotxe per xarxa despres de comprovacions"
 
+String CotxeEncesa_Xarxa_Tarifes "Tarifes que permeten la connexio del cotxe per xarxa"
+
 Switch CotxeEncesa_Restart_Proxy "Encesa amb funcionalitat de reseteig per si es bloqueja"
 String CotxeConnexio_Status "Estat de la connexio" //potential states are "disabled", "no_car", "blocked", "charging"
 
