@@ -2,8 +2,6 @@ import java.time.ZonedDateTime
 import java.time.DayOfWeek
 import java.time.temporal.ChronoUnit
 
-val useWeekends = false
-
 rule "Actualitza tarifa xarxa"
 when
     Time cron "0 0 * * * * *" //every 1 hour
@@ -11,7 +9,7 @@ when
 then
     val now = ZonedDateTime::now
     val day = now.getDayOfWeek()
-    if((day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY) && useWeekends ){
+    if((day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY)){
         logDebug("grid", "La hora es vall pq es finde: "+currentHour)
         GridPriceCurrent.postUpdate("vall")
     }else{
