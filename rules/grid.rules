@@ -10,9 +10,10 @@ then
     val now = ZonedDateTime::now
     val day = now.getDayOfWeek()
     if((day == DayOfWeek.SATURDAY || day == DayOfWeek.SUNDAY)){
-        logDebug("grid", "La hora es vall pq es finde: "+currentHour)
+        logDebug("grid", "La hora es vall pq es finde: "+day)
         GridPriceCurrent.postUpdate("vall")
     }else{
+        logDebug("grid", "No es finde pq es "+day)
         val currentHour = now.getHour()
         if(currentHour >= 0 && currentHour <= 7){
             logDebug("grid", "La hora es vall: "+currentHour)
@@ -47,7 +48,65 @@ then
     }
 end
 
-//TODO add logic for using gird if battery level is low
+//Logic for using gird if battery level is low
+
+rule "Activació connexio xarxa per bateria"
+when
+    Item BatteryLevelToChargeWithGrid changed
+    or Item GridPriceToChargeBattery changed
+    or Item GridPriceCurrent changed
+    or Item BatteryLevelStatus changed
+then
+    val batteryLeveltoEnable = BatteryLevelToChargeWithGrid.state
+    val gridPriceToEnable = GridPriceToChargeBattery.state
+    val batteryLevel = BatteryLevelStatus.state
+    val gridPrice = GridPriceCurrent.state
+
+    logDebug("grid", "Cal carregar bateria amb xarxa? bat.lev.="+batteryLevel+", tarifa="+gridPrice+
+        ", bat.lev.activ="+batteryLeveltoEnable+", tarifa.activ="+gridPriceToEnable)
+    var batteryOnLevel = false
+    var gridOnPrice = false
+    if(batteryLeveltoEnable == "medium"){
+        if(batteryLevel == "low" || batteryLevel == "medium"){
+            batteryOnLevel = true
+        }
+    }else if (batteryLeveltoEnable == "low" && batteryLevel == "low"){
+        batteryOnLevel = true
+    }
+    logDebug("grid", "La bateria està al nivell per activar? "+batteryOnLevel)
+    if(batteryOnLevel){
+        logDebug("grid", "Ja que està per activar segons la bateria, mirem la tarifa")
+        if(gridPrice == "vall"){
+            logDebug("grid", "Ja que esta a vall, si que hem d'activar")
+            gridOnPrice = true
+        }else if(gridPrice == "pla"){
+            if(gridPriceToEnable == "pla" || gridPriceToEnable == "all"){
+                logDebug("grid", "Esta a pla, i per habilitar es "+gridPriceToEnable+", aixi que activem")
+                gridOnPrice = true
+            }else{
+                logDebug("grid", "Esta a pla, i per habilitar es "+gridPriceToEnable+", aixi que NO activem")
+                gridOnPrice = false
+            }
+        }else{
+            if(gridPriceToEnable == "all"){
+                logDebug("grid", "Esta a punta, i per habilitar es "+gridPriceToEnable+", aixi que activem")
+                gridOnPrice = true
+            }else{
+                logDebug("grid", "Esta a punta, i per habilitar es "+gridPriceToEnable+", aixi que NO activem")
+                gridOnPrice = false
+            }
+        }
+        logDebug("grid", "La tarifa està al nivell per activar? "+gridOnPrice)
+    }
+
+    if(gridOnPrice && batteryOnLevel){
+        logDebug("grid", "Bateria per activar i tarifa per activar. Activem!")
+        GridAutomaticBatterySwitch.sendCommand(ON)
+    }else{
+        logDebug("grid", "Bateria per NO activar o tarifa per NO activar. NO activem!")
+        GridAutomaticBatterySwitch.sendCommand(OFF)
+    }
+end
 
 //NOTE: In case the grid is to be activated (e.g. to load batteries if low, or to heat the water), use a new 
 // item and add an OR to enable the grid here.
@@ -55,12 +114,15 @@ rule "Activació connexio xarxa"
 when
     Item GridManualSwitch changed
     or Item GridAutomaticCarSwitch changed
+    or Item GridAutomaticBatterySwitch changed
 then
     val manual = GridManualSwitch.state == ON
     val cotxeAutomatic = GridAutomaticCarSwitch.state == ON
-    val encendre = manual || cotxeAutomatic
+    val batteryAutomatic = GridAutomaticBatterySwitch.state == ON
+    val encendre = manual || cotxeAutomatic || batteryAutomatic
     
-    logDebug("grid", "Els controls per la xarxa son: Manual->"+manual+", CotxeAutomatic->"+cotxeAutomatic)
+    logDebug("grid", "Els controls per la xarxa son: Manual->"+manual+", CotxeAutomatic->"+cotxeAutomatic+
+        ", BateriaAutomatic->"+batteryAutomatic)
     if(encendre){
         logDebug("grid", "Connectant xarxa")
         Ordre_Encesa_Grid_Connection.sendCommand(ON)

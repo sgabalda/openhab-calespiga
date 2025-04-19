@@ -150,6 +150,8 @@ sitemap default label="Ca l'espiga" {
         }
         Frame label="Bateria" {
             Text item=BatteryLevelStatus icon="battery" label="Nivell bateria"
+            Selection item=BatteryLevelToChargeWithGrid icon="electric_tower" label="Nivell per carregar de xarxa" mappings=["mai"="Mai", "low"="Low", "medium"="Medium"]
+            Selection item=GridPriceToChargeBattery icon="chart" label="Tarifa per carregar bateria" mappings=["vall"="Només vall", "pla"="Vall + pla", "all"="Totes"]
         }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"

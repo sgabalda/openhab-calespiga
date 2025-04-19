@@ -3,10 +3,14 @@ String GridConnectionAction "Estat relé xarxa" {channel="mqtt:topic:grid:GridCo
 String GridConnectionStatus "Estat connexió xarxa" {channel="mqtt:topic:grid:GridConnectionStatus"}
 String GridConnectionSet "Ordre relé xarxa" {channel="mqtt:topic:grid:GridConnectionSet"}
 
+String BatteryLevelToChargeWithGrid "Nivell de bateria per carregar desde xarxa"
+String GridPriceToChargeBattery "Tram per carregar la bateria"
+
 String GridPriceCurrent "Tram actual de la tarifa"
 Switch GridStatus "Estat de la xarxa"
 Switch GridManualSwitch "Connexió manual xarxa"
 Switch GridAutomaticCarSwitch "Connexió automatica xarxa per caregar cotxe"
+Switch GridAutomaticBatterySwitch "Connexió automatica xarxa per bateria baixa"
 String GridReasonOn "Raó encesa"
 
 Switch Ordre_Encesa_Grid_Connection "Ordre encesa bomba depuradora"
