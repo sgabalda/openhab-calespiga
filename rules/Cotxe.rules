@@ -202,8 +202,6 @@ end
 
 //RULES FOR GRID CHARGING
 
-//TODO allow to configure if charging can go with PLA and VALL, or always
-
 rule "Grid connected and charge car"
 when
     Item GridPriceCurrent changed
