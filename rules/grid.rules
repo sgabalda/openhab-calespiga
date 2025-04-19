@@ -133,6 +133,9 @@ then
         if(cotxeAutomatic){
             rao = rao + "Cotxe "
         }
+        if(batteryAutomatic){
+            rao = rao + "Bateria "
+        }
         GridReasonOn.postUpdate(rao)
     }else{
         logDebug("grid", "Apagant switch")
