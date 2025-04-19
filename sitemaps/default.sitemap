@@ -140,7 +140,7 @@ sitemap default label="Ca l'espiga" {
             Text item=EstufaInfrarrojos_Energia_Avui icon="energy" label="Energia avui: [%.3f kWh]" 
         }
     }
-    Text item=XarxaBateriaTitle label="Xarxa i bateria" icon="poweroutlet"
+    Text item=XarxaBateriaTitle label="Xarxa i bateria" icon="electric_tower"
     {
         Frame label="Estat de la xarxa" {
             Text item=GridStatus icon="switch" label="Estat connexió [%s]"
@@ -149,7 +149,7 @@ sitemap default label="Ca l'espiga" {
             Text item=GridReasonOn icon="switch" label="Raó encesa [%s]"
         }
         Frame label="Bateria" {
-            Text item=BatteryLevelStatus icon="battery" label="Nivell bateria" //mappings=["low"="Baix", "medium"="Mig", "high"="Alt"]
+            Text item=BatteryLevelStatus icon="battery" label="Nivell bateria"
         }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"

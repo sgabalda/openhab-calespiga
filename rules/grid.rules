@@ -177,3 +177,11 @@ then
         logWarn("grid", "Checking status of Grid Connection and some state is null: Ordre-> "+ordre+", State -> "+state)
     }
 end
+
+rule "Update icon for xarxa in sitemap"
+when
+    Item GridStatus changed
+then
+    if(newState == ON) XarxaBateriaTitle.postUpdate("on")
+    else XarxaBateriaTitle.postUpdate("off")
+end
