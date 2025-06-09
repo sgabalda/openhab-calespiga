@@ -65,3 +65,12 @@ DateTime AlarmTransvassamentLastNotificationTime "Darrera notif."
 Number AlarmTransvassamentTimeNotifications "Min. entre notif."
 String AlarmTransvassamentText "La circulacio de la bassa no respon. Pot ser que no funcioni o no s'hagi pogut aturar"
 Number AlarmTransvassament_Seconds "Minuts limit comunicació"
+
+Switch AlarmGridConnection "GridConnection" (Alarms)
+DateTime AlarmGridConnectionTimeOn "Com. diposit activada"
+DateTime AlarmGridConnectionTimeOff "Com. diposit desact."
+Switch AlarmGridConnectionNotification "Notificacio Com. diposit"
+DateTime AlarmGridConnectionLastNotificationTime "Darrera notif."
+Number AlarmGridConnectionTimeNotifications "Min. entre notif."
+String AlarmGridConnectionText "La GridConnection no respon, pot ser que no s'hagi regat o no s'hagi pogut aturar"
+Number AlarmGridConnection_Seconds "Minuts limit comunicació"

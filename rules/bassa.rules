@@ -440,8 +440,12 @@ then
     ){
         logDebug("bassa.rules", "BassaCirculacioStatus changed to "+nouEstat+". Updating darrer canvi")
         val now = ZonedDateTime::now
-        val nowDateType = new DateTimeType(now) 
-        Estat_Bomba_Depuradora.sendCommand(ordre)
+        val nowDateType = new DateTimeType(now)
+        if(ordre == ON){
+            Estat_Bomba_Depuradora.sendCommand(ON)
+        }else{
+            Estat_Bomba_Depuradora.sendCommand(OFF)
+        }
         Darrer_Canvi_Bomba_Depuradora.postUpdate(nowDateType)
     }
 end

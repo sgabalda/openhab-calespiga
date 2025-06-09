@@ -12,8 +12,19 @@ Number Cotxe_Temps_Bateria "Temps consumint bateria (min)" //minutes without eno
 
 Switch CotxeEncesa_Control "Encesa del cotxe" (GPIOOutput, GPIOOutputInverted) //this is the actual item tant turns on or off the charger
 String CotxeEncesa_ControlNumber "3" // Item required with the GPIO number
-//Switch CotxeEncesa_Control "Encesa del cotxe" {channel="gpio:pigpio-remote:local-pigpio:gpioOutputCarregadorCotxe"} //this is the actual item tant turns on or off the charger
 Switch CotxeEncesa_Control_Proxy "Encesa del cotxe" <connect>   //proxy to turn on or off the cotxe, or test it
+
+Switch CotxeEncesa_Manual_Proxy "Encesa manual cotxe"
+Switch CotxeEncesa_FV_Proxy "Encesa cotxe excedent fotovoltaic"
+Switch CotxeEncesa_Xarxa_Proxy "Encesa cotxe per xarxa"
+
+Switch CotxeEncesa_FV_Decisor "Encesa cotxe per FV despres de comprovacions"
+Switch CotxeEncesa_Xarxa_Decisor "Encesa cotxe per xarxa despres de comprovacions"
+
+String CotxeEncesa_Xarxa_Tarifes "Tarifes que permeten la connexio del cotxe per xarxa"
+
+Switch CotxeEncesa_Restart_Proxy "Encesa amb funcionalitat de reseteig per si es bloqueja"
+String CotxeConnexio_Status "Estat de la connexio" //potential states are "disabled", "no_car", "blocked", "charging"
 
 //		<device>_AvailablePower -> that receives the power available for the device
 //		<device>_UsedPower	(UsedPowerPersist)	-> that exposes the power that is currently using the device
@@ -28,7 +39,4 @@ String Cotxe_ApplyChange "Dispara el càlcul de potència"
 Number Cotxe_Priority "Prioritat d'us del cotxe amb potencia sobrant" (UnusedPowerPriority)
 
 String CotxeTitle "Carregador cotxe" <electric_car>
-
-String CotxeEncesa_Control_Fake "Encesa del cotxe fake"
-Number:Power Cotxe_Potencia_Sensor_Fake "Potencia fake usada pel Cotxe"
 
