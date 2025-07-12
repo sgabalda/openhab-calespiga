@@ -1,0 +1,22 @@
+/*
+-------------------------
+ TEMPERATURES
+--------------------------
+*/
+
+Number:Temperature ElectronicaTemperaturaSHS      "T. arm. electronica: [%.2f %unit%]"
+Number:Temperature BateriesTemperaturaSHS     "T. arm. bateries: [%.2f %unit%]"
+Number:Temperature ExteriorArmarisTemperaturaSHS      "T. fora: [%.2f %unit%]"
+Number:Temperature BateriesTemperaturaAdosadaSHS      "T. bateries: [%.2f %unit%]"
+
+Number:Temperature BateriesTemperaturaObjectiuSHS "T. objectiu bat."
+
+String VentiladorBateriesStatusSHS  "Estat ventilador bateria"
+String VentiladorBateriesSetSHS  "Commanda ventilador bateria"
+String VentiladorElectronicaStatusSHS  "Estat ventilador electronica"
+String VentiladorElectronicaSetSHS  "Commanda ventilador electronica"
+
+String VentiladorGestioElectSHS "Gestió dels ventiladors" 
+
+//TO BE removed when migration is finished
+String VentiladorBateriesStatusSHS  "Control al SHS"

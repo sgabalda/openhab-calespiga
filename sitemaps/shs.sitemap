@@ -1,0 +1,27 @@
+sitemap default label="Ca l'espiga SHS" {
+
+    Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
+    {
+        Frame label="Temperatures sistema elèctric" {
+            
+            Text item=ElectronicaTemperaturaSHS
+            Text item=BateriesTemperaturaSHS
+            Text item=ExteriorArmarisTemperaturaSHS
+            Text item=BateriesTemperaturaAdosadaSHS
+
+            Setpoint item=BateriesTemperaturaObjectiuSHS icon="dial_heater" label="T. objectiu bat. [%.1f]" minValue=5 maxValue=30 step=1
+            Selection item=VentiladorGestioElectSHS icon="thermostat_heater" mappings=["auto"="Auto", "manual"="Manual"]
+            
+            Text item=VentiladorBateriesStatusSHS label="Vent. bateries: [%s]" icon="fan"
+            Text item=VentiladorElectronicaStatusSHS label="Vent. electr.: [%s]" icon="fan"
+
+            Switch item=VentiladorBateriesSetSHS icon="fan"
+            Switch item=VentiladorElectronicaSetSHS icon="fan"
+        }
+
+        Frame{
+            //TODO migrate the panel to use the SHS items
+            Webview height=16 url="http://calespiga.ddns.net:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
+        }
+    }
+}
