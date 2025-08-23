@@ -33,7 +33,7 @@ then
     if(ordre == ON){
         BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",diposit")
     }else{
-        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",off")
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Transvassament.name+",stop")
         Trasvassament_Diposit_Bassa_Estat.postUpdate("Aturant bomba...")
         //stop the pump, then the off to circulacio will be sent afterwards
     }
@@ -61,8 +61,8 @@ then
             Trasvassament_Diposit_Bassa_Estat.postUpdate("Canviant circulacio bassa...")
             logDebug("transvassament", "bassa is NOT in diposit state, so waiting")
         }
-    }else if(ordre == "off"){
-        logDebug("transvassament", "Transvassament is the owner, and command is off")
+    }else if(ordre == "stop"){
+        logDebug("transvassament", "Transvassament is the owner, and command is stop")
         Trasvassament_Diposit_Bassa_Estat.postUpdate("Aturat")
         Estat_Bomba_Diposit.sendCommand(OFF)
         Estat_Transvassament.sendCommand(OFF)

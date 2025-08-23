@@ -405,7 +405,7 @@ then
     if(ordre == ON){
         BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Depuradora.name+",depuradora")
     }else{
-        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Depuradora.name+",off")
+        BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Depuradora.name+",stop")
         BassaCirculacioChangeRequest.sendCommand(""+Circulacio_Leader_Bomba_Depuradora.name+",")
     }
 end
@@ -418,8 +418,8 @@ then
     if(ordre == "depuradora"){
         logDebug("bassa.rules", "Depuradora is the owner, and command is depuradora")
         //no need to do anything as the rule for succeit will update statuses
-    }else if(ordre == "off"){
-        logDebug("bassa.rules", "Depuradora is the owner, and command is off")
+    }else if(ordre == "stop"){
+        logDebug("bassa.rules", "Depuradora is the owner, and command is stop")
     }else if(ordre == ""){
         logDebug("bassa.rules", "Depuradora is not anymore the owner")
     }else{
