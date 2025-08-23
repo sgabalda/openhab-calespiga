@@ -74,7 +74,7 @@ sitemap default label="Ca l'espiga" {
         Frame label="Transvassament" {
             Text item=Trasvassament_Diposit_Bassa_Estat label="Estat transvassament: [%s]" icon="water"
             Switch item=Trasvassament_Diposit_Bassa_Encesa icon="sprinkler" label="Activar transvassament"
-            Setpoint item=Trasvassament_Diposit_Bassa_Durada icon="stopwatch" label="Durada transvassament [%.1f min]" minValue=1 maxValue=30 step=1
+            Setpoint item=Trasvassament_Diposit_Bassa_Durada icon="stopwatch" label="Durada transvassament [%.1f min]" minValue=1 maxValue=180 step=1
             Text icon="time" item=Trasvassament_Diposit_Bassa_Darrer label="Últim transvassament [%1$td/%1$tm/%1$tY %1$tT]"
         }
         Frame label="Aigua grisa" {
