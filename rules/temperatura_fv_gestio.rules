@@ -93,27 +93,39 @@ rule "Propaga ventilador bat"
 when
     Item VentiladorBateriesSetProxy changed
 then
-    logDebug("temperatura_fv_elect.rules", 
+    if(VentiladorsHabilitatsSHS.state != "true") {
+        logDebug("temperatura_fv_elect.rules", 
         "As proxy changed, propagating to VentiladorBateriesSet "+VentiladorBateriesSetProxy.state)
-    VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state.toString)
+        VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state.toString)
+    } else {
+        logInfo("temperatura_fv_elect.rules", "Not propagating to VentiladorBateriesSet as the ventiladors are managed in SHS")
+    }
 end
 
 rule "Propaga ventilador elect"
 when
     Item VentiladorElectronicaSetProxy changed
 then
-    logDebug("temperatura_fv_elect.rules", 
-        "As proxy changed, propagating to VentiladorElectronicaSet "+VentiladorElectronicaSetProxy.state)
-    VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state.toString)
+    if(VentiladorsHabilitatsSHS.state != "true") {
+        logDebug("temperatura_fv_elect.rules", 
+            "As proxy changed, propagating to VentiladorElectronicaSet "+VentiladorElectronicaSetProxy.state)
+        VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state.toString)
+    } else {
+        logInfo("temperatura_fv_elect.rules", "Not propagating to VentiladorElectronicaSet as the ventiladors are managed in SHS")
+    }
 end
 
 rule "Actualitza periodicament MQTT"
 when
     Time cron "0/30 * * * * * *" //every 15 secs
 then
-    logDebug("temperatura_fv_elect.rules", 
-        "Periodic propagation: VentiladorElectronicaSet: "+VentiladorElectronicaSetProxy.state+
-        ", VentiladorBateriesSet: "+VentiladorBateriesSetProxy.state)
-    VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state.toString)
-    VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state.toString)
+    if(VentiladorsHabilitatsSHS.state != "true") {
+        logDebug("temperatura_fv_elect.rules", 
+            "Periodic propagation: VentiladorElectronicaSet: "+VentiladorElectronicaSetProxy.state+
+            ", VentiladorBateriesSet: "+VentiladorBateriesSetProxy.state)
+        VentiladorElectronicaSet.sendCommand(VentiladorElectronicaSetProxy.state.toString)
+        VentiladorBateriesSet.sendCommand(VentiladorBateriesSetProxy.state.toString)
+    }else{
+        logInfo("temperatura_fv_elect.rules", "Not propagating to VentiladorElectronicaSet nor VentiladorBateriesSet as the ventiladors are managed in SHS")
+    }
 end

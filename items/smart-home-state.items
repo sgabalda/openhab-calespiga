@@ -3,20 +3,33 @@
  TEMPERATURES
 --------------------------
 */
+String TemperaturesTitle "Temperatures"
 
 Number:Temperature ElectronicaTemperaturaSHS      "T. arm. electronica: [%.2f %unit%]"
 Number:Temperature BateriesTemperaturaSHS     "T. arm. bateries: [%.2f %unit%]"
 Number:Temperature ExteriorArmarisTemperaturaSHS      "T. fora: [%.2f %unit%]"
 Number:Temperature BateriesTemperaturaAdosadaSHS      "T. bateries: [%.2f %unit%]"
 
-Number:Temperature BateriesTemperaturaObjectiuSHS "T. objectiu bat."
+Number:Temperature TemperaturaObjectiuSHS "T. objectiu bat."
 
 String VentiladorBateriesStatusSHS  "Estat ventilador bateria"
-String VentiladorBateriesSetSHS  "Commanda ventilador bateria"
+Switch VentiladorBateriesSetSHS  "Commanda ventilador bateria"
 String VentiladorElectronicaStatusSHS  "Estat ventilador electronica"
-String VentiladorElectronicaSetSHS  "Commanda ventilador electronica"
+Switch VentiladorElectronicaSetSHS  "Commanda ventilador electronica"
 
-String VentiladorGestioElectSHS "Gestió dels ventiladors" 
+String VentiladorGestioSHS "Gestió dels ventiladors" 
+String VentiladorsInconsistencySHS "Inconsistencies ventiladors"
 
-//TO BE removed when migration is finished
-String VentiladorBateriesStatusSHS  "Control al SHS"
+/*
+----------------------
+SYSTEM 
+----------------------
+*/
+
+String SystemTitle "Estat"
+
+/* offline detectors */
+String TemperaturesMicroControladorEstat "Estat microcontrolador temperatures"
+
+/* feature flags */
+String VentiladorsHabilitatsSHS "Habilitar ventiladors per SHS"
