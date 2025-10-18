@@ -10,7 +10,7 @@ Number:Temperature BateriesTemperaturaSHS     "T. arm. bateries: [%.2f %unit%]"
 Number:Temperature ExteriorArmarisTemperaturaSHS      "T. fora: [%.2f %unit%]"
 Number:Temperature BateriesTemperaturaAdosadaSHS      "T. bateries: [%.2f %unit%]"
 
-Number:Temperature TemperaturaObjectiuSHS "T. objectiu bat."
+Number:Temperature TemperaturaObjectiuSHS "T. objectiu"
 
 String VentiladorBateriesStatusSHS  "Estat ventilador bateria"
 Switch VentiladorBateriesSetSHS  "Commanda ventilador bateria"
