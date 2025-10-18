@@ -30,7 +30,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=TemperaturesMicroControladorEstat icon="receiver" label="Estat micro vent. [%s]"
         }
         Frame label="Controls" {
-            Text item=VentiladorsHabilitatsSHS icon="network" label="Control vent. [%s]" mappings=["true"="SHS", "false"="OH"]
+            Selection item=VentiladorsHabilitatsSHS icon="network" label="Control vent. [%s]" mappings=["true"="SHS", "false"="OH"]
         }
     }
 }
