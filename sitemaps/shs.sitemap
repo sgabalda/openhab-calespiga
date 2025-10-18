@@ -1,4 +1,4 @@
-sitemap default label="Ca l'espiga SHS" {
+sitemap shs label="Ca l'espiga SHS" {
 
     Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
     {
