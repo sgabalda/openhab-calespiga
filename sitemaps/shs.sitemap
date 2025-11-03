@@ -4,10 +4,10 @@ sitemap shs label="Ca l'espiga SHS" {
     {
         Frame label="Temperatures sistema elèctric" {
             
-            Text item=ElectronicaTemperaturaSHS
-            Text item=BateriesTemperaturaSHS
-            Text item=ExteriorArmarisTemperaturaSHS
-            Text item=BateriesTemperaturaAdosadaSHS
+            Text item=ElectronicaTemperaturaSHS label="T. Electr.: [%s]"
+            Text item=BateriesTemperaturaSHS label="T. Armari Bat.: [%s]"
+            Text item=ExteriorArmarisTemperaturaSHS label="T. Fora: [%s]"
+            Text item=BateriesTemperaturaAdosadaSHS label="T. Bateries: [%s]"
 
             Setpoint item=TemperaturaObjectiuSHS icon="dial_heater" label="T. objectiu [%.1f]" minValue=5 maxValue=35 step=1
             Selection item=VentiladorGestioSHS icon="thermostat_heater" mappings=["on"="Auto", "off"="Manual"]
@@ -24,13 +24,32 @@ sitemap shs label="Ca l'espiga SHS" {
         //TODO migrate the grafana panel
     }
 
+    Text item=CalentadorTitle label="Calentador" icon="heater"
+    {
+        Frame label="Calentador" {
+            
+            Selection item=CalentadorSetSHS icon="thermostat_heater" mappings=["off"="Off", "500"="500W", "1000"="1000W", "2000"="2000W", "automatic"="Automàtic"]
+            Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%s W]" 
+
+            Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
+            Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
+            
+            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%s Wh]" 
+        }
+
+        //TODO migrate the grafana panel
+    }
+
     Text item=SystemTitle label="Estat" icon="alert"
     {
         Frame label="Alarmes" {
             Text item=TemperaturesMicroControladorEstat icon="receiver" label="Estat micro vent. [%s]"
+            Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
         }
         Frame label="Controls" {
             Selection item=VentiladorsHabilitatsSHS icon="network" label="Control vent. [%s]" mappings=["true"="SHS", "false"="OH"]
+            Selection item=CalentadorHabilitatsSHS icon="network" label="Control calent. [%s]" mappings=["true"="SHS", "false"="OH"]
         }
     }
 }

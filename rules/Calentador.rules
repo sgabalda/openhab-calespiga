@@ -173,8 +173,12 @@ rule "Turn On Calentador"
 when
     Item Calentador_Potencia_ProxyItem received command
 then
-    Calentador_Potencia_ProxyEmissio.sendCommand(receivedCommand);
-    logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
+    if(VentiladorsHabilitatsSHS.state != "true") {
+        Calentador_Potencia_ProxyEmissio.sendCommand(receivedCommand);
+        logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
+    }else{
+        logInfo("Calentador.rules", "Not propagating to MQTT as the calentador is managed in SHS")
+    }
 end
 
 rule "update display state from MQTT calentador"

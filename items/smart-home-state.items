@@ -5,12 +5,12 @@
 */
 String TemperaturesTitle "Temperatures"
 
-Number:Temperature ElectronicaTemperaturaSHS      "T. arm. electronica: [%.2f %unit%]"
-Number:Temperature BateriesTemperaturaSHS     "T. arm. bateries: [%.2f %unit%]"
-Number:Temperature ExteriorArmarisTemperaturaSHS      "T. fora: [%.2f %unit%]"
-Number:Temperature BateriesTemperaturaAdosadaSHS      "T. bateries: [%.2f %unit%]"
+Number ElectronicaTemperaturaSHS      "T. arm. electronica"
+Number BateriesTemperaturaSHS     "T. arm. bateries"
+Number ExteriorArmarisTemperaturaSHS      "T. fora"
+Number BateriesTemperaturaAdosadaSHS      "T. bateries"
 
-Number:Temperature TemperaturaObjectiuSHS "T. objectiu"
+Number TemperaturaObjectiuSHS "T. objectiu"
 
 String VentiladorBateriesStatusSHS  "Estat ventilador bateria"
 Switch VentiladorBateriesSetSHS  "Commanda ventilador bateria"
@@ -22,6 +22,20 @@ String VentiladorsInconsistencySHS "Inconsistencies ventiladors"
 
 /*
 ----------------------
+ HEATER 
+----------------------
+*/
+String CalentadorTitle "Calentador"
+
+String CalentadorSetSHS "Mode calentador"
+String CalentadorStatusSHS "Estat calentador"
+String CalentadorCalentSHS "Estat termostat"
+String CalentadorUltimaVegadaCalentSHS "Última vegada HOT"
+String CalentadorEnergiaAvuiSHS "Energia avui"
+String CalentadorSincronitzacioSHS "Estat sincronització calentador"
+
+/*
+----------------------
 SYSTEM 
 ----------------------
 */
@@ -30,6 +44,10 @@ String SystemTitle "Estat"
 
 /* offline detectors */
 String TemperaturesMicroControladorEstat "Estat microcontrolador temperatures"
+String CalentadorMicroControladorEstatSHS "Estat microcontrolador calentador"
+
 
 /* feature flags */
 String VentiladorsHabilitatsSHS "Habilitar ventiladors per SHS"
+String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
+
