@@ -173,7 +173,7 @@ rule "Turn On Calentador"
 when
     Item Calentador_Potencia_ProxyItem received command
 then
-    if(VentiladorsHabilitatsSHS.state != "true") {
+    if(CalentadorHabilitatsSHS.state != "true") {
         Calentador_Potencia_ProxyEmissio.sendCommand(receivedCommand);
         logInfo("Calentador.rules", "Sending to calentador MQTT "+receivedCommand)
     }else{
