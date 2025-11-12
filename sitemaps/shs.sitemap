@@ -3,22 +3,21 @@ sitemap shs label="Ca l'espiga SHS" {
     Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
     {
         Frame label="Temperatures sistema elèctric" {
-            
-            Text item=ElectronicaTemperaturaSHS label="T. Electr.: [%s]"
-            Text item=BateriesTemperaturaSHS label="T. Armari Bat.: [%s]"
-            Text item=ExteriorArmarisTemperaturaSHS label="T. Fora: [%s]"
-            Text item=BateriesTemperaturaAdosadaSHS label="T. Bateries: [%s]"
+            Text item=ElectronicaTemperaturaSHS label="T. arm. electronica: [%s]"
+            Text item=BateriesTemperaturaSHS label="T. arm. bateries: [%s]"
+            Text item=ExteriorArmarisTemperaturaSHS label="T. fora: [%s]"
+            Text item=BateriesTemperaturaAdosadaSHS label="T. bateries: [%s]"
 
             Setpoint item=TemperaturaObjectiuSHS icon="dial_heater" label="T. objectiu [%.1f]" minValue=5 maxValue=35 step=1
-            Selection item=VentiladorGestioSHS icon="thermostat_heater" mappings=["on"="Auto", "off"="Manual"]
-            
-            Text item=VentiladorBateriesStatusSHS label="Vent. bateries: [%s]" icon="fan"
-            Text item=VentiladorElectronicaStatusSHS label="Vent. electr.: [%s]" icon="fan"
+        }
+        Frame label="Ventiladors" {
+            Text item=VentiladorBateriesStatusSHS label="Estat vent. bat.: [%s]" icon="fan"
+            Text item=VentiladorBateriesInconsistencySHS label="Sincronització vent. bat.: [%s]" icon="fan"
+            Selection item=VentiladorBateriesSetSHS icon="fan" mappings=["off"="Off", "on"="On","automatic"="Automàtic"]
 
-            Switch item=VentiladorBateriesSetSHS icon="fan"
-            Switch item=VentiladorElectronicaSetSHS icon="fan"
-
-            Text item=VentiladorsInconsistencySHS
+            Text item=VentiladorElectronicaStatusSHS label="Estat vent. elect.: [%s]" icon="fan"
+            Text item=VentiladorElectronicaInconsistencySHS label="Sincronització vent. elect.: [%s]" icon="fan"
+            Selection item=VentiladorElectronicaSetSHS icon="fan" mappings=["off"="Off", "on"="On","automatic"="Automàtic"]
         }
 
         //TODO migrate the grafana panel

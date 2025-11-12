@@ -5,21 +5,19 @@
 */
 String TemperaturesTitle "Temperatures"
 
-Number ElectronicaTemperaturaSHS      "T. arm. electronica"
-Number BateriesTemperaturaSHS     "T. arm. bateries"
-Number ExteriorArmarisTemperaturaSHS      "T. fora"
-Number BateriesTemperaturaAdosadaSHS      "T. bateries"
+Number ElectronicaTemperaturaSHS      "T. arm. electronica"           // electronics-temperature-item
+Number BateriesTemperaturaSHS         "T. arm. bateries"              // battery-closet-temperature-item
+Number ExteriorArmarisTemperaturaSHS  "T. fora"                       // external-temperature-item
+Number BateriesTemperaturaAdosadaSHS  "T. bateries"                   // battery-temperature-item
+Number TemperaturaObjectiuSHS         "T. objectiu"                   // goal-temperature-item
 
-Number TemperaturaObjectiuSHS "T. objectiu"
+String VentiladorBateriesStatusSHS        "Estat vent. bat."      // battery-fan-status-item
+String VentiladorBateriesInconsistencySHS "Sincronització vent. bat." // battery-fan-inconsistency-item
+String VentiladorBateriesSetSHS           "Mode vent. bat."   // battery-fan-command-item
 
-String VentiladorBateriesStatusSHS  "Estat ventilador bateria"
-Switch VentiladorBateriesSetSHS  "Commanda ventilador bateria"
-String VentiladorElectronicaStatusSHS  "Estat ventilador electronica"
-Switch VentiladorElectronicaSetSHS  "Commanda ventilador electronica"
-
-String VentiladorGestioSHS "Gestió dels ventiladors" 
-String VentiladorsInconsistencySHS "Inconsistencies ventiladors"
-
+String VentiladorElectronicaStatusSHS        "Estat vent. elect."      // electronics-fan-status-item
+String VentiladorElectronicaInconsistencySHS "Sincronització vent. elect." // electronics-fan-inconsistency-item
+String VentiladorElectronicaSetSHS           "Mode vent. elect."   // electronics-fan-command-item
 /*
 ----------------------
  HEATER 
