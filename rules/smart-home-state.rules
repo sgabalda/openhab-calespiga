@@ -1,0 +1,9 @@
+
+rule "Send SHS notification"
+when
+    Item NotificacionsSHS received command
+then
+    val message = receivedCommand.toString
+    sendBroadcastNotification(message)
+    logInfo("SHS", "sent a notification: " + message)                     
+end

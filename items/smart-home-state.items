@@ -38,6 +38,8 @@ SYSTEM
 ----------------------
 */
 
+String NotificacionsSHS "Notificacions SHS"
+
 String SystemTitle "Estat"
 
 /* offline detectors */
