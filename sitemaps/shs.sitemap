@@ -40,6 +40,17 @@ sitemap shs label="Ca l'espiga SHS" {
         //TODO migrate the grafana panel
     }
 
+    Text item=PotenciaTitle label="Potència" icon="power"
+    {
+        Frame label="Potència" {
+            Text item=PotenciaDisponibleSHS icon="power" label="Potència disponible: [%s W]"
+            Text item=PotenciaGeneradaSHS icon="power" label="Potència generada: [%s W]"
+            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%s W]"
+        }
+
+        //TODO migrate the grafana panel
+    }
+
     Text item=SystemTitle label="Estat" icon="alert"
     {
         Frame label="Alarmes" {

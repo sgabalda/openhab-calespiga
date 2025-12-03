@@ -34,6 +34,18 @@ String CalentadorSincronitzacioSHS "Estat sincronització calentador"
 
 /*
 ----------------------
+ POWER 
+----------------------
+*/
+
+String PotenciaTitle "Potència"
+
+String PotenciaDisponibleSHS "Potència disponible"
+String PotenciaGeneradaSHS "Potència generada"
+String PotenciaRebutjadaSHS "Potència rebutjada"
+
+/*
+----------------------
 SYSTEM 
 ----------------------
 */
