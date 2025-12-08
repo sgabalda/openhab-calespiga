@@ -40,9 +40,9 @@ String CalentadorSincronitzacioSHS "Estat sincronització calentador"
 
 String PotenciaTitle "Potència"
 
-String PotenciaDisponibleSHS "Potència disponible"
-String PotenciaGeneradaSHS "Potència generada"
-String PotenciaRebutjadaSHS "Potència rebutjada"
+Number PotenciaDisponibleSHS "Potència disponible"
+Number PotenciaGeneradaSHS "Potència generada"
+Number PotenciaRebutjadaSHS "Potència rebutjada"
 
 /*
 ----------------------
