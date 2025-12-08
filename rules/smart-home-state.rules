@@ -12,14 +12,19 @@ rule "update FV title SHS"
 when
     Item PotenciaGeneradaSHS changed
 then
-    val power = (PotenciaGeneradaSHS.state as Number).intValue
-    var iconState = "0"
-    if(power > 0 && power <= 1000){
-        iconState = "500"
-    }else if(power > 1000 && power <= 2000){
-        iconState = "1500"
-    }else if(power > 2000){
-        iconState = "2500"
+    try {
+        val power = Integer::parseInt(PotenciaGeneradaSHS.state.toString)
+        var iconState = "0"
+        if(power > 0 && power <= 1000){
+            iconState = "500"
+        }else if(power > 1000 && power <= 2000){
+            iconState = "1500"
+        }else if(power > 2000){
+            iconState = "2500"
+        }
+        PotenciaTitle.sendCommand(iconState)
+    } catch (Exception e) {
+        logError("SHS", "Error parsing PotenciaGeneradaSHS state: " + e.message)
+        PotenciaTitle.sendCommand("0")
     }
-    PotenciaTitle.sendCommand(iconState)
 end
