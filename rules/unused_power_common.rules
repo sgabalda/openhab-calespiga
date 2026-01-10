@@ -173,7 +173,18 @@ when
 	or Time cron "15 * * ? * * *"
 then
 	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
-	if(!test){
+	if(CalentadorHabilitatsSHS.state != "true"){
+	    NotUsedPower.postUpdate(unusedPower)
+    }
+end
+
+rule "update extra power SHS"
+when
+	Item PotenciaRebutjadaSHS changed
+	or Time cron "15 * * ? * * *"
+then
+	val unusedPower = (PotenciaRebutjadaSHS.state as Number).intValue
+	if(CalentadorHabilitatsSHS.state == "true"){
 	    NotUsedPower.postUpdate(unusedPower)
     }
 end

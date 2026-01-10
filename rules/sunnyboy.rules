@@ -66,7 +66,7 @@ end
 
 rule "Check periodic refresh"
 when
-    Time cron "0 0/15 6-21 ? * * *"
+    Time cron "0 0/15 7-21 ? * * *"
     or System started
 then
     logInfo("SunnyBoy","Checking automatic token refresh")
@@ -89,7 +89,7 @@ end
 
 rule "Produccio fotovoltaica rule"
 when
-    Time cron "0/10 * 6-21 ? * * *" //if you change this, check the schedule for the alerting rules below
+    Time cron "0/10 * 7-21 ? * * *" //if you change this, check the schedule for the alerting rules below
 then
     if(token !== null){
         val now = ZonedDateTime::now
@@ -190,7 +190,7 @@ end
 // per assegurar que a la nit no s'interpreta que hi ha potencia produida o rebutjada
 rule "Assegura nit zero"
 when
-    Time cron "0 0 0,1,2,3,4,5,22,23 ? * * *"
+    Time cron "0 0 0,1,2,3,4,5,6,22,23 ? * * *"
 then
     SunnyBoy_Pot_Rebutjada.postUpdate(0)
     SunnyBoy_Pot_Actual.postUpdate(0)
@@ -200,7 +200,7 @@ end
 // set the measurements to 0 if too much time without measurements
 rule "Assegura lectures"
 when
-    Time cron "0 5-55/10 6-21 ? * * *"
+    Time cron "0 5-55/10 7-21 ? * * *"
 then
     val now = ZonedDateTime::now
     logInfo("SunnyBoy","Obtenint darrera lectura i temps actual")
