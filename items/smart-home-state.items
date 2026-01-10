@@ -29,7 +29,7 @@ String CalentadorSetSHS "Mode calentador"
 String CalentadorStatusSHS "Estat calentador"
 String CalentadorCalentSHS "Estat termostat"
 String CalentadorUltimaVegadaCalentSHS "Última vegada HOT"
-String CalentadorEnergiaAvuiSHS "Energia avui"
+Number CalentadorEnergiaAvuiSHS "Energia avui"
 String CalentadorSincronitzacioSHS "Estat sincronització calentador"
 
 /*

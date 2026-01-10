@@ -38,7 +38,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
             
-            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [#,### KWh]" 
+            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d KWh]" 
         }
 
         //TODO migrate the grafana panel
