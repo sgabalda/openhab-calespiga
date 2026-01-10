@@ -35,11 +35,11 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%s W]" 
 
             Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
-            Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
             
             Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d KWh]" 
 
+            Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
         }
 
