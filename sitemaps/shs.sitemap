@@ -37,7 +37,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
             Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
             
-            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d KWh]" 
+            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d kWh]" 
 
             Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
@@ -52,6 +52,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=PotenciaDisponibleSHS icon="power" label="Potència disponible: [%.0f W]"
             Text item=PotenciaGeneradaSHS icon="power" label="Potència generada: [%.0f W]"
             Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
         }
 
         //TODO migrate the grafana panel

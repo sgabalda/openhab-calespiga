@@ -43,6 +43,7 @@ String PotenciaTitle "Potència"
 Number PotenciaDisponibleSHS "Potència disponible"
 Number PotenciaGeneradaSHS "Potència generada"
 Number PotenciaRebutjadaSHS "Potència rebutjada"
+Number PotenciaDinamicaFVSHS "Potència dinàmica FV"
 
 /*
 ----------------------
