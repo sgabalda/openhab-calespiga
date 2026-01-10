@@ -3,21 +3,25 @@ sitemap shs label="Ca l'espiga SHS" {
     Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
     {
         Frame label="Temperatures sistema elèctric" {
-            Text item=ElectronicaTemperaturaSHS label="T. arm. electronica: [%.1f]"
-            Text item=BateriesTemperaturaSHS label="T. arm. bateries: [%.1f]"
-            Text item=ExteriorArmarisTemperaturaSHS label="T. fora: [%.1f]"
-            Text item=BateriesTemperaturaAdosadaSHS label="T. bateries: [%.1f]"
+            Text item=ElectronicaTemperaturaSHS label="T. arm. electronica: [%.1f]" icon="temperature"
+            Text item=BateriesTemperaturaSHS label="T. arm. bateries: [%.1f]" icon="temperature"
+            Text item=ExteriorArmarisTemperaturaSHS label="T. fora: [%.1f]" icon="temperature"
+            Text item=BateriesTemperaturaAdosadaSHS label="T. bateries: [%.1f]" icon="temperature"
 
             Setpoint item=TemperaturaObjectiuSHS icon="dial_heater" label="T. objectiu [%.1f]" minValue=5 maxValue=35 step=1
         }
         Frame label="Ventiladors" {
             Text item=VentiladorBateriesStatusSHS label="Estat vent. bat.: [%s]" icon="fan"
-            Text item=VentiladorBateriesInconsistencySHS label="Sincronització vent. bat.: [%s]" icon="fan"
             Selection item=VentiladorBateriesSetSHS icon="fan" mappings=["off"="Off", "on"="On","automatic"="Automàtic"]
 
             Text item=VentiladorElectronicaStatusSHS label="Estat vent. elect.: [%s]" icon="fan"
-            Text item=VentiladorElectronicaInconsistencySHS label="Sincronització vent. elect.: [%s]" icon="fan"
             Selection item=VentiladorElectronicaSetSHS icon="fan" mappings=["off"="Off", "on"="On","automatic"="Automàtic"]
+
+            Text item=VentiladorBateriesInconsistencySHS label="Sincronització vent. bat.: [%s]" icon="fan"
+            Text item=VentiladorElectronicaInconsistencySHS label="Sincronització vent. elect.: [%s]" icon="fan"
+            
+            Text item=TemperaturesMicroControladorEstat icon="receiver" label="Estat micro vent. [%s]"
+            
         }
 
         //TODO migrate the grafana panel
