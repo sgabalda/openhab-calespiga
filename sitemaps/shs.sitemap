@@ -27,7 +27,7 @@ sitemap shs label="Ca l'espiga SHS" {
         //TODO migrate the grafana panel
     }
 
-    Text item=CalentadorTitle label="Calentador" icon="heater"
+    Text item=CalentadorTitle label="Calentador" icon="heater_display"
     {
         Frame label="Calentador" {
             
@@ -38,7 +38,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
             
-            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%s Wh]" 
+            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%#,### KWh]" 
         }
 
         //TODO migrate the grafana panel
