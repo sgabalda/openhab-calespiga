@@ -12,9 +12,16 @@ sitemap default label="Ca l'espiga" {
             Text icon="time" item=SunnyBoy_Time_Read
             Text icon="time" item=SunnyBoy_Time_Not_Zero
         }
+
+        Frame label="Potència SHS" {
+            Text item=PotenciaDisponibleSHS icon="power" label="Potència disponible: [%.0f W]"
+            Text item=PotenciaGeneradaSHS icon="power" label="Potència generada: [%.0f W]"
+            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
+        }
         
         Frame{
-            Webview height=12 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
+            Webview height=24 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
         }
     }
 
