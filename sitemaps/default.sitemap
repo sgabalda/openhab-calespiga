@@ -14,9 +14,9 @@ sitemap default label="Ca l'espiga" {
         }
 
         Frame label="Potència SHS" {
-            Text item=PotenciaDisponibleSHS icon="power" label="Potència disponible: [%.0f W]"
-            Text item=PotenciaGeneradaSHS icon="power" label="Potència generada: [%.0f W]"
-            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
+            Text item=PotenciaDisponibleSHS icon="energy" label="Potència disponible: [%.0f W]"
+            Text item=PotenciaGeneradaSHS icon="light" label="Potència generada: [%.0f W]"
+            Text item=PotenciaRebutjadaSHS icon="smoke" label="Potència rebutjada: [%.0f W]"
             Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
         }
         
