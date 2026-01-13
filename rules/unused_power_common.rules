@@ -167,26 +167,14 @@ then
 	DestinationDevices.sendCommand(destinationsString)
 end
 
-rule "update extra power"
-when
-	Item SunnyBoy_Pot_Rebutjada changed
-	or Time cron "15 * * ? * * *"
-then
-	val unusedPower = (SunnyBoy_Pot_Rebutjada.state as Number).intValue
-	if(SunnyBoyUnusedPowerFromSHS.state != "true"){
-	    NotUsedPower.postUpdate(unusedPower)
-    }
-end
-
 rule "update extra power SHS"
 when
 	Item PotenciaRebutjadaSHS changed
 	or Time cron "15 * * ? * * *"
 then
 	val unusedPower = (PotenciaRebutjadaSHS.state as Number).intValue
-	if(SunnyBoyUnusedPowerFromSHS.state == "true"){
-	    NotUsedPower.postUpdate(unusedPower)
-    }
+	NotUsedPower.postUpdate(unusedPower)
+    
 end
 
 rule "manage not used power"

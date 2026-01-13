@@ -2,18 +2,7 @@ sitemap default label="Ca l'espiga" {
 
     Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solar_panel"
     {
-        Frame label="Fotovoltaica" {
-            Text icon="light" item=SunnyBoy_Pot_Usada
-            Text icon="smoke" item=SunnyBoy_Pot_Rebutjada
-            Text icon="energy" item=SunnyBoy_Pot_Actual
-            //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea1
-            //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea2
-            Text icon="time" item=SunnyBoy_Time_Attempt
-            Text icon="time" item=SunnyBoy_Time_Read
-            Text icon="time" item=SunnyBoy_Time_Not_Zero
-        }
-
-        Frame label="Potència SHS" {
+        Frame label="Potència FV" {
             Text item=PotenciaDisponibleSHS icon="energy" label="Potència disponible: [%.0f W]"
             Text item=PotenciaGeneradaSHS icon="light" label="Potència generada: [%.0f W]"
             Text item=PotenciaRebutjadaSHS icon="smoke" label="Potència rebutjada: [%.0f W]"
@@ -21,7 +10,7 @@ sitemap default label="Ca l'espiga" {
         }
         
         Frame{
-            Webview height=24 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
+            Webview height=14 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
         }
     }
 

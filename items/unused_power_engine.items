@@ -27,3 +27,5 @@ String DestinationDeviceApplied "Monitor de dispositiu canviat"
 String PotenciaSobrantTitle "Potencia sobrant"
 
 String UnusedPowerPriorityRefreshProxy "Proxy item for refreshing priority"
+
+String FotovoltaicaTitle "Fotovoltaica" <solar_panel>
