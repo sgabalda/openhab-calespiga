@@ -3,32 +3,39 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 1,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "Openhab",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
+      "datasource": {
+        "type": "influxdb",
+        "uid": "kyyxCjigk"
       },
       "fill": 1,
       "fillGradient": 0,
@@ -39,7 +46,7 @@
         "y": 0
       },
       "hiddenSeries": false,
-      "id": 2,
+      "id": 3,
       "legend": {
         "avg": false,
         "current": false,
@@ -52,8 +59,11 @@
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
       "percentage": false,
-      "pluginVersion": "7.1.1",
+      "pluginVersion": "9.2.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -64,22 +74,22 @@
       "targets": [
         {
           "alias": "Potencia generada",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "kyyxCjigk"
+          },
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
           "hide": false,
-          "measurement": "SunnyBoy_Pot_Actual",
+          "measurement": "PotenciaDisponibleSHS",
           "orderByTime": "ASC",
           "policy": "autogen",
           "refId": "A",
@@ -87,9 +97,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -102,21 +110,21 @@
         },
         {
           "alias": "Potencia usada",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "kyyxCjigk"
+          },
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "SunnyBoy_Pot_Usada",
+          "measurement": "PotenciaGeneradaSHS",
           "orderByTime": "ASC",
           "policy": "default",
           "query": "SELECT mean(\"value\") FROM \"SunnyBoy_Pot_Usada\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
@@ -126,9 +134,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -141,22 +147,22 @@
         },
         {
           "alias": "Potencia rebutjada",
+          "datasource": {
+            "type": "influxdb",
+            "uid": "kyyxCjigk"
+          },
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
           "hide": false,
-          "measurement": "SunnyBoy_Pot_Rebutjada",
+          "measurement": "PotenciaRebutjadaSHS",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "C",
@@ -164,9 +170,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -179,9 +183,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Fotovoltaica",
       "tooltip": {
         "shared": true,
@@ -190,37 +192,30 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
       "yaxes": [
         {
+          "$$hashKey": "object:215",
           "format": "watt",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
+          "$$hashKey": "object:216",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
-  "schemaVersion": 26,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -246,5 +241,6 @@
   "timezone": "",
   "title": "Fotovoltaica",
   "uid": "PUsS3Cmgz",
-  "version": 8
+  "version": 10,
+  "weekStart": ""
 }
