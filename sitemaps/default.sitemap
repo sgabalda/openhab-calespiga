@@ -1,6 +1,6 @@
 sitemap default label="Ca l'espiga" {
 
-    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solar_panel"
+    Text item=PotenciaTitle label="Fotovoltaica" icon="solar_panel"
     {
         Frame label="Potència FV" {
             Text item=PotenciaDisponibleSHS icon="energy" label="Potència disponible: [%.0f W]"
