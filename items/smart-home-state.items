@@ -44,6 +44,7 @@ Number PotenciaDisponibleSHS "Potència disponible"
 Number PotenciaGeneradaSHS "Potència generada"
 Number PotenciaRebutjadaSHS "Potència rebutjada"
 Number PotenciaDinamicaFVSHS "Potència dinàmica FV"
+String PotenciaEstatLecturesSHS "Estat lectures FV"
 
 /*
 ----------------------
@@ -62,5 +63,4 @@ String CalentadorMicroControladorEstatSHS "Estat microcontrolador calentador"
 
 /* feature flags */
 String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
-
 

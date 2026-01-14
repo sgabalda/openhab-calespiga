@@ -52,7 +52,8 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=PotenciaDisponibleSHS icon="power" label="Potència disponible: [%.0f W]"
             Text item=PotenciaGeneradaSHS icon="power" label="Potència generada: [%.0f W]"
             Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
-            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"  
+            Text item=PotenciaEstatLecturesSHS icon="receiver" label="Estat lectures FV: [%s]"  
         }
 
         //TODO migrate the grafana panel

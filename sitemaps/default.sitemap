@@ -7,6 +7,8 @@ sitemap default label="Ca l'espiga" {
             Text item=PotenciaGeneradaSHS icon="light" label="Potència generada: [%.0f W]"
             Text item=PotenciaRebutjadaSHS icon="smoke" label="Potència rebutjada: [%.0f W]"
             Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
+            Text item=PotenciaEstatLecturesSHS icon="receiver" label="Estat lectures FV: [%s]"  
+        
         }
         
         Frame{
