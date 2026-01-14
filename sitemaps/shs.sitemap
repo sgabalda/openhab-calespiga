@@ -1,0 +1,71 @@
+sitemap shs label="Ca l'espiga SHS" {
+
+    Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
+    {
+        Frame label="Temperatures sistema elèctric" {
+            Text item=ElectronicaTemperaturaSHS label="T. arm. electronica: [%.1f]" icon="temperature"
+            Text item=BateriesTemperaturaSHS label="T. arm. bateries: [%.1f]" icon="temperature"
+            Text item=ExteriorArmarisTemperaturaSHS label="T. fora: [%.1f]" icon="temperature"
+            Text item=BateriesTemperaturaAdosadaSHS label="T. bateries: [%.1f]" icon="temperature"
+
+            Setpoint item=TemperaturaObjectiuSHS icon="dial_heater" label="T. objectiu [%.1f]" minValue=5 maxValue=35 step=1
+        }
+        Frame label="Ventiladors" {
+            Text item=VentiladorBateriesStatusSHS label="Estat vent. bat.: [%s]" icon="fan"
+            Selection item=VentiladorBateriesSetSHS icon="fan" mappings=["off"="Off", "on"="On","automatic"="Automàtic"]
+
+            Text item=VentiladorElectronicaStatusSHS label="Estat vent. elect.: [%s]" icon="fan"
+            Selection item=VentiladorElectronicaSetSHS icon="fan" mappings=["off"="Off", "on"="On","automatic"="Automàtic"]
+
+            Text item=VentiladorBateriesInconsistencySHS label="Sincronització vent. bat.: [%s]" icon="fan"
+            Text item=VentiladorElectronicaInconsistencySHS label="Sincronització vent. elect.: [%s]" icon="fan"
+            
+            Text item=TemperaturesMicroControladorEstat icon="receiver" label="Estat micro vent. [%s]"
+            
+        }
+
+        //TODO migrate the grafana panel
+    }
+
+    Text item=CalentadorTitle label="Calentador" icon="heater_display"
+    {
+        Frame label="Calentador" {
+            
+            Selection item=CalentadorSetSHS icon="thermostat_heater" mappings=["off"="Off", "500"="500W", "1000"="1000W", "2000"="2000W", "automatic"="Automàtic"]
+            Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%s W]" 
+
+            Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
+            Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
+            
+            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d kWh]" 
+
+            Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
+        }
+
+        //TODO migrate the grafana panel
+    }
+
+    Text item=PotenciaTitle label="Potència" icon="solar_panel"
+    {
+        Frame label="Potència" {
+            Text item=PotenciaDisponibleSHS icon="power" label="Potència disponible: [%.0f W]"
+            Text item=PotenciaGeneradaSHS icon="power" label="Potència generada: [%.0f W]"
+            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
+        }
+
+        //TODO migrate the grafana panel
+    }
+
+    Text item=SystemTitle label="Estat" icon="alert"
+    {
+        Frame label="Alarmes" {
+            Text item=TemperaturesMicroControladorEstat icon="receiver" label="Estat micro vent. [%s]"
+            Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
+        }
+        Frame label="Controls" {
+            Selection item=CalentadorHabilitatsSHS icon="network" label="Control calent. [%s]" mappings=["true"="SHS", "false"="OH"]
+        }
+    }
+}

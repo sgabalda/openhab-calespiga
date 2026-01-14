@@ -1,20 +1,16 @@
 sitemap default label="Ca l'espiga" {
 
-    Text item=FotovoltaicaTitle label="Fotovoltaica" icon="solar_panel"
+    Text item=PotenciaTitle label="Fotovoltaica" icon="solar_panel"
     {
-        Frame label="Fotovoltaica" {
-            Text icon="light" item=SunnyBoy_Pot_Usada
-            Text icon="smoke" item=SunnyBoy_Pot_Rebutjada
-            Text icon="energy" item=SunnyBoy_Pot_Actual
-            //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea1
-            //Text icon="solarplant" item=SunnyBoy_Pot_Actual_Linea2
-            Text icon="time" item=SunnyBoy_Time_Attempt
-            Text icon="time" item=SunnyBoy_Time_Read
-            Text icon="time" item=SunnyBoy_Time_Not_Zero
+        Frame label="Potència FV" {
+            Text item=PotenciaDisponibleSHS icon="energy" label="Potència disponible: [%.0f W]"
+            Text item=PotenciaGeneradaSHS icon="light" label="Potència generada: [%.0f W]"
+            Text item=PotenciaRebutjadaSHS icon="smoke" label="Potència rebutjada: [%.0f W]"
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
         }
         
         Frame{
-            Webview height=12 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
+            Webview height=14 url="http://calespiga.ddns.net:3000/d/PUsS3Cmgz/fotovoltaica?orgId=1"
         }
     }
 
@@ -93,20 +89,25 @@ sitemap default label="Ca l'espiga" {
     Text item=TemperaturesTitle label="Temperatures" icon="temperature_cold"
     {
         Frame label="Temperatures sistema elèctric" {
-            
-            Text item=ElectronicaTemperatura
-            Text item=BateriesTemperatura
-            Text item=ExteriorArmarisTemperatura
-            Text item=BateriesTemperaturaAdosada
+            Text item=ElectronicaTemperaturaSHS label="T. arm. electronica: [%.1f]" icon="temperature"
+            Text item=BateriesTemperaturaSHS label="T. arm. bateries: [%.1f]" icon="temperature"
+            Text item=ExteriorArmarisTemperaturaSHS label="T. fora: [%.1f]" icon="temperature"
+            Text item=BateriesTemperaturaAdosadaSHS label="T. bateries: [%.1f]" icon="temperature"
 
-            Setpoint item=BateriesTemperaturaObjectiu icon="dial_heater" label="T. objectiu bat. [%.1f]" minValue=5 maxValue=30 step=1
-            Selection item=VentiladorGestioElect icon="thermostat_heater" mappings=["auto"="Auto (bat)", "autotemp"="Auto (temp)", "manual"="Manual"]
-            
-            Text item=VentiladorBateriesStatus label="Vent. bateries: [%s]" icon="fan"
-            Text item=VentiladorElectronicaStatus label="Vent. electr.: [%s]" icon="fan"
+            Setpoint item=TemperaturaObjectiuSHS icon="dial_heater" label="T. objectiu [%.1f]" minValue=5 maxValue=35 step=1
+        }
+        Frame label="Ventiladors" {
+            Text item=VentiladorBateriesStatusSHS label="Estat vent. bat.: [%s]" icon="fan"
+            Selection item=VentiladorBateriesSetSHS icon="fan" mappings=["off"="Off", "on"="On","automatic"="Automàtic"]
 
-            Switch item=VentiladorBateriesManual icon="fan"
-            Switch item=VentiladorElectronicaManual icon="fan"
+            Text item=VentiladorElectronicaStatusSHS label="Estat vent. elect.: [%s]" icon="fan"
+            Selection item=VentiladorElectronicaSetSHS icon="fan" mappings=["off"="Off", "on"="On","automatic"="Automàtic"]
+
+            Text item=VentiladorBateriesInconsistencySHS label="Sincronització vent. bat.: [%s]" icon="fan"
+            Text item=VentiladorElectronicaInconsistencySHS label="Sincronització vent. elect.: [%s]" icon="fan"
+            
+            Text item=TemperaturesMicroControladorEstat icon="receiver" label="Estat micro vent. [%s]"
+            
         }
 
         Frame{

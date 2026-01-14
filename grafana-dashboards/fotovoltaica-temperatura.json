@@ -66,19 +66,15 @@
           "alias": "Temp. armari electronica",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "ElectronicaTemperatura",
+          "measurement": "ElectronicaTemperaturaSHS",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "A",
@@ -86,9 +82,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -103,19 +97,15 @@
           "alias": "Temp. armari bateries",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "BateriesTemperatura",
+          "measurement": "BateriesTemperaturaSHS",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "B",
@@ -123,9 +113,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -140,19 +128,15 @@
           "alias": "Temp. exterior",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "ExteriorArmarisTemperatura",
+          "measurement": "ExteriorArmarisTemperaturaSHS",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "C",
@@ -160,9 +144,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -177,19 +159,15 @@
           "alias": "Temp. bateria",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "BateriesTemperaturaAdosada",
+          "measurement": "BateriesTemperaturaAdosadaSHS",
           "orderByTime": "ASC",
           "policy": "default",
           "refId": "D",
@@ -197,9 +175,7 @@
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -298,9 +274,7 @@
         "displayMode": "gradient",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
+          "calcs": ["mean"],
           "fields": "",
           "values": false
         },
@@ -312,31 +286,25 @@
           "alias": "Fora",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "ExteriorArmarisTemperatura",
+          "measurement": "ExteriorArmarisTemperaturaSHS",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT min(\"value\") FROM \"ExteriorArmarisTemperatura\" WHERE $timeFilter",
+          "query": "SELECT min(\"value\") FROM \"ExteriorArmarisTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -351,30 +319,24 @@
           "alias": "Fora",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"value\") FROM \"ExteriorArmarisTemperatura\" WHERE $timeFilter",
+          "query": "SELECT mean(\"value\") FROM \"ExteriorArmarisTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -389,30 +351,24 @@
           "alias": "Fora",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT max(\"value\") FROM \"ExteriorArmarisTemperatura\" WHERE $timeFilter",
+          "query": "SELECT max(\"value\") FROM \"ExteriorArmarisTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -427,31 +383,25 @@
           "alias": "bateries",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "ExteriorArmarisTemperatura",
+          "measurement": "ExteriorArmarisTemperaturaSHS",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT min(\"value\") FROM \"BateriesTemperatura\" WHERE $timeFilter",
+          "query": "SELECT min(\"value\") FROM \"BateriesTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "D",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -466,30 +416,24 @@
           "alias": "bateries",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"value\") FROM \"BateriesTemperatura\" WHERE $timeFilter",
+          "query": "SELECT mean(\"value\") FROM \"BateriesTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "F",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -504,30 +448,24 @@
           "alias": "bateries",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT max(\"value\") FROM \"BateriesTemperatura\" WHERE $timeFilter",
+          "query": "SELECT max(\"value\") FROM \"BateriesTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "E",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -542,31 +480,25 @@
           "alias": "electrònica",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "ElectronicaTemperatura",
+          "measurement": "ElectronicaTemperaturaSHS",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT min(\"value\") FROM \"ElectronicaTemperatura\" WHERE $timeFilter",
+          "query": "SELECT min(\"value\") FROM \"ElectronicaTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "G",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -581,30 +513,24 @@
           "alias": "electrònica",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"value\") FROM \"ElectronicaTemperatura\" WHERE $timeFilter",
+          "query": "SELECT mean(\"value\") FROM \"ElectronicaTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "I",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -619,30 +545,24 @@
           "alias": "electrònica",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT max(\"value\") FROM \"ElectronicaTemperatura\" WHERE $timeFilter",
+          "query": "SELECT max(\"value\") FROM \"ElectronicaTemperaturaSHS\" WHERE $timeFilter",
           "rawQuery": true,
           "refId": "H",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {

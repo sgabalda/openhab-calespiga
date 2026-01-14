@@ -1,0 +1,66 @@
+/*
+-------------------------
+ TEMPERATURES
+--------------------------
+*/
+String TemperaturesTitle "Temperatures"
+
+Number ElectronicaTemperaturaSHS      "T. arm. electronica"           // electronics-temperature-item
+Number BateriesTemperaturaSHS         "T. arm. bateries"              // battery-closet-temperature-item
+Number ExteriorArmarisTemperaturaSHS  "T. fora"                       // external-temperature-item
+Number BateriesTemperaturaAdosadaSHS  "T. bateries"                   // battery-temperature-item
+Number TemperaturaObjectiuSHS         "T. objectiu"                   // goal-temperature-item
+
+String VentiladorBateriesStatusSHS        "Estat vent. bat."      // battery-fan-status-item
+String VentiladorBateriesInconsistencySHS "Sincronització vent. bat." // battery-fan-inconsistency-item
+String VentiladorBateriesSetSHS           "Mode vent. bat."   // battery-fan-command-item
+
+String VentiladorElectronicaStatusSHS        "Estat vent. elect."      // electronics-fan-status-item
+String VentiladorElectronicaInconsistencySHS "Sincronització vent. elect." // electronics-fan-inconsistency-item
+String VentiladorElectronicaSetSHS           "Mode vent. elect."   // electronics-fan-command-item
+/*
+----------------------
+ HEATER 
+----------------------
+*/
+String CalentadorTitle "Calentador"
+
+String CalentadorSetSHS "Mode calentador"
+String CalentadorStatusSHS "Estat calentador"
+String CalentadorCalentSHS "Estat termostat"
+String CalentadorUltimaVegadaCalentSHS "Última vegada HOT"
+Number CalentadorEnergiaAvuiSHS "Energia avui"
+String CalentadorSincronitzacioSHS "Estat sincronització calentador"
+
+/*
+----------------------
+ POWER 
+----------------------
+*/
+
+String PotenciaTitle "Potència" <solar_panel>
+
+Number PotenciaDisponibleSHS "Potència disponible"
+Number PotenciaGeneradaSHS "Potència generada"
+Number PotenciaRebutjadaSHS "Potència rebutjada"
+Number PotenciaDinamicaFVSHS "Potència dinàmica FV"
+
+/*
+----------------------
+SYSTEM 
+----------------------
+*/
+
+String NotificacionsSHS "Notificacions SHS"
+
+String SystemTitle "Estat"
+
+/* offline detectors */
+String TemperaturesMicroControladorEstat "Estat microcontrolador temperatures"
+String CalentadorMicroControladorEstatSHS "Estat microcontrolador calentador"
+
+
+/* feature flags */
+String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
+
+
