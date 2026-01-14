@@ -46,7 +46,7 @@ sitemap shs label="Ca l'espiga SHS" {
         //TODO migrate the grafana panel
     }
 
-    Text item=PotenciaTitle label="Potència" icon="power"
+    Text item=PotenciaTitle label="Potència" icon="solar_panel"
     {
         Frame label="Potència" {
             Text item=PotenciaDisponibleSHS icon="power" label="Potència disponible: [%.0f W]"
