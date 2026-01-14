@@ -63,6 +63,4 @@ String CalentadorMicroControladorEstatSHS "Estat microcontrolador calentador"
 /* feature flags */
 String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
 
-//this is not configured in SHS, but only in OH
-String SunnyBoyUnusedPowerFromSHS "Lectura de potencia no usada per SHS"
 
