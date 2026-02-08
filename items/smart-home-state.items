@@ -46,6 +46,8 @@ Number PotenciaRebutjadaSHS "Potència rebutjada"
 Number PotenciaDinamicaFVSHS "Potència dinàmica FV"
 String PotenciaEstatLecturesSHS "Estat lectures FV"
 
+Number CalentadorPrioritatConsumSHS "Calentador"
+
 /*
 ----------------------
 SYSTEM 
