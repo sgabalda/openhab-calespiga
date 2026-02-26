@@ -34,6 +34,20 @@ String CalentadorSincronitzacioSHS "Estat sincronització calentador"
 
 /*
 ----------------------
+ Infrared Stove 
+----------------------
+*/
+String EstufaInfrarrojosTitle "Estufa infrarrojos"
+
+String EstufaInfrarrojosSetSHS "Mode estufa"
+String EstufaInfrarrojosStatusSHS "Estat estufa"
+String EstufaInfrarrojosUltimaConnexioSHS "Última connexió"
+Number EstufaInfrarrojosSetTempsManualSHS "Minuts manual"
+Number EstufaInfrarrojosEnergiaAvuiSHS "Energia avui"
+String EstufaInfrarrojosSincronitzacioSHS "Estat sincronització estufa inf."
+
+/*
+----------------------
  POWER 
 ----------------------
 */
@@ -47,6 +61,7 @@ Number PotenciaDinamicaFVSHS "Potència dinàmica FV"
 String PotenciaEstatLecturesSHS "Estat lectures FV"
 
 Number CalentadorPrioritatConsumSHS "Calentador"
+Number EstufaInfrarrojosPrioritatConsumSHS "Est. Infrarrojos"
 
 /*
 ----------------------
@@ -61,8 +76,9 @@ String SystemTitle "Estat"
 /* offline detectors */
 String TemperaturesMicroControladorEstat "Estat microcontrolador temperatures"
 String CalentadorMicroControladorEstatSHS "Estat microcontrolador calentador"
-
+String EstufaInfrarrojosMicroControladorEstatSHS "Estat microcontrolador estufa"
 
 /* feature flags */
 String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
+String EstufaInfrarrojosEnabledSHS "Habilitar estufa infrarrojos per SHS"
 

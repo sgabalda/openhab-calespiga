@@ -69,7 +69,7 @@ then
             }
             logInfo("EstufaInfrarrojos.rules", "The required power to apply is "+powerToApply)
             EstufaInfrarrojos_UsedPower.sendCommand(powerToApply)
-            EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(powerToApply)
+            EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(powerToApply)
             DestinationDeviceApplied.sendCommand("EstufaInfrarrojos")
         }else{
             logInfo("EstufaInfrarrojos.rules", "Estufa is offline, so not applying required power, but notifying as applied")
@@ -97,7 +97,7 @@ then
             currentManualPower = Double::parseDouble(currentPowerSelection.toString)
         }
         logDebug("EstufaInfrarrojos.rules", "As gestio changed, going to set value to proxy item: "+currentManualPower)
-        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentManualPower.intValue)
+        EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(currentManualPower.intValue)
 
         //we are not using unused power, because all is manual.
         EstufaInfrarrojos_UsedPower.sendCommand(0)
@@ -125,7 +125,7 @@ then
             energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
-                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
+                EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(0)
                 EstufaInfrarrojos_Potencia_UserSelection.postUpdate("0")
             ])
         }
@@ -133,7 +133,7 @@ then
     }else{
         logInfo("EstufaInfrarrojos.rules", "Gestio EstufaInfrarrojos changed to auto, starting from 0 used power")
         EstufaInfrarrojos_UsedPower.sendCommand(0)
-        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
+        EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(0)
         //cancel energy timer
         if(energyTimer!==null){
             logDebug("EstufaInfrarrojos.rules","Energy timer not null, cancelling it as mode set to auto")
@@ -158,7 +158,7 @@ then
         }
         logDebug("EstufaInfrarrojos.rules", "Going to set value to proxy item: "+currentManualPower)
 
-        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(currentManualPower.intValue)
+        EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(currentManualPower.intValue)
 
         if(energyTimer!==null){
             logDebug("EstufaInfrarrojos.rules","Energy timer not null, resetting it as user selected power changed")
@@ -177,7 +177,7 @@ then
             energyTimer = createTimer(now.plusMinutes(minutesToRun), [|
                 logDebug("EstufaInfrarrojos.rules","Timer reached, turning off estufa infrarrojos")
                 energyTimer = null
-                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
+                EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(0)
                 EstufaInfrarrojos_Potencia_UserSelection.postUpdate("0")
             ])
         }
@@ -208,7 +208,7 @@ then
                 logDebug("EstufaInfrarrojos.rules","Timer reached, changing state to offline")
                 commsTimer = null
                 EstufaInfrarrojos_Potencia_Estat.sendCommand("offline")
-                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(0)
+                EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(0)
             ])
     logDebug("EstufaInfrarrojos.rules","Comms timer resetted, now updating energy")
 
@@ -260,7 +260,7 @@ end
 
 rule "Proxy emissio debug log"
 when
-    Item EstufaInfrarrojos_Potencia_ProxyEmissio received command
+    Item EstufaInfrarrojos_Potencia_ProxyEmissioPrevi received command
 then
     if(periodicUpdateTimer!==null){
         logDebug("EstufaInfrarrojos.rules","Periodic update timer not null, cancelling it")
@@ -271,8 +271,22 @@ then
     periodicUpdateTimer = createTimer(now.plusMinutes(PERIODIC_UPDATE_MINUTES.longValue), [|
                 logDebug("EstufaInfrarrojos.rules","Sending periodic update")
                 periodicUpdateTimer = null
-                EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(( receivedValue as Number).intValue)
+                EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(( receivedValue as Number).intValue)
             ])
+end
+
+rule "Proxy emissio previ a MQTT"
+when
+    Item EstufaInfrarrojos_Potencia_ProxyEmissioPrevi received command
+then
+    if(EstufaInfrarrojosEnabledSHS.state != "true") {
+        val receivedValue = receivedCommand
+        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(( receivedValue as Number).intValue)
+
+        logInfo("EstufaInfrarrojos.rules", "Sending to estufa MQTT "+receivedCommand)
+    }else{
+        logInfo("EstufaInfrarrojos.rules", "Not propagating to MQTT as the estufa is managed in SHS")
+    }
 end
 
 rule "Reset energy today EstufaInfrarrojos"
