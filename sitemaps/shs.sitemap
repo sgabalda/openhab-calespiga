@@ -58,6 +58,7 @@ sitemap shs label="Ca l'espiga SHS" {
             
             Text item=EstufaInfrarrojosEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d Wh]" 
             Text item=EstufaInfrarrojosSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=EstufaInfrarrojosProgramatApagamentSHS icon="time" label="Apagada programada: [%s]"
             Text item=EstufaInfrarrojosMicroControladorEstatSHS icon="receiver" label="Estat micro est. [%s]"
         }
 
