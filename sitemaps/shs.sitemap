@@ -78,6 +78,17 @@ sitemap shs label="Ca l'espiga SHS" {
 
     }
 
+    Text item=XarxaTitle label="Xarxa" icon="electric_tower"
+    {
+        Frame label="Xarxa" {
+            Selection item=XarxaManualConnexioSHS icon="switch" mappings=["true"="Connectar", "false"="Desconnectar"]
+            Text item=XarxaStatusSHS icon="electric_tower" label="Estat connexió: [%s]"
+            Text item=XarxaActorsConexioSHS icon="switch" label="Raó connexió: [%s]"
+            Text item=XarxaSincronitzacioSHS icon="time" label="Sincronització [%s]"
+            Text item=XarxaTarifaSHS icon="price" label="Tarifa: [%s]"
+        }
+    }
+
     Text item=SystemTitle label="Estat" icon="alert"
     {
         Frame label="Alarmes" {
@@ -87,6 +98,7 @@ sitemap shs label="Ca l'espiga SHS" {
         Frame label="Controls" {
             Selection item=CalentadorHabilitatsSHS icon="network" label="Control calent. [%s]" mappings=["true"="SHS", "false"="OH"]
             Selection item=EstufaInfrarrojosEnabledSHS icon="network" label="Control estufa infrarrojos [%s]" mappings=["true"="SHS", "false"="OH"]
+            Selection item=XarxaEnabledSHS icon="network" label="Control xarxa [%s]" mappings=["true"="SHS", "false"="OH"]
         }
     }
 }

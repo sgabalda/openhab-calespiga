@@ -66,6 +66,20 @@ Number EstufaInfrarrojosPrioritatConsumSHS "Est. Infrarrojos"
 
 /*
 ----------------------
+ GRID CONNECTION
+----------------------
+*/
+
+String XarxaTitle "Xarxa"
+
+String XarxaStatusSHS "Estat connexió xarxa"       // status-item
+String XarxaManualConnexioSHS "Connexió manual xarxa" // manual-switch-item
+String XarxaActorsConexioSHS "Raó connexió" // connection-reason-item
+String XarxaSincronitzacioSHS "Sincronització xarxa"  // sync-status-item
+String XarxaTarifaSHS "Tarifa xarxa"                 // tariff-item
+
+/*
+----------------------
 SYSTEM 
 ----------------------
 */
@@ -82,4 +96,5 @@ String EstufaInfrarrojosMicroControladorEstatSHS "Estat microcontrolador estufa"
 /* feature flags */
 String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
 String EstufaInfrarrojosEnabledSHS "Habilitar estufa infrarrojos per SHS"
+String XarxaEnabledSHS "Habilitar xarxa per SHS"
 
