@@ -24,7 +24,7 @@ PubSubClient client(ethClient);
 //Relay config
 int RELAY_1 = 5;
 int RELAY_2 = 6;
-int RELAY_3 = 7;
+int RELAY_3 = 8;  //7 is not working on the nano, so using 8.
 int OPTO_READ = 3;
 byte optoHOT = HIGH;
 byte optoCOLD = LOW;   //HIGH is when the optocoupler does receive 220V
