@@ -1,6 +1,7 @@
 /*
-  Turns on the three relays for the heater
+  Manages the pumps of the pond and the associated depth sensor
 */
+#include <avr/wdt.h>
 #include <UIPEthernet.h>
 #include <PubSubClient.h>
 #include <MemoryFree.h>
@@ -59,6 +60,11 @@
 #define RELAY_ON HIGH
 #define RELAY_OFF LOW
 
+//Pressure sensor calibration
+#define V0  0.52 //Volts without liquid
+#define V1  2.56 //Volts with h1 of liquid
+#define h1  1.53 // measured height at V1
+
 // Networking details
 byte mac[]    = {  0x00, 0xAA, 0xBB, 0xCC, 0xDE, 0x03 };  // Ethernet shield (W5100) MAC address
 IPAddress ip(192, 168, 2, 77);                           // Ethernet shield (W5100) IP address
@@ -67,10 +73,7 @@ IPAddress server(192, 168, 2, 114);                       // MTTQ server IP addr
 EthernetClient ethClient;
 PubSubClient client(ethClient);
 
-//Pressure sensor calibration
-double V0 = 0.52; //Volts without liquid
-double V1 = 2.56; //Volts with h1 of liquid
-double h1 = 1.53; // measured height at V1
+//Pressure sensor variables
 double level, Vout, aux, i, result;
 int previousLiters = 0;
 int maxHeightCm = 153;  //max measured height
@@ -124,6 +127,7 @@ void setup() {
   Serial.println(Ethernet.localIP());
 
   lastOrder = millis();
+  wdt_enable(WDTO_8S);
 }
 
 void reportMemory(){
@@ -163,6 +167,7 @@ void reconnect()
 }
 
 void loop() {
+  wdt_reset();
   if (!client.connected()){
     reconnect();
   }

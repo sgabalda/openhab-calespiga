@@ -86,6 +86,28 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=XarxaActorsConexioSHS icon="switch" label="Raó connexió: [%s]"
             Text item=XarxaSincronitzacioSHS icon="time" label="Sincronització [%s]"
             Text item=XarxaTarifaSHS icon="price" label="Tarifa: [%s]"
+            Text item=XarxaMicroControladorEstatSHS icon="receiver" label="Estat microcontrolador xarxa: [%s]"
+        }
+    }
+
+    Text item=XarxaBateriaTitle label="Bateria" icon="battery"
+    {
+        Frame label="Bateria" {
+            Text item=XarxaBateriaEstatSHS icon="battery" label="Estat: [%s]"
+            Selection item=XarxaBateriaCarregarLowSHS icon="battery" label="Càrrega baixa: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
+            Selection item=XarxaBateriaCarregarMediumSHS icon="battery" label="Càrrega mitja: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
+            Text item=XarxaBateriaMicroControladorEstatSHS icon="receiver" label="Estat micro: [%s]"
+        }
+    }
+
+    Text item=CarChargerTitle label="Vehicle Elèctric" icon="electric_car"
+    {
+        Frame label="Carregador vehicle" {
+            Text item=CarChargerStatusSHS icon="car" label="Estat: [%s]"
+            Text item=CarChargerMicroControladorEstatSHS icon="network" label="Estat microcontrolador: [%s]"
+            Text item=CarChargerChargingStatusSHS icon="indicator" label="Connexió: [%s]"
+            Text item=CarChargerPowerSHS icon="power" label="Potència: [%.0f W]"
+            Text item=CarChargerEnergiaAvuiSHS icon="energy" label="Energia carregada avui: [%,d Wh]"
         }
     }
 

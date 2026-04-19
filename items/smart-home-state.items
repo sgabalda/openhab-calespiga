@@ -77,7 +77,30 @@ String XarxaManualConnexioSHS "Connexió manual xarxa" // manual-switch-item
 String XarxaActorsConexioSHS "Raó connexió" // connection-reason-item
 String XarxaSincronitzacioSHS "Sincronització xarxa"  // sync-status-item
 String XarxaTarifaSHS "Tarifa xarxa"                 // tariff-item
+String XarxaMicroControladorEstatSHS "Estat microcontrolador xarxa"
 
+/*
+----------------------
+BATTERY
+----------------------
+*/
+String XarxaBateriaTitle "Bateria"
+String XarxaBateriaEstatSHS "Estat bateria"               // battery status item
+String XarxaBateriaCarregarLowSHS "Tarifa càrrega bateria low"
+String XarxaBateriaCarregarMediumSHS "Tarifa càrrega bateria medium"
+String XarxaBateriaMicroControladorEstatSHS "Estat microcontrolador bateria"
+
+/*
+----------------------
+CAR CHARGER
+----------------------
+*/
+String CarChargerTitle "Vehicle Elèctric"
+String CarChargerStatusSHS "Estat carregador"
+String CarChargerMicroControladorEstatSHS "Estat microcontrolador carregador"
+String CarChargerChargingStatusSHS "Estat càrrega carregador"
+Number CarChargerPowerSHS "Potència carregador"
+Number CarChargerEnergiaAvuiSHS "Energia carregada avui"
 /*
 ----------------------
 SYSTEM 

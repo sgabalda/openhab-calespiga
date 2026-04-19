@@ -61,4 +61,14 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type number : Altura "Altura" [ stateTopic="bassa/height" ]
             Type number : Memoria "Memoria" [ stateTopic="bassa/memory" ]
     }
+
+    //topics and thing to transition to SHS before moving this to an arduino/esp32
+    Thing mqtt:topic:cotxe "cotxe" (mqtt:broker:defaultBroker) {
+        Channels:
+            Type string : CotxeStatus "CotxeStatus" [ commandTopic="cotxe/carrega/status" ]
+            Type string : CotxeSet "CotxeSet" [ stateTopic="cotxe/carrega/set" ]
+            Type string : CotxePower "CotxePower" [ commandTopic="cotxe/carrega/power" ]
+            Type string : CotxeEnergy "CotxeEnergy" [ commandTopic="cotxe/carrega/energy" ]
+    }
+
 }

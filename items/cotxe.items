@@ -14,6 +14,13 @@ Switch CotxeEncesa_Control "Encesa del cotxe" (GPIOOutput, GPIOOutputInverted) /
 String CotxeEncesa_ControlNumber "3" // Item required with the GPIO number
 Switch CotxeEncesa_Control_Proxy "Encesa del cotxe" <connect>   //proxy to turn on or off the cotxe, or test it
 
+// ITEMS FOR THE TRANSITION TO SHS and ARDUINO/ESP32
+String CotxeEncesa_Control_MQTTProxy "Encesa cotxe MQTT" {channel="mqtt:topic:cotxe:CotxeSet"} //proxy to turn on or off the cotxe, or test it
+String CotxePotenciaMQTT "Potencia cotxe MQTT" {channel="mqtt:topic:cotxe:CotxePower"} //proxy to send the power of the cotxe, or test it
+String CotxeEnergiaMQTT "Energia cotxe MQTT" {channel="mqtt:topic:cotxe:CotxeEnergy"} //proxyto send the energia of the cotxe, or test it
+String CotxeStatusMQTT "Estat cotxe MQTT" {channel="mqtt:topic:cotxe:CotxeStatus"} //proxy to send the status of the cotxe, or test it
+// END ITEMS FOR THE TRANSITION TO SHS and ARDUINO/ESP32
+
 Switch CotxeEncesa_Manual_Proxy "Encesa manual cotxe"
 Switch CotxeEncesa_FV_Proxy "Encesa cotxe excedent fotovoltaic"
 Switch CotxeEncesa_Xarxa_Proxy "Encesa cotxe per xarxa"

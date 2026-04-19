@@ -407,6 +407,46 @@ then
     }  
 end
 
+//RULEs TO SIMULATE THE RPI is an Arduino/ESP32 for testing without the real one
+rule "Enviar MQTT estat Carregador"
+when
+    Item CotxeEncesa_Control received command
+then
+    val newState = receivedCommand
+    logDebug("Cotxe.rules", "Simulating MQTT proxy for charger state, new state is "+ newState)
+    if(newState == ON){
+        CotxeStatusMQTT.sendCommand("ON")
+    }else{
+        CotxeStatusMQTT.sendCommand("OFF")
+    }
+end
+
+rule "Enviar MQTT Potencia Carregador"
+when
+    Item Cotxe_Potencia_Sensor changed
+then
+    val potenciaSensor = Cotxe_Potencia_Sensor.state
+    var potencia = 0.0
+    if(potenciaSensor != NULL){
+        potencia = (potenciaSensor as Number).doubleValue
+    }
+    CotxePotenciaMQTT.sendCommand(potencia + "")
+end
+
+rule "Enviar MQTT Energia Carregador"
+when
+    Item Cotxe_Energia_Sensor changed
+then
+    val energiaSensor = Cotxe_Energia_Sensor.state
+    var energia = 0.0
+    if(energiaSensor != NULL){
+        energia = (energiaSensor as Number).doubleValue
+    }
+    CotxeEnergiaMQTT.sendCommand(energia + "")
+end
+
+//END RULES TO SIMULATE THE RPI is an Arduino/ESP32 for testing without the real one
+
 //RULES FOR MANAGING SENSOR DATA OF THE CHARGER
 
 rule "Canvi potencia cotxe"
