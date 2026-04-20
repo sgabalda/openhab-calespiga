@@ -411,6 +411,7 @@ end
 rule "Enviar MQTT estat Carregador"
 when
     Item CotxeEncesa_Control received command
+    or Time cron "0/15 * * * * * *"
 then
     val newState = receivedCommand
     logDebug("Cotxe.rules", "Simulating MQTT proxy for charger state, new state is "+ newState)
@@ -423,7 +424,7 @@ end
 
 rule "Enviar MQTT Potencia Carregador"
 when
-    Item Cotxe_Potencia_Sensor changed
+    Item Cotxe_Potencia_Sensor received update
 then
     val potenciaSensor = Cotxe_Potencia_Sensor.state
     var potencia = 0.0
@@ -435,7 +436,7 @@ end
 
 rule "Enviar MQTT Energia Carregador"
 when
-    Item Cotxe_Energia_Sensor changed
+    Item Cotxe_Energia_Sensor received update
 then
     val energiaSensor = Cotxe_Energia_Sensor.state
     var energia = 0.0
