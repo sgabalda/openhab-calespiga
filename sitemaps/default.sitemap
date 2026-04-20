@@ -139,7 +139,6 @@ sitemap default label="Ca l'espiga" {
             Text item=CarChargerEnergiaAvuiSHS icon="energy" label="Energia carregada avui: [%,d Wh]"
         }
     }
-    }
     Text item=EstufaInfrarrojos_Title label="Estufes" icon="radiator"
     {
         Frame label="Estufa infrarrojos" {
