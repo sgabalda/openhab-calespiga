@@ -132,7 +132,9 @@ sitemap default label="Ca l'espiga" {
             Webview height=14 url="http://calespiga.ddns.net:3000/d/euckLcRRz/cotxe?orgId=1"
         }
         Frame label="Carregador vehicle SHS" {
+            Selection item=CarChargerSetSHS icon="switch" mappings=["off"="Off","on"="On","automatic"="Automàtic"]
             Text item=CarChargerStatusSHS icon="car" label="Estat: [%s]"
+            Text item=CarChargerSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CarChargerMicroControladorEstatSHS icon="network" label="Estat microcontrolador: [%s]"
             Text item=CarChargerChargingStatusSHS icon="indicator" label="Connexió: [%s]"
             Text item=CarChargerPowerSHS icon="power" label="Potència: [%.0f W]"

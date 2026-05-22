@@ -97,7 +97,9 @@ CAR CHARGER
 */
 String CarChargerTitle "Vehicle Elèctric"
 String CarChargerStatusSHS "Estat carregador"
+String CarChargerSetSHS "Mode carregador"
 String CarChargerMicroControladorEstatSHS "Estat microcontrolador carregador"
+String CarChargerSincronitzacioSHS "Estat sincronització carregador"
 String CarChargerChargingStatusSHS "Estat càrrega carregador"
 Number CarChargerPowerSHS "Potència carregador"
 Number CarChargerEnergiaAvuiSHS "Energia carregada avui"
@@ -120,4 +122,5 @@ String EstufaInfrarrojosMicroControladorEstatSHS "Estat microcontrolador estufa"
 String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
 String EstufaInfrarrojosEnabledSHS "Habilitar estufa infrarrojos per SHS"
 String XarxaEnabledSHS "Habilitar xarxa per SHS"
+String CarChargerHabilitatsSHS "Habilitar carregador per SHS"
 

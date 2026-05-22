@@ -103,7 +103,9 @@ sitemap shs label="Ca l'espiga SHS" {
     Text item=CarChargerTitle label="Vehicle Elèctric" icon="electric_car"
     {
         Frame label="Carregador vehicle" {
+            Selection item=CarChargerSetSHS icon="switch" mappings=["off"="Off","on"="On","automatic"="Automàtic"]
             Text item=CarChargerStatusSHS icon="car" label="Estat: [%s]"
+            Text item=CarChargerSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CarChargerMicroControladorEstatSHS icon="network" label="Estat microcontrolador: [%s]"
             Text item=CarChargerChargingStatusSHS icon="indicator" label="Connexió: [%s]"
             Text item=CarChargerPowerSHS icon="power" label="Potència: [%.0f W]"
@@ -121,6 +123,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Selection item=CalentadorHabilitatsSHS icon="network" label="Control calent. [%s]" mappings=["true"="SHS", "false"="OH"]
             Selection item=EstufaInfrarrojosEnabledSHS icon="network" label="Control estufa infrarrojos [%s]" mappings=["true"="SHS", "false"="OH"]
             Selection item=XarxaEnabledSHS icon="network" label="Control xarxa [%s]" mappings=["true"="SHS", "false"="OH"]
+            Selection item=CarChargerHabilitatsSHS icon="network" label="Control carregador [%s]" mappings=["true"="SHS", "false"="OH"]
         }
     }
 }

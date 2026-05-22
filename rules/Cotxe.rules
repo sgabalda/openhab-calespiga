@@ -397,15 +397,38 @@ rule "Activar o desactivar carregador Cotxe"
 when
     Item CotxeEncesa_Control_Proxy changed
 then
-    val newState = CotxeEncesa_Control_Proxy.state
-    logDebug("Cotxe.rules", "The cotxe plug will be set to "+ newState)
-    if (newState == ON) {
-        logInfo("Cotxe.rules", "The cotxe charger changed to ON as it has been turned on")
-        CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
-    }else{
-        logInfo("Cotxe.rules", "The cotxe charger changed to OFF as it has been turned off")
-        CotxeEncesa_Control.sendCommand(OFF) 
-    }  
+    if(CarChargerHabilitatsSHS.state != "true") {
+        val newState = CotxeEncesa_Control_Proxy.state
+        logInfo("Cotxe.rules", "The cotxe is going to be set to "+ CotxeEncesa_Control_Proxy.state +", as the SHS is disabled")
+        if (newState == ON) {
+            logInfo("Cotxe.rules", "The cotxe charger changed to ON as it has been turned on")
+            CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
+        }else{
+            logInfo("Cotxe.rules", "The cotxe charger changed to OFF as it has been turned off")
+            CotxeEncesa_Control.sendCommand(OFF) 
+        }
+    }else{  
+        logInfo("Cotxe.rules", "The cotxe was going to be set to "+ CotxeEncesa_Control_Proxy.state +", but the SHS is enabled, so ignoring it")
+    }
+end
+
+rule "Activar o desactivar carregador Cotxe per MQTT"
+when
+    Item CotxeEncesa_Control_MQTTProxy changed
+then
+    if(CarChargerHabilitatsSHS.state == "true") {
+        val newState = CotxeEncesa_Control_MQTTProxy.state
+        logInfo("Cotxe.rules", "The cotxe is going to be set to "+ CotxeEncesa_Control_MQTTProxy.state +" received from MQTT, as the SHS is enabled")
+        if (newState == "on") {
+            logInfo("Cotxe.rules", "The cotxe charger changed to ON as it has been turned on")
+            CotxeEncesa_Control.sendCommand(ON)  //turn it on or off
+        }else{
+            logInfo("Cotxe.rules", "The cotxe charger changed to OFF as it has been turned off")
+            CotxeEncesa_Control.sendCommand(OFF) 
+        }
+    }else{  
+        logInfo("Cotxe.rules", "The cotxe was going to be set to "+ CotxeEncesa_Control_MQTTProxy.state +", but the SHS is disabled, so ignoring it")
+    }
 end
 
 //RULEs TO SIMULATE THE RPI is an Arduino/ESP32 for testing without the real one
