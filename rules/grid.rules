@@ -171,11 +171,17 @@ when
 then
     val ordre = receivedCommand
     logDebug("grid", "Executor Grid Connection received "+ordre)
-    if(ordre == ON){
-        GridConnectionSet.sendCommand("start")
+    if(XarxaEnabledSHS.state != "true") {
+        if(ordre == ON){
+            GridConnectionSet.sendCommand("start")
+        }else{
+            GridConnectionSet.sendCommand("stop")
+        }
+        logInfo("grid", "Sending to grid MQTT "+ordre+" as grid is not enabled in SHS")
     }else{
-        GridConnectionSet.sendCommand("stop")
+        logInfo("grid", "Not propagating to MQTT as the grid is managed in SHS")
     }
+    
 end
 
 rule "Comprova alarma Grid Connection"
