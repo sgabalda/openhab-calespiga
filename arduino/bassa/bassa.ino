@@ -57,8 +57,11 @@
 #define AIGUAGRISA_OFF 1  // Can transition to ON only
 #define AIGUAGRISA_ON 2  //can transition to OFF only
 
-#define RELAY_ON HIGH
-#define RELAY_OFF LOW
+#define RELAY_NO_ON HIGH
+#define RELAY_NO_OFF LOW
+
+#define RELAY_NC_ON LOW
+#define RELAY_NC_OFF HIGH
 
 //Pressure sensor calibration
 #define V0  0.52 //Volts without liquid
@@ -284,7 +287,7 @@ void applyStates(){
       Serial.println(F("Finished transition to DEPURADORA/OFF"));
       if(status_circulacio == CIRCULACIO_PREPARING_DEPURADORA){
         status_circulacio = CIRCULACIO_DEPURADORA;
-        turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_ON); //turn on the pump for depuradora
+        turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_NC_ON); //turn on the pump for depuradora
         client.publish(TOPIC_CIRCULACIO_STATUS, MESSAGE_CIRCULACIO_DEPURADORA);
       }else{
         status_circulacio = CIRCULACIO_OFF;
@@ -366,34 +369,34 @@ void turnAllOff(){
 
 //transicions per aigues grises
 void turnAiguagrisaOff(){
-  turnRelay(RELAY_BOMBA_AIGUAGRISA, RELAY_OFF);
+  turnRelay(RELAY_BOMBA_AIGUAGRISA, RELAY_NC_OFF);
   client.publish(TOPIC_AIGUAGRISA_STATUS, "off");
   Serial.println(F("Aiguagrisa: off"));
 }
 
 void turnAiguagrisaOn(){
-  turnRelay(RELAY_BOMBA_AIGUAGRISA, RELAY_ON);
+  turnRelay(RELAY_BOMBA_AIGUAGRISA, RELAY_NC_ON);
   client.publish(TOPIC_AIGUAGRISA_STATUS, "on");
   Serial.println(F("Aiguagrisa: on"));
 }
 
 //transicions per bomba reg
 void turnBombaRegOff(){
-  turnRelay(RELAY_BOMBA_REG, RELAY_OFF);
+  turnRelay(RELAY_BOMBA_REG, RELAY_NO_OFF);
   client.publish(TOPIC_REG_STATUS, "off");
   Serial.println(F("Reg: off"));
 }
 
 void turnBombaRegOn(){
-  turnRelay(RELAY_BOMBA_REG, RELAY_ON);
+  turnRelay(RELAY_BOMBA_REG, RELAY_NO_ON);
   client.publish(TOPIC_REG_STATUS, "on");
   Serial.println(F("Reg: on"));
 }
 
 //transicions per circulacio
 void turnCirculacioOff(){
-  turnRelay(RELAY_ELECTROVALVULA, RELAY_OFF); //set the connection to depuradora
-  turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_OFF); //turn off the pump for depuradora
+  turnRelay(RELAY_ELECTROVALVULA, RELAY_NO_OFF); //set the connection to depuradora
+  turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_NC_OFF); //turn off the pump for depuradora
   if(status_circulacio == CIRCULACIO_DEPURADORA || status_circulacio == CIRCULACIO_OFF){
     status_circulacio = CIRCULACIO_OFF;
     client.publish(TOPIC_CIRCULACIO_STATUS, MESSAGE_CIRCULACIO_OFF);
@@ -413,9 +416,9 @@ void turnCirculacioOff(){
 }
 
 void turnCirculacioDepuradora(){
-  turnRelay(RELAY_ELECTROVALVULA, RELAY_OFF); //set the connection to depuradora
+  turnRelay(RELAY_ELECTROVALVULA, RELAY_NO_OFF); //set the connection to depuradora
   if(status_circulacio == CIRCULACIO_DEPURADORA || status_circulacio == CIRCULACIO_OFF){
-    turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_ON); //turn on the pump for depuradora
+    turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_NC_ON); //turn on the pump for depuradora
     status_circulacio = CIRCULACIO_DEPURADORA;
     client.publish(TOPIC_CIRCULACIO_STATUS, MESSAGE_CIRCULACIO_DEPURADORA);
     Serial.println(F("Circulacio: DEP"));
@@ -434,8 +437,8 @@ void turnCirculacioDepuradora(){
 }
 
 void turnCirculacioDiposit(){
-  turnRelay(RELAY_ELECTROVALVULA, RELAY_ON); //set the connection to diposit
-  turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_OFF); //turn off the pump for depuradora
+  turnRelay(RELAY_ELECTROVALVULA, RELAY_NO_ON); //set the connection to diposit
+  turnRelay(RELAY_BOMBA_DEPURADORA, RELAY_NC_OFF); //turn off the pump for depuradora
   if(status_circulacio == CIRCULACIO_DEPURADORA || status_circulacio == CIRCULACIO_OFF || status_circulacio == CIRCULACIO_PREPARING_DEPURADORA
     || status_circulacio == CIRCULACIO_PREPARING_OFF){
     status_circulacio = CIRCULACIO_PREPARING_DIPOSIT;
@@ -456,5 +459,5 @@ void turnCirculacioDiposit(){
 
 void turnRelay(int relay, int status) {
   digitalWrite(relay, status);
-  delay(100);
+  delay(330);
 }

@@ -63,6 +63,7 @@ String PotenciaEstatLecturesSHS "Estat lectures FV"
 
 Number CalentadorPrioritatConsumSHS "Calentador"
 Number EstufaInfrarrojosPrioritatConsumSHS "Est. Infrarrojos"
+Number CarChargerPrioritatConsumSHS "Carregador VE"
 
 /*
 ----------------------
@@ -76,6 +77,7 @@ String XarxaStatusSHS "Estat connexió xarxa"       // status-item
 String XarxaManualConnexioSHS "Connexió manual xarxa" // manual-switch-item
 String XarxaActorsConexioSHS "Raó connexió" // connection-reason-item
 String XarxaSincronitzacioSHS "Sincronització xarxa"  // sync-status-item
+String XarxaSincronitzacioReleSHS "Sincronització rele xarxa"  // sync-relay-status-item
 String XarxaTarifaSHS "Tarifa xarxa"                 // tariff-item
 String XarxaMicroControladorEstatSHS "Estat microcontrolador xarxa"
 
@@ -98,6 +100,7 @@ CAR CHARGER
 String CarChargerTitle "Vehicle Elèctric"
 String CarChargerStatusSHS "Estat carregador"
 String CarChargerSetSHS "Mode carregador"
+String CarChargerMaxGridTariffSHS "Màxima tarifa xarxa carregador"
 String CarChargerMicroControladorEstatSHS "Estat microcontrolador carregador"
 String CarChargerSincronitzacioSHS "Estat sincronització carregador"
 String CarChargerChargingStatusSHS "Estat càrrega carregador"
