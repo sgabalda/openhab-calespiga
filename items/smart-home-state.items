@@ -26,7 +26,7 @@ String VentiladorElectronicaSetSHS           "Mode vent. elect."   // electronic
 String CalentadorTitle "Calentador"
 
 String CalentadorSetSHS "Mode calentador"
-String CalentadorStatusSHS "Estat calentador"
+Number CalentadorStatusSHS "Estat calentador"
 String CalentadorCalentSHS "Estat termostat"
 String CalentadorUltimaVegadaCalentSHS "Última vegada HOT"
 Number CalentadorEnergiaAvuiSHS "Energia avui"

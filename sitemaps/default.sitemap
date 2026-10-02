@@ -21,7 +21,7 @@ sitemap default label="Ca l'espiga" {
         Frame label="Calentador" {
             
             Selection item=CalentadorSetSHS icon="thermostat_heater" mappings=["off"="Off", "500"="500W", "1000"="1000W", "2000"="2000W", "automatic"="Automàtic"]
-            Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%s W]" 
+            Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%d W]" 
 
             Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
             Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
