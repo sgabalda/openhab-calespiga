@@ -39,14 +39,6 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type number : Set "Set" [ commandTopic="estufa1/set" ]
             Type number : Memoria "Memoria" [ stateTopic="estufa1/memory" ]
     }
-
-    Thing mqtt:topic:arduino_calentador "arduino_calentador" (mqtt:broker:defaultBroker) {
-        Channels:
-            Type string : TermostatStatus "TermostatStatus" [ stateTopic="arduino_calentador/termostat/status" ]
-            Type string : PotenciaStatus "PotenciaStatus" [ stateTopic="arduino_calentador/potencia/status" ]
-            Type string : PotenciaSet "PotenciaSet" [ commandTopic="arduino_calentador/potencia/set" ]
-            Type number : Memoria "Memoria" [ stateTopic="arduino_calentador/memory" ]
-    }
     
     Thing mqtt:topic:bassa "bassa" (mqtt:broker:defaultBroker) {
         Channels:

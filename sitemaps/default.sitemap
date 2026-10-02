@@ -19,15 +19,17 @@ sitemap default label="Ca l'espiga" {
     Text item=CalentadorTitle label="Calentador" icon="heater_display"
     {
         Frame label="Calentador" {
-            Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
-            Selection item=Calentador_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "500"="500W", "1000"="1000W", "2000"="2000W"]
-            Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat Pot.: [%d W]" 
             
-            Text item=Calentador_Termostat_UserDisplay icon="calentador_termostat" label="Estat Term.: [%s]" 
-            Text item=Calentador_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
-            Text item=Calentador_Hot_Date icon="time" label="Ultim cop calent: [%1$td/%1$tm/%1$tY %1$tT]" 
+            Selection item=CalentadorSetSHS icon="thermostat_heater" mappings=["off"="Off", "500"="500W", "1000"="1000W", "2000"="2000W", "automatic"="Automàtic"]
+            Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%s W]" 
+
+            Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
+            Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
             
-            Text item=Calentador_Energia_Avui icon="energy" label="Energia avui: [%.3f kWh]" 
+            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d Wh]" 
+
+            Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
         }
         Frame{
             Webview height=14 url="http://calespiga.ddns.net:3000/d/yImV7EWgz/calentador?orgId=1"
