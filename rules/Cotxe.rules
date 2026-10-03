@@ -351,14 +351,6 @@ then
 
 end 
 
-rule "Update car icon"
-when
-    Item CotxeConnexio_Status changed
-then
-    val status = CotxeConnexio_Status.state.toString
-    CotxeTitle.sendCommand(status + "")
-end
-
 rule "Restart blocked charger"
 when
     Item CotxeEncesa_Restart_Proxy changed 
@@ -429,6 +421,15 @@ then
     }else{  
         logInfo("Cotxe.rules", "The cotxe was going to be set to "+ CotxeEncesa_Control_MQTTProxy.state +", but the SHS is disabled, so ignoring it")
     }
+end
+
+
+rule "Update car icon"
+when
+    Item CarChargerStatusSHS changed
+then
+    val status = CarChargerStatusSHS.state.toString
+    CotxeTitle.sendCommand(status + "")
 end
 
 //RULEs TO SIMULATE THE RPI is an Arduino/ESP32 for testing without the real one

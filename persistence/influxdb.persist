@@ -9,7 +9,7 @@ GestioAutomaticaCalentador,Durada_Encesa_Manual,Encesa_Bomba_Auto_Mati,Durada_En
 PotenciaDisponibleSHS,PotenciaGeneradaSHS,PotenciaRebutjadaSHS,PotenciaDinamicaFVSHS: strategy = everyChange
 ElectronicaTemperaturaSHS,BateriesTemperaturaSHS,ExteriorArmarisTemperaturaSHS,BateriesTemperaturaAdosadaSHS: strategy = everyMinute
 Calentador_Controlador_Memoria,Diposit_Controlador_Memoria,EstufaInfrarrojos_Controlador_Memoria,BassaControladorMemoria: strategy = everyChange, everyMinute
-CalentadorEnergiaAvuiSHS,CalentadorStatusSHS,Cotxe_Potencia_UserDisplay,Cotxe_Energia_Avui,DipositPercentNumber,DipositLitres: strategy = everyChange, everyMinute
+CalentadorEnergiaAvuiSHS,CalentadorStatusSHS,CarChargerPowerSHS,CarChargerEnergiaAvuiSHS,DipositPercentNumber,DipositLitres: strategy = everyChange, everyMinute
 BassaPercentNumber,BassaLitres,BassaAltura: strategy = everyChange, everyMinute
 UsedPowerPersist*,AvailablePower: strategy = everyMinute
 }
