@@ -251,8 +251,8 @@ end
 
 rule "Update icon for xarxa in sitemap"
 when
-    Item GridStatus changed
+    Item XarxaBateriaEstatSHS changed
 then
-    if(newState == ON) XarxaBateriaTitle.postUpdate("on")
+    if(newState == "on") XarxaBateriaTitle.postUpdate("on")
     else XarxaBateriaTitle.postUpdate("off")
 end
