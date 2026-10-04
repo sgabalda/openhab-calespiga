@@ -261,7 +261,7 @@ then
     }
 end
 
-rule "Activar o desactivar carregador Cotxe per MQTT"
+rule "Activar o desactivar carregador Cotxe per MQTT" //THIS ONE IS TO KEEP until the RPI is replaced by an arduino for reading the sensor
 when
     Item CotxeEncesa_Control_MQTTProxy changed
 then
@@ -283,7 +283,7 @@ end
 
 rule "Update car icon"
 when
-    Item CarChargerStatusSHS changed
+    Item CarChargerChargingStatusSHS changed
 then
     val status = CarChargerChargingStatusSHS.state.toString
     logWarn("Cotxe.rules", "The cotxe charger icon item set to "+status)
@@ -341,7 +341,7 @@ then
     Cotxe_UsedPower.sendCommand(receivedCommand)
 end
 
-rule "lectura sensor cotxe"
+rule "lectura sensor cotxe"         //THIS ONE IS TO KEEP until the RPI is replaced by an arduino for reading the sensor
 when
     Item Cotxe_Sensor_Lectura received update
 then
