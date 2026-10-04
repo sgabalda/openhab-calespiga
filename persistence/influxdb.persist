@@ -11,5 +11,4 @@ ElectronicaTemperaturaSHS,BateriesTemperaturaSHS,ExteriorArmarisTemperaturaSHS,B
 Calentador_Controlador_Memoria,Diposit_Controlador_Memoria,EstufaInfrarrojos_Controlador_Memoria,BassaControladorMemoria: strategy = everyChange, everyMinute
 CalentadorEnergiaAvuiSHS,CalentadorStatusSHS,CarChargerPowerSHS,CarChargerEnergiaAvuiSHS,DipositPercentNumber,DipositLitres: strategy = everyChange, everyMinute
 BassaPercentNumber,BassaLitres,BassaAltura: strategy = everyChange, everyMinute
-UsedPowerPersist*,AvailablePower: strategy = everyMinute
 }

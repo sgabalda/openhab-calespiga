@@ -219,26 +219,19 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmGridConnection_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=5 maxValue=60 step=5
         }
     }
-    Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
+
+    Text item=PotenciaTitle label="Potència" icon="solar_panel"
     {
-        Frame label="Potencia sobrant" {
-            Text item=AvailablePower icon="receiver" label="Potencia disponible [%d W]"
-            Text item=NotUsedPower icon="receiver" label="Potencia no usada [%d W]"
+        Frame label="Potència" {
+            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"
         }
         Frame label="Dispositius" {
-            Setpoint item=Cotxe_Priority icon="electric_car" label="Prioritat cotxe [%d]" minValue=1 maxValue=4 step=1
-            Setpoint item=Calentador_Priority icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=4 step=1
-            Setpoint item=EstufaInfrarrojos_Priority icon="radiator" label="Prioritat Estufa infrarrojos [%d]" minValue=1 maxValue=4 step=1
-            Setpoint item=Bassa_Priority icon="faucet" label="Prioritat Bassa [%d]" minValue=1 maxValue=4 step=1
-        }
-        Frame label="Dispositius SHS" {
             Setpoint item=CalentadorPrioritatConsumSHS icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=3 step=1
             Setpoint item=EstufaInfrarrojosPrioritatConsumSHS icon="radiator" label="Prioritat estufa infrarrojos [%d]" minValue=1 maxValue=3 step=1
             Setpoint item=CarChargerPrioritatConsumSHS icon="electric_car" label="Prioritat carregador VE [%d]" minValue=1 maxValue=3 step=1
         }
-        Frame{
-            Webview height=14 url="http://calespiga.ddns.net:3000/d/HIpApQWRk/potencia-sobrant"
-        }
+
     }
     Text item=SystemTitle label="Sistema" icon="settings"
     {
