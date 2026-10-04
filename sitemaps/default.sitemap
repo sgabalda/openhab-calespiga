@@ -123,11 +123,11 @@ sitemap default label="Ca l'espiga" {
         Frame label="Cotxe" {
             Selection item=CarChargerSetSHS icon="switch" mappings=["off"="Off","on"="On","automatic_fv"="Automàtic FV","automatic_grid"="Automàtic xarxa"]
             Selection item=CarChargerMaxGridTariffSHS icon="energy" label="Màxima tarifa xarxa: [%s]" mappings=["vall"="Vall","pla + vall"="Pla + Vall","all tariffs"="Totes"]
-            Text item=CarChargerStatusSHS icon="car" label="Estat: [%s]"
+            Text item=CarChargerStatusSHS icon="switch" label="Estat: [%s]"
             Text item=CarChargerSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CarChargerMicroControladorEstatSHS icon="network" label="Estat microcontrolador: [%s]"
             Text item=CarChargerChargingStatusSHS icon="indicator" label="Connexió: [%s]"
-            Text item=CarChargerPowerSHS icon="power" label="Potència: [%.0f W]"
+            Text item=CarChargerPowerSHS icon="humidity" label="Potència: [%.0f W]"
             Text item=CarChargerEnergiaAvuiSHS icon="energy" label="Energia carregada avui: [%,d Wh]"
         }
         Frame{

@@ -428,7 +428,8 @@ rule "Update car icon"
 when
     Item CarChargerStatusSHS changed
 then
-    val status = CarChargerStatusSHS.state.toString
+    val status = CarChargerChargingStatusSHS.state.toString
+    logWarn("Cotxe.rules", "The cotxe charger icon item set to "+status)
     CotxeTitle.sendCommand((status + "").toUpperCase)
 end
 
@@ -481,25 +482,6 @@ when
 then
     logDebug("Cotxe.rules", "The cotxe is now using "+ receivedCommand +", updating UsedPower")
     Cotxe_UsedPower.sendCommand(receivedCommand)
-end
-
-rule "Canvi potencia cotxe sensor"
-when
-    Item Cotxe_Potencia_Sensor changed
-then
-    val potenciaSensor = Cotxe_Potencia_Sensor.state
-    var potencia = 0.0
-    if(potenciaSensor != NULL){
-        potencia = (potenciaSensor as Number).doubleValue
-        if(potencia >= 200.0){
-            logDebug("Cotxe.rules", "The cotxe title changed to CHARGING as there is potencia : "+potencia)
-            CotxeTitle.sendCommand("CHARGING")
-        }else{
-            logDebug("Cotxe.rules", "The cotxe title NOT changed to CHARGING as there is NOT potencia : "+potencia)
-        }
-    }
-    logDebug("Cotxe.rules", "The cotxe power sensor received "+ potencia)
-    Cotxe_Potencia_UserDisplay.sendCommand(potencia)
 end
 
 rule "lectura sensor cotxe"
