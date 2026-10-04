@@ -429,7 +429,7 @@ when
     Item CarChargerStatusSHS changed
 then
     val status = CarChargerStatusSHS.state.toString
-    CotxeTitle.sendCommand(status + "")
+    CotxeTitle.sendCommand((status + "").toUpperCase)
 end
 
 //RULEs TO SIMULATE THE RPI is an Arduino/ESP32 for testing without the real one
