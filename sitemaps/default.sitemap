@@ -239,14 +239,5 @@ sitemap default label="Ca l'espiga" {
             Text item=DiskPercent icon="receiver" label="Ús disc [%s %%]"
             Text item=DiskInodesPercent icon="receiver" label="Ús inodes [%s %%]"
         }
-        Frame label="Controladors" {
-            Text item=Calentador_Controlador_Memoria icon="receiver" label="Mem. calentador [%s bytes]"
-            Text item=Diposit_Controlador_Memoria icon="receiver" label="Mem. dipòsit [%s bytes]"
-            Text item=EstufaInfrarrojos_Controlador_Memoria icon="receiver" label="Mem. estufa infr. [%s bytes]"
-            Text item=BassaControladorMemoria icon="receiver" label="Mem. bassa [%s bytes]"
-        }
-        Frame{
-            Webview height=14 url="http://calespiga.ddns.net:3000/d/X3vwvRmRk/memoria-arduinos?orgId=1"
-        }
     }
 }

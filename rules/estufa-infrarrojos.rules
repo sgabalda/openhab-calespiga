@@ -113,76 +113,6 @@ then
     }
 end
 
-rule "update state from MQTT EstufaInfrarrojos"
-when
-    Item EstufaInfrarrojos_Potencia_ProxyRecepcio received update
-then
-    val now = ZonedDateTime::now
-    val nowDateType = new DateTimeType(now) 
-    val receivedEstat = EstufaInfrarrojos_Potencia_ProxyRecepcio.state.toString
-    logInfo("EstufaInfrarrojos.rules", "EstufaInfrarrojos estat changed to "+receivedEstat)
-    //update last connection
-    EstufaInfrarrojos_Ultima_Connexio.postUpdate(nowDateType)
-
-    //reset comms timer
-    if(commsTimer!==null){
-        logDebug("EstufaInfrarrojos.rules","comms timer not null, cancelling it")
-        commsTimer.cancel()
-    }
-    commsTimer = createTimer(now.plusMinutes(COMMS_TIMEOUT_MINUTES.longValue), [|
-                logDebug("EstufaInfrarrojos.rules","Timer reached, changing state to offline")
-                commsTimer = null
-                EstufaInfrarrojos_Potencia_Estat.sendCommand("offline")
-                EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(0)
-            ])
-    logDebug("EstufaInfrarrojos.rules","Comms timer resetted, now updating energy")
-
-    val previousState = EstufaInfrarrojos_Potencia_Estat.state.toString
-    var previousPower = 0.0
-
-    if(previousState == "600"){
-        previousPower = 600.0
-    }else if(previousState == "1200"){
-        previousPower = 1200.0
-    }
-    logInfo("EstufaInfrarrojos.rules", "As previous state is "+previousState+", previous power is "+previousPower)
-
-    val now_millis = (new Date()).time
-    logInfo("EstufaInfrarrojos.rules", "Going to update energy from "+lastChangePower+" with "+previousPower)
-    if(lastChangePower>0 ){
-
-        val timeMillis = now_millis - lastChangePower
-        val timeHours = (timeMillis/1000.0)/3600
-        val energyToAdd = previousPower*timeHours/1000
-
-        var energyCurrent = 0.0
-
-        val EstufaInfrarrojosEnergiaState = EstufaInfrarrojos_Energia_Avui.state
-        if(EstufaInfrarrojosEnergiaState != NULL){
-            energyCurrent = ( EstufaInfrarrojosEnergiaState as Number).doubleValue
-        }
-
-        logInfo("EstufaInfrarrojos.rules", "Adding energy EstufaInfrarrojos "+energyToAdd+" to "+energyCurrent)
-
-        EstufaInfrarrojos_Energia_Avui.postUpdate(energyCurrent + energyToAdd)
-
-    }
-    lastChangePower = now_millis
-
-    logDebug("EstufaInfrarrojos.rules","Energy updated, now updating state")
-    //update Estat item
-    if(receivedEstat == "0"){
-        EstufaInfrarrojos_Potencia_Estat.sendCommand("off")
-    }else if(receivedEstat == "600"){
-        EstufaInfrarrojos_Potencia_Estat.sendCommand("600")
-    }else if(receivedEstat == "1200"){
-        EstufaInfrarrojos_Potencia_Estat.sendCommand("1200")
-    }else{
-        EstufaInfrarrojos_Potencia_Estat.sendCommand("error")
-    }
-      
-end
-
 rule "Proxy emissio debug log"
 when
     Item EstufaInfrarrojos_Potencia_ProxyEmissioPrevi received command
@@ -198,20 +128,6 @@ then
                 periodicUpdateTimer = null
                 EstufaInfrarrojos_Potencia_ProxyEmissioPrevi.sendCommand(( receivedValue as Number).intValue)
             ])
-end
-
-rule "Proxy emissio previ a MQTT"
-when
-    Item EstufaInfrarrojos_Potencia_ProxyEmissioPrevi received command
-then
-    if(EstufaInfrarrojosEnabledSHS.state != "true") {
-        val receivedValue = receivedCommand
-        EstufaInfrarrojos_Potencia_ProxyEmissio.sendCommand(( receivedValue as Number).intValue)
-
-        logInfo("EstufaInfrarrojos.rules", "Sending to estufa MQTT "+receivedCommand)
-    }else{
-        logInfo("EstufaInfrarrojos.rules", "Not propagating to MQTT as the estufa is managed in SHS")
-    }
 end
 
 rule "Reset energy today EstufaInfrarrojos"
