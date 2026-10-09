@@ -134,7 +134,7 @@ sitemap default label="Ca l'espiga" {
             Webview height=14 url="http://calespiga.ddns.net:3000/d/euckLcRRz/cotxe?orgId=1"
         }
     }
-    Text item=EstufaInfrarrojos_Title label="Estufes" icon="radiator"
+    Text item=EstufaInfrarrojosStatusSHS label="Estufes" icon="radiator"
     {
         Frame label="Estufa infrarrojos" {
             
