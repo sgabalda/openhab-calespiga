@@ -5,7 +5,7 @@ everyDay : "0 0 0 * * ?"
 }
 
 Items {
-GestioAutomaticaCalentador,Durada_Encesa_Manual,Encesa_Bomba_Auto_Mati,Durada_Encesa_Auto_Mati,Encesa_Bomba_Auto_Migdia,Durada_Encesa_Auto_Migdia,Encesa_Bomba_Auto_Tarda,Durada_Encesa_Auto_Tarda:  strategy = everyChange
+Durada_Encesa_Manual,Encesa_Bomba_Auto_Mati,Durada_Encesa_Auto_Mati,Encesa_Bomba_Auto_Migdia,Durada_Encesa_Auto_Migdia,Encesa_Bomba_Auto_Tarda,Durada_Encesa_Auto_Tarda:  strategy = everyChange
 PotenciaDisponibleSHS,PotenciaGeneradaSHS,PotenciaRebutjadaSHS,PotenciaDinamicaFVSHS: strategy = everyChange
 ElectronicaTemperaturaSHS,BateriesTemperaturaSHS,ExteriorArmarisTemperaturaSHS,BateriesTemperaturaAdosadaSHS: strategy = everyMinute
 CalentadorEnergiaAvuiSHS,CalentadorStatusSHS,CarChargerPowerSHS,CarChargerEnergiaAvuiSHS,DipositPercentNumber,DipositLitres: strategy = everyChange, everyMinute
