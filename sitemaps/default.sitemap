@@ -16,7 +16,7 @@ sitemap default label="Ca l'espiga" {
         }
     }
 
-    Text item=CalentadorTitle label="Calentador" icon="heater_display"
+    Text item=CalentadorStatusSHS label="Calentador" icon="heater_display"
     {
         Frame label="Calentador" {
             
