@@ -65,6 +65,19 @@ sitemap shs label="Ca l'espiga SHS" {
         //TODO migrate the grafana panel
     }
 
+    Text item=AiguaGrisaTitle label="Aigua grisa" icon="water"
+    {
+        Frame label="Bomba aigua grisa" {
+            Selection item=BassaAiguaGrisaModeSHS mappings=["on"="On", "off"="Off", "horari"="Horari"]
+            Setpoint item=BassaAiguaGrisaHoraIniciSHS label="Hora inici [%d h]" minValue=0 maxValue=23 step=1
+            Setpoint item=BassaAiguaGrisaHoraFiSHS label="Hora fi [%d h]" minValue=0 maxValue=23 step=1
+            Text item=BassaAiguaGrisaStatusSHS label="Estat bomba: [%s]"
+            Text item=BassaAiguaGrisaProgramacioSHS label="Programació: [%s]"
+            Text item=BassaAiguaGrisaSincronitzacioSHS label="Sincronització: [%s]"
+            Text item=BassaAiguaGrisaMicroControladorEstatSHS label="Microcontrolador: [%s]"
+        }
+    }
+
     Text item=PotenciaTitle label="Potència" icon="solar_panel"
     {
         Frame label="Potència" {
@@ -123,10 +136,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
         }
         Frame label="Controls" {
-            Selection item=CalentadorHabilitatsSHS icon="network" label="Control calent. [%s]" mappings=["true"="SHS", "false"="OH"]
-            Selection item=EstufaInfrarrojosEnabledSHS icon="network" label="Control estufa infrarrojos [%s]" mappings=["true"="SHS", "false"="OH"]
-            Selection item=XarxaEnabledSHS icon="network" label="Control xarxa [%s]" mappings=["true"="SHS", "false"="OH"]
-            Selection item=CarChargerHabilitatsSHS icon="network" label="Control carregador [%s]" mappings=["true"="SHS", "false"="OH"]
+            Selection item=BassaAiguaGrisaEnabledSHS icon="network" label="Control aigua grisa [%s]" mappings=["true"="SHS", "false"="OH"]
         }
     }
 }

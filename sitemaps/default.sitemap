@@ -85,6 +85,18 @@ sitemap default label="Ca l'espiga" {
             Text icon="network" item=BassaAiguaGrisaStatusConnexio label="Connexió: [%s]"
             Text icon="time" item=BassaAiguaGrisaUltimaConnexio label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
         }
+        Frame label="Aigua grisa SHS" {
+            Selection item=BassaAiguaGrisaModeSHS mappings=["on"="On", "off"="Off", "horari"="Horari"]
+            Setpoint item=BassaAiguaGrisaHoraIniciSHS label="Hora inici [%d h]" minValue=0 maxValue=23 step=1
+            Setpoint item=BassaAiguaGrisaHoraFiSHS label="Hora fi [%d h]" minValue=0 maxValue=23 step=1
+            Text item=BassaAiguaGrisaStatusSHS label="Estat bomba: [%s]"
+            Text item=BassaAiguaGrisaProgramacioSHS label="Programació: [%s]"
+            Text item=BassaAiguaGrisaSincronitzacioSHS label="Sincronització: [%s]"
+            Text item=BassaAiguaGrisaMicroControladorEstatSHS label="Microcontrolador: [%s]"
+        }
+        Frame label="Controls" {
+            Selection item=BassaAiguaGrisaEnabledSHS icon="network" label="Control aigua grisa [%s]" mappings=["true"="SHS", "false"="OH"]
+        }
         Frame{
             Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
         }

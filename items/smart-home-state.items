@@ -26,7 +26,7 @@ String VentiladorElectronicaSetSHS           "Mode vent. elect."   // electronic
 String CalentadorTitle "Calentador"
 
 String CalentadorSetSHS "Mode calentador"
-Number CalentadorStatusSHS "Estat calentador"
+String CalentadorStatusSHS "Estat calentador"
 String CalentadorCalentSHS "Estat termostat"
 String CalentadorUltimaVegadaCalentSHS "Última vegada HOT"
 Number CalentadorEnergiaAvuiSHS "Energia avui"
@@ -46,6 +46,20 @@ Number EstufaInfrarrojosSetTempsManualSHS "Minuts manual"
 Number EstufaInfrarrojosEnergiaAvuiSHS "Energia avui"
 String EstufaInfrarrojosSincronitzacioSHS "Estat sincronització estufa inf."
 String EstufaInfrarrojosProgramatApagamentSHS "Apagada programada"
+
+/*
+----------------------
+ GREY WATER
+----------------------
+*/
+String AiguaGrisaTitle "Aigua grisa"
+String BassaAiguaGrisaModeSHS "Mode bomba aigua grisa"
+Number BassaAiguaGrisaHoraIniciSHS "Hora inici bomba aigua grisa"
+Number BassaAiguaGrisaHoraFiSHS "Hora fi bomba aigua grisa"
+String BassaAiguaGrisaStatusSHS "Estat bomba aigua grisa"
+String BassaAiguaGrisaProgramacioSHS "Programació bomba aigua grisa"
+String BassaAiguaGrisaSincronitzacioSHS "Estat sincronització bomba aigua grisa"
+String BassaAiguaGrisaMicroControladorEstatSHS "Estat microcontrolador aigua grisa"
 
 /*
 ----------------------
@@ -122,8 +136,5 @@ String CalentadorMicroControladorEstatSHS "Estat microcontrolador calentador"
 String EstufaInfrarrojosMicroControladorEstatSHS "Estat microcontrolador estufa"
 
 /* feature flags */
-String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
-String EstufaInfrarrojosEnabledSHS "Habilitar estufa infrarrojos per SHS"
-String XarxaEnabledSHS "Habilitar xarxa per SHS"
-String CarChargerHabilitatsSHS "Habilitar carregador per SHS"
+String BassaAiguaGrisaEnabledSHS "Habilitar control d'aigua grisa per SHS"
 
