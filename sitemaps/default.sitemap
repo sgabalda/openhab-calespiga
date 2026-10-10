@@ -7,6 +7,8 @@ sitemap default label="Ca l'espiga" {
             Text item=PotenciaGeneradaSHS icon="light" label="Potència generada: [%.0f W]"
             Text item=PotenciaRebutjadaSHS icon="smoke" label="Potència rebutjada: [%.0f W]"
             Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
+            Text item=PotenciaEstatLecturesSHS icon="receiver" label="Estat lectures FV: [%s]"  
+        
         }
         
         Frame{
@@ -14,18 +16,20 @@ sitemap default label="Ca l'espiga" {
         }
     }
 
-    Text item=CalentadorTitle label="Calentador" icon="heater_display"
+    Text item=CalentadorStatusSHS label="Calentador" icon="heater_display"
     {
         Frame label="Calentador" {
-            Switch item=GestioAutomaticaCalentador icon="thermostat_heater" label="Gestió calentador" mappings=["auto"="Automatic", "manual"="Manual"]
-            Selection item=Calentador_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "500"="500W", "1000"="1000W", "2000"="2000W"]
-            Text item=Calentador_Potencia_UserDisplay icon="water_heater" label="Estat Pot.: [%d W]" 
             
-            Text item=Calentador_Termostat_UserDisplay icon="calentador_termostat" label="Estat Term.: [%s]" 
-            Text item=Calentador_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
-            Text item=Calentador_Hot_Date icon="time" label="Ultim cop calent: [%1$td/%1$tm/%1$tY %1$tT]" 
+            Selection item=CalentadorSetSHS icon="thermostat_heater" mappings=["off"="Off", "500"="500W", "1000"="1000W", "2000"="2000W", "automatic"="Automàtic"]
+            Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%d W]" 
+
+            Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
+            Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
             
-            Text item=Calentador_Energia_Avui icon="energy" label="Energia avui: [%.3f kWh]" 
+            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d Wh]" 
+
+            Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
         }
         Frame{
             Webview height=14 url="http://calespiga.ddns.net:3000/d/yImV7EWgz/calentador?orgId=1"
@@ -114,66 +118,58 @@ sitemap default label="Ca l'espiga" {
             Webview height=16 url="http://calespiga.ddns.net:3000/d/QB--j3mRz/fotovoltaica-temperatures?orgId=1"
         }
     }
-    Text item=CotxeTitle label="Carregador cotxe" icon="electric_car"
+    Text item=CarChargerChargingStatusSHS label="Carregador cotxe" icon="electric_car"
     {
         Frame label="Cotxe" {
-            Text item=Cotxe_Potencia_UserDisplay label="Potencia enviada cotxe [%.1f W]" icon="gauge_indicator"
-            Text item=Cotxe_Energia_Avui label="Energia avui [%.1f Wh]" icon="battery"
-            Text item=CotxeEncesa_Control_Proxy label="Encesa carregador [%s]" icon="connect"
-            Setpoint item=Cotxe_Temps_Bateria icon="stopwatch" label="Temps consumint bateria [%.1f min]" minValue=1 maxValue=60 step=1
-            Selection item=GestioAutomaticaCotxe icon="remote_control" label="Gestió carregador" mappings=["auto"="FV sobrant", "grid"="FV sob. + Xarxa", "manual"="Manual"]
-            Switch item=CotxeEncesaManual icon="switch_on_off"
-            Text item=CotxeConnexio_Status label="Estat del carregador [%s]" icon="electric_car"
-            Selection item=CotxeEncesa_Xarxa_Tarifes icon="chart" label="Tarifa carrega per xarxa" mappings=["vall"="Només vall", "pla"="Vall + pla", "all"="Totes"]
+            Selection item=CarChargerSetSHS icon="switch" mappings=["off"="Off","on"="On","automatic_fv"="Automàtic FV","automatic_grid"="Automàtic xarxa"]
+            Selection item=CarChargerMaxGridTariffSHS icon="energy" label="Màxima tarifa xarxa: [%s]" mappings=["vall"="Vall","pla + vall"="Pla + Vall","all tariffs"="Totes"]
+            Text item=CarChargerStatusSHS icon="switch" label="Estat: [%s]"
+            Text item=CarChargerSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=CarChargerMicroControladorEstatSHS icon="network" label="Estat microcontrolador: [%s]"
+            Text item=CarChargerChargingStatusSHS icon="indicator" label="Connexió: [%s]"
+            Text item=CarChargerPowerSHS icon="humidity" label="Potència: [%.0f W]"
+            Text item=CarChargerEnergiaAvuiSHS icon="energy" label="Energia carregada avui: [%,d Wh]"
         }
         Frame{
             Webview height=14 url="http://calespiga.ddns.net:3000/d/euckLcRRz/cotxe?orgId=1"
         }
     }
-    Text item=EstufaInfrarrojos_Title label="Estufes" icon="radiator"
+    Text item=EstufaInfrarrojosStatusSHS label="Estufes" icon="radiator"
     {
         Frame label="Estufa infrarrojos" {
-            Text item=EstufaInfrarrojos_Potencia_Estat icon="estufa_ir" label="Estat [%s]"
-            Text item=EstufaInfrarrojos_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
-            Switch item=EstufaInfrarrojos_GestioAutomatica icon="remote_control" label="Gestió estufa" mappings=["auto"="Automatic", "manual"="Manual"]
-            Selection item=EstufaInfrarrojos_Potencia_UserSelection icon="dial_heater" label="Pot. Manual (W): [%s]"  mappings=["0"="OFF", "600"="600W", "1200"="1200W"]
-            Setpoint item=EstufaInfrarrojos_Durada_Encesa_Auto icon="stopwatch" label="Durada manual [%.1f min]" minValue=1 maxValue=120 step=1
-            Text item=EstufaInfrarrojos_Energia_Avui icon="energy" label="Energia avui: [%.3f kWh]" 
+            
+            Selection item=EstufaInfrarrojosSetSHS icon="remote_control" mappings=["off"="Off", "600"="600W", "1200"="1200W", "automatic"="Automàtic"]
+            Text item=EstufaInfrarrojosStatusSHS icon="thermostat_heater" label="Estat: [%s W]" 
+
+            Text item=EstufaInfrarrojosUltimaConnexioSHS icon="time" label="Ultima connexió: [%s]" 
+            Selection item=EstufaInfrarrojosSetTempsManualSHS icon="stopwatch" mappings=["10"="10 min", "20"="20 min", "30"="30 min", "60"="60 min"]
+            
+            Text item=EstufaInfrarrojosEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d Wh]" 
+            Text item=EstufaInfrarrojosSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=EstufaInfrarrojosProgramatApagamentSHS icon="time" label="Apagada programada: [%s]"
+            Text item=EstufaInfrarrojosMicroControladorEstatSHS icon="receiver" label="Estat micro est. [%s]"
         }
     }
-    Text item=XarxaBateriaTitle label="Xarxa i bateria" icon="electric_tower"
+    Text item=XarxaStatusSHS label="Xarxa i bateria" icon="electric_tower"
     {
-        Frame label="Estat de la xarxa" {
-            Text item=GridStatus icon="switch" label="Estat connexió [%s]"
-            Text item=GridPriceCurrent icon="chart" label="Tarifa actual [%s]"
-            Switch item=GridManualSwitch icon="wallswitch"
-            Text item=GridReasonOn icon="switch" label="Raó encesa [%s]"
+        Frame label="Xarxa" {
+            Selection item=XarxaManualConnexioSHS icon="switch" mappings=["true"="Connectar", "false"="Desconnectar"]
+            Text item=XarxaStatusSHS icon="electric_tower" label="Estat connexió: [%s]"
+            Text item=XarxaActorsConexioSHS icon="switch" label="Raó connexió: [%s]"
+            Text item=XarxaSincronitzacioSHS icon="time" label="Sincronització connexió: [%s]"
+            Text item=XarxaSincronitzacioReleSHS icon="time" label="Sincronització rele: [%s]"
+            Text item=XarxaTarifaSHS icon="price" label="Tarifa: [%s]"
+            Text item=XarxaMicroControladorEstatSHS icon="receiver" label="Estat microcontrolador xarxa: [%s]"
         }
         Frame label="Bateria" {
-            Text item=BatteryLevelStatus icon="battery" label="Nivell bateria"
-            Selection item=BatteryLevelToChargeWithGrid icon="electric_tower" label="Nivell per carregar de xarxa" mappings=["mai"="Mai", "low"="Low", "medium"="Medium"]
-            Selection item=GridPriceToChargeBattery icon="chart" label="Tarifa per carregar bateria" mappings=["vall"="Només vall", "pla"="Vall + pla", "all"="Totes"]
+            Text item=XarxaBateriaEstatSHS icon="battery" label="Estat: [%s]"
+            Selection item=XarxaBateriaCarregarLowSHS icon="battery" label="Càrrega baixa: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
+            Selection item=XarxaBateriaCarregarMediumSHS icon="battery" label="Càrrega mitja: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
+            Text item=XarxaBateriaMicroControladorEstatSHS icon="receiver" label="Estat micro: [%s]"
         }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"
     {
-        Frame label="Comunicació calentador" {
-            Text item=AlarmCalentadorCommunication label="Estat [%s]" icon="alert"
-            Text icon="time" item=AlarmCalentadorCommunicationTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
-            Text icon="time" item=AlarmCalentadorCommunicationTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
-            Switch item=AlarmCalentadorCommunicationNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
-            Setpoint item=AlarmCalentadorCommunicationTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
-            Setpoint item=AlarmCalentadorCommunication_Seconds icon="stopwatch" label="Temps limit [%.1f s]" minValue=30 maxValue=120 step=10
-        }
-        Frame label="Temp. bateries" {
-            Text item=AlarmTempBateries label="Estat [%s]" icon="alert"
-            Text icon="time" item=AlarmTempBateriesTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
-            Text icon="time" item=AlarmTempBateriesTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
-            Switch item=AlarmTempBateriesNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
-            Setpoint item=AlarmTempBateriesTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
-            Setpoint item=AlarmTempBateries_GrausInf icon="temperature_cold" label="Graus min. [%.1f C]" minValue=-2 maxValue=10 step=1
-            Setpoint item=AlarmTempBateries_GrausSup icon="temperature_hot" label="Graus max. [%.1f C]" minValue=25 maxValue=45 step=1
-        }
         Frame label="Comunicació bassa" {
             Text item=AlarmBassaComunicacio label="Estat [%s]" icon="alert"
             Text icon="time" item=AlarmBassaComunicacioTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
@@ -223,36 +219,25 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmGridConnection_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=5 maxValue=60 step=5
         }
     }
-    Text item=PotenciaSobrantTitle label="Potencia sobrant" icon="energy"
+
+    Text item=PotenciaTitle label="Potència" icon="solar_panel"
     {
-        Frame label="Potencia sobrant" {
-            Text item=AvailablePower icon="receiver" label="Potencia disponible [%d W]"
-            Text item=NotUsedPower icon="receiver" label="Potencia no usada [%d W]"
+        Frame label="Potència" {
+            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"
         }
         Frame label="Dispositius" {
-            Setpoint item=Cotxe_Priority icon="electric_car" label="Prioritat cotxe [%d]" minValue=1 maxValue=4 step=1
-            Setpoint item=Calentador_Priority icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=4 step=1
-            Setpoint item=EstufaInfrarrojos_Priority icon="radiator" label="Prioritat Estufa infrarrojos [%d]" minValue=1 maxValue=4 step=1
-            Setpoint item=Bassa_Priority icon="faucet" label="Prioritat Bassa [%d]" minValue=1 maxValue=4 step=1
+            Setpoint item=CalentadorPrioritatConsumSHS icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=EstufaInfrarrojosPrioritatConsumSHS icon="radiator" label="Prioritat estufa infrarrojos [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=CarChargerPrioritatConsumSHS icon="electric_car" label="Prioritat carregador VE [%d]" minValue=1 maxValue=3 step=1
         }
-        Frame{
-            Webview height=14 url="http://calespiga.ddns.net:3000/d/HIpApQWRk/potencia-sobrant"
-        }
+
     }
     Text item=SystemTitle label="Sistema" icon="settings"
     {
         Frame label="Sistema operatiu" {
             Text item=DiskPercent icon="receiver" label="Ús disc [%s %%]"
             Text item=DiskInodesPercent icon="receiver" label="Ús inodes [%s %%]"
-        }
-        Frame label="Controladors" {
-            Text item=Calentador_Controlador_Memoria icon="receiver" label="Mem. calentador [%s bytes]"
-            Text item=Diposit_Controlador_Memoria icon="receiver" label="Mem. dipòsit [%s bytes]"
-            Text item=EstufaInfrarrojos_Controlador_Memoria icon="receiver" label="Mem. estufa infr. [%s bytes]"
-            Text item=BassaControladorMemoria icon="receiver" label="Mem. bassa [%s bytes]"
-        }
-        Frame{
-            Webview height=14 url="http://calespiga.ddns.net:3000/d/X3vwvRmRk/memoria-arduinos?orgId=1"
         }
     }
 }

@@ -8,45 +8,6 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type string : PumpStatus "PumpStatus" [ stateTopic="diposit1/pump/status" ]
             Type string : PumpSet "PumpSet" [ commandTopic="diposit1/pump/set" ]
     }
-
-    Thing mqtt:topic:grid (mqtt:broker:defaultBroker) {
-        Channels:
-            Type string : BatteryLevelStatus "BatteryLevelStatus" [ stateTopic="battery/level/status" ]
-            Type string : GridConnectionAction "GridConnectionAction" [ stateTopic="grid/connection/action" ]
-            Type string : GridConnectionStatus "GridConnectionStatus" [ stateTopic="grid/connection/status" ]
-            Type string : GridConnectionSet "GridConnectionSet" [ commandTopic="grid/connection/set" ]
-    }
-
-    Thing mqtt:topic:fan (mqtt:broker:defaultBroker) {
-        Channels:
-            Type string : FanBatteriesStatus "FanBatteriesStatus" [ stateTopic="fan/batteries/status" ]
-            Type string : FanBatteriesSet "FanBatteriesSet" [ commandTopic="fan/batteries/set" ]
-            Type string : FanElectronicsStatus "FanElectronicsStatus" [ stateTopic="fan/electronics/status" ]
-            Type string : FanElectronicsSet "FanElectronicsSet" [ commandTopic="fan/electronics/set" ]
-    }
-
-    Thing mqtt:topic:temperatures (mqtt:broker:defaultBroker) {
-        Channels:
-            Type number : Electronics [ stateTopic="diposit1/temperature/electronics" ]
-            Type number : Batteries [ stateTopic="diposit1/temperature/batteries" ]
-            Type number : BatteriesCloset [ stateTopic="diposit1/temperature/batteriescloset" ]
-            Type number : Outdoor [ stateTopic="diposit1/temperature/outdoor" ]
-    }
-
-    Thing mqtt:topic:estufa1 "estufa1" (mqtt:broker:defaultBroker) {
-        Channels:
-            Type string : Status "Status" [ stateTopic="estufa1/status" ]
-            Type number : Set "Set" [ commandTopic="estufa1/set" ]
-            Type number : Memoria "Memoria" [ stateTopic="estufa1/memory" ]
-    }
-
-    Thing mqtt:topic:arduino_calentador "arduino_calentador" (mqtt:broker:defaultBroker) {
-        Channels:
-            Type string : TermostatStatus "TermostatStatus" [ stateTopic="arduino_calentador/termostat/status" ]
-            Type string : PotenciaStatus "PotenciaStatus" [ stateTopic="arduino_calentador/potencia/status" ]
-            Type string : PotenciaSet "PotenciaSet" [ commandTopic="arduino_calentador/potencia/set" ]
-            Type number : Memoria "Memoria" [ stateTopic="arduino_calentador/memory" ]
-    }
     
     Thing mqtt:topic:bassa "bassa" (mqtt:broker:defaultBroker) {
         Channels:
@@ -61,4 +22,14 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
             Type number : Altura "Altura" [ stateTopic="bassa/height" ]
             Type number : Memoria "Memoria" [ stateTopic="bassa/memory" ]
     }
+
+    //topics and thing to transition to SHS before moving this to an arduino/esp32
+    Thing mqtt:topic:cotxe "cotxe" (mqtt:broker:defaultBroker) {
+        Channels:
+            Type string : CotxeStatus "CotxeStatus" [ commandTopic="cotxe/carrega/status" ]
+            Type string : CotxeSet "CotxeSet" [ stateTopic="cotxe/carrega/set" ]
+            Type string : CotxePower "CotxePower" [ commandTopic="cotxe/carrega/power" ]
+            Type string : CotxeEnergy "CotxeEnergy" [ commandTopic="cotxe/carrega/energy" ]
+    }
+
 }

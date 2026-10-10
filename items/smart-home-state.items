@@ -26,11 +26,26 @@ String VentiladorElectronicaSetSHS           "Mode vent. elect."   // electronic
 String CalentadorTitle "Calentador"
 
 String CalentadorSetSHS "Mode calentador"
-String CalentadorStatusSHS "Estat calentador"
+Number CalentadorStatusSHS "Estat calentador"
 String CalentadorCalentSHS "Estat termostat"
 String CalentadorUltimaVegadaCalentSHS "Última vegada HOT"
 Number CalentadorEnergiaAvuiSHS "Energia avui"
 String CalentadorSincronitzacioSHS "Estat sincronització calentador"
+
+/*
+----------------------
+ Infrared Stove 
+----------------------
+*/
+String EstufaInfrarrojosTitle "Estufa infrarrojos"
+
+String EstufaInfrarrojosSetSHS "Mode estufa"
+String EstufaInfrarrojosStatusSHS "Estat estufa"
+String EstufaInfrarrojosUltimaConnexioSHS "Última connexió"
+Number EstufaInfrarrojosSetTempsManualSHS "Minuts manual"
+Number EstufaInfrarrojosEnergiaAvuiSHS "Energia avui"
+String EstufaInfrarrojosSincronitzacioSHS "Estat sincronització estufa inf."
+String EstufaInfrarrojosProgramatApagamentSHS "Apagada programada"
 
 /*
 ----------------------
@@ -44,7 +59,53 @@ Number PotenciaDisponibleSHS "Potència disponible"
 Number PotenciaGeneradaSHS "Potència generada"
 Number PotenciaRebutjadaSHS "Potència rebutjada"
 Number PotenciaDinamicaFVSHS "Potència dinàmica FV"
+String PotenciaEstatLecturesSHS "Estat lectures FV"
 
+Number CalentadorPrioritatConsumSHS "Calentador"
+Number EstufaInfrarrojosPrioritatConsumSHS "Est. Infrarrojos"
+Number CarChargerPrioritatConsumSHS "Carregador VE"
+
+/*
+----------------------
+ GRID CONNECTION
+----------------------
+*/
+
+String XarxaTitle "Xarxa"
+
+String XarxaStatusSHS "Estat connexió xarxa"       // status-item
+String XarxaManualConnexioSHS "Connexió manual xarxa" // manual-switch-item
+String XarxaActorsConexioSHS "Raó connexió" // connection-reason-item
+String XarxaSincronitzacioSHS "Sincronització xarxa"  // sync-status-item
+String XarxaSincronitzacioReleSHS "Sincronització rele xarxa"  // sync-relay-status-item
+String XarxaTarifaSHS "Tarifa xarxa"                 // tariff-item
+String XarxaMicroControladorEstatSHS "Estat microcontrolador xarxa"
+
+/*
+----------------------
+BATTERY
+----------------------
+*/
+String XarxaBateriaTitle "Bateria"
+String XarxaBateriaEstatSHS "Estat bateria"               // battery status item
+String XarxaBateriaCarregarLowSHS "Tarifa càrrega bateria low"
+String XarxaBateriaCarregarMediumSHS "Tarifa càrrega bateria medium"
+String XarxaBateriaMicroControladorEstatSHS "Estat microcontrolador bateria"
+
+/*
+----------------------
+CAR CHARGER
+----------------------
+*/
+String CarChargerTitle "Vehicle Elèctric"
+String CarChargerStatusSHS "Estat carregador"
+String CarChargerSetSHS "Mode carregador"
+String CarChargerMaxGridTariffSHS "Màxima tarifa xarxa carregador"
+String CarChargerMicroControladorEstatSHS "Estat microcontrolador carregador"
+String CarChargerSincronitzacioSHS "Estat sincronització carregador"
+String CarChargerChargingStatusSHS "Estat càrrega carregador"
+Number CarChargerPowerSHS "Potència carregador"
+Number CarChargerEnergiaAvuiSHS "Energia carregada avui"
 /*
 ----------------------
 SYSTEM 
@@ -58,9 +119,11 @@ String SystemTitle "Estat"
 /* offline detectors */
 String TemperaturesMicroControladorEstat "Estat microcontrolador temperatures"
 String CalentadorMicroControladorEstatSHS "Estat microcontrolador calentador"
-
+String EstufaInfrarrojosMicroControladorEstatSHS "Estat microcontrolador estufa"
 
 /* feature flags */
 String CalentadorHabilitatsSHS "Habilitar calentador per SHS"
-
+String EstufaInfrarrojosEnabledSHS "Habilitar estufa infrarrojos per SHS"
+String XarxaEnabledSHS "Habilitar xarxa per SHS"
+String CarChargerHabilitatsSHS "Habilitar carregador per SHS"
 

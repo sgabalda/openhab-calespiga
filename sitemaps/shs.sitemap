@@ -37,7 +37,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
             Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
             
-            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d kWh]" 
+            Text item=CalentadorEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d Wh]" 
 
             Text item=CalentadorSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
             Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
@@ -46,16 +46,74 @@ sitemap shs label="Ca l'espiga SHS" {
         //TODO migrate the grafana panel
     }
 
-    Text item=PotenciaTitle label="Potència" icon="solar_panel"
+    Text item=EstufaInfrarrojosTitle label="Estufa infrarrojos" icon="radiator"
     {
-        Frame label="Potència" {
-            Text item=PotenciaDisponibleSHS icon="power" label="Potència disponible: [%.0f W]"
-            Text item=PotenciaGeneradaSHS icon="power" label="Potència generada: [%.0f W]"
-            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
-            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
+        Frame label="Estufa infrarrojos" {
+            
+            Selection item=EstufaInfrarrojosSetSHS icon="remote_control" mappings=["off"="Off", "600"="600W", "1200"="1200W", "automatic"="Automàtic"]
+            Text item=EstufaInfrarrojosStatusSHS icon="thermostat_heater" label="Estat: [%s W]" 
+
+            Text item=EstufaInfrarrojosUltimaConnexioSHS icon="time" label="Ultima connexió: [%s]" 
+            Selection item=EstufaInfrarrojosSetTempsManualSHS icon="stopwatch" mappings=["10"="10 min", "20"="20 min", "30"="30 min", "60"="60 min"]
+            
+            Text item=EstufaInfrarrojosEnergiaAvuiSHS icon="energy" label="Energia avui: [%,d Wh]" 
+            Text item=EstufaInfrarrojosSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=EstufaInfrarrojosProgramatApagamentSHS icon="time" label="Apagada programada: [%s]"
+            Text item=EstufaInfrarrojosMicroControladorEstatSHS icon="receiver" label="Estat micro est. [%s]"
         }
 
         //TODO migrate the grafana panel
+    }
+
+    Text item=PotenciaTitle label="Potència" icon="solar_panel"
+    {
+        Frame label="Potència" {
+            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"
+        }
+        Frame label="Dispositius" {
+            Setpoint item=CalentadorPrioritatConsumSHS icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=EstufaInfrarrojosPrioritatConsumSHS icon="radiator" label="Prioritat estufa infrarrojos [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=CarChargerPrioritatConsumSHS icon="electric_car" label="Prioritat carregador VE [%d]" minValue=1 maxValue=3 step=1
+        }
+
+    }
+
+    Text item=XarxaTitle label="Xarxa" icon="electric_tower"
+    {
+        Frame label="Xarxa" {
+            Selection item=XarxaManualConnexioSHS icon="switch" mappings=["true"="Connectar", "false"="Desconnectar"]
+            Text item=XarxaStatusSHS icon="electric_tower" label="Estat connexió: [%s]"
+            Text item=XarxaActorsConexioSHS icon="switch" label="Raó connexió: [%s]"
+            Text item=XarxaSincronitzacioSHS icon="time" label="Sincronització connexió: [%s]"
+            Text item=XarxaSincronitzacioReleSHS icon="time" label="Sincronització rele: [%s]"
+            Text item=XarxaTarifaSHS icon="price" label="Tarifa: [%s]"
+            Text item=XarxaMicroControladorEstatSHS icon="receiver" label="Estat microcontrolador xarxa: [%s]"
+        }
+    }
+
+    Text item=XarxaBateriaTitle label="Bateria" icon="battery"
+    {
+        Frame label="Bateria" {
+            Text item=XarxaBateriaEstatSHS icon="battery" label="Estat: [%s]"
+            Selection item=XarxaBateriaCarregarLowSHS icon="battery" label="Càrrega baixa: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
+            Selection item=XarxaBateriaCarregarMediumSHS icon="battery" label="Càrrega mitja: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
+            Text item=XarxaBateriaMicroControladorEstatSHS icon="receiver" label="Estat micro: [%s]"
+        }
+    }
+
+    Text item=CarChargerTitle label="Vehicle Elèctric" icon="electric_car"
+    {
+        Frame label="Carregador vehicle" {
+            Selection item=CarChargerSetSHS icon="switch" mappings=["off"="Off","on"="On","automatic_fv"="Automàtic FV","automatic_grid"="Automàtic xarxa"]
+            Selection item=CarChargerMaxGridTariffSHS icon="energy" label="Màxima tarifa xarxa: [%s]" mappings=["vall"="Vall","pla + vall"="Pla + Vall","all tariffs"="Totes"]
+            Text item=CarChargerStatusSHS icon="car" label="Estat: [%s]"
+            Text item=CarChargerSincronitzacioSHS icon="time" label="Sincronitzacio [%s]"
+            Text item=CarChargerMicroControladorEstatSHS icon="network" label="Estat microcontrolador: [%s]"
+            Text item=CarChargerChargingStatusSHS icon="indicator" label="Connexió: [%s]"
+            Text item=CarChargerPowerSHS icon="power" label="Potència: [%.0f W]"
+            Text item=CarChargerEnergiaAvuiSHS icon="energy" label="Energia carregada avui: [%,d Wh]"
+        }
     }
 
     Text item=SystemTitle label="Estat" icon="alert"
@@ -66,6 +124,9 @@ sitemap shs label="Ca l'espiga SHS" {
         }
         Frame label="Controls" {
             Selection item=CalentadorHabilitatsSHS icon="network" label="Control calent. [%s]" mappings=["true"="SHS", "false"="OH"]
+            Selection item=EstufaInfrarrojosEnabledSHS icon="network" label="Control estufa infrarrojos [%s]" mappings=["true"="SHS", "false"="OH"]
+            Selection item=XarxaEnabledSHS icon="network" label="Control xarxa [%s]" mappings=["true"="SHS", "false"="OH"]
+            Selection item=CarChargerHabilitatsSHS icon="network" label="Control carregador [%s]" mappings=["true"="SHS", "false"="OH"]
         }
     }
 }

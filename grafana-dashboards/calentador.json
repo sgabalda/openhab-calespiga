@@ -66,31 +66,25 @@
           "alias": "Potencia (W)",
           "groupBy": [
             {
-              "params": [
-                "$__interval"
-              ],
+              "params": ["$__interval"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "Calentador_Potencia_UserDisplay",
+          "measurement": "CalentadorStatusSHS",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT mean(\"value\") FROM \"Calentador_Potencia_UserDisplay\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "SELECT mean(\"value\") FROM \"CalentadorStatusSHS\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
@@ -209,31 +203,25 @@
           "alias": "Energia (kWh)",
           "groupBy": [
             {
-              "params": [
-                "1d"
-              ],
+              "params": ["1d"],
               "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
+              "params": ["null"],
               "type": "fill"
             }
           ],
-          "measurement": "Calentador_Energia_Avui",
+          "measurement": "CalentadorEnergiaAvuiSHS",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT max(\"value\") FROM \"Calentador_Energia_Avui\" WHERE $timeFilter GROUP BY time(1d) fill(null)",
+          "query": "SELECT max(\"value\") FROM \"CalentadorEnergiaAvuiSHS\" WHERE $timeFilter GROUP BY time(1d) fill(null)",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
             [
               {
-                "params": [
-                  "value"
-                ],
+                "params": ["value"],
                 "type": "field"
               },
               {
