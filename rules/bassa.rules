@@ -20,7 +20,11 @@ then
 
     logDebug("bassa.rules","Forwarding proxy values to command items: Reg: "+commandReg+
         ", Circulacio: "+commandCirculacio+", Aigua grisa: "+commandGrisa)
-    BassaAiguagrisaCommand.sendCommand(commandGrisa)
+    if(BassaAiguaGrisaEnabledSHS.state.toString.contains("true")){
+        logDebug("bassa.rules", "Not forwarding Aigua grisa command while SHS control is enabled")
+    }else{
+        BassaAiguagrisaCommand.sendCommand(commandGrisa)
+    }
     BassaRegCommand.sendCommand(commandReg)
     BassaCirculacioCommand.sendCommand(commandCirculacio)
 end

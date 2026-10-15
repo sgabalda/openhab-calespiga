@@ -81,6 +81,8 @@ sitemap shs label="Ca l'espiga SHS" {
     Text item=PotenciaTitle label="Potència" icon="solar_panel"
     {
         Frame label="Potència" {
+            Text item=PotenciaConsumCasaSHS icon="power" label="Consum casa: [%.0f W]"
+            Text item=PotenciaXarxaSHS icon="electric_tower" label="Xarxa (+ consumida / - injectada): [%.0f W]"
             Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
             Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"
         }

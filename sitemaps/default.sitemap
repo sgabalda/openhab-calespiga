@@ -1,14 +1,23 @@
 sitemap default label="Ca l'espiga" {
 
-    Text item=PotenciaTitle label="Fotovoltaica" icon="solar_panel"
+    Text item=PotenciaTitle label="Potencia" icon="solar_panel"
     {
-        Frame label="Potència FV" {
+        Frame label="Fotovoltaica" {
             Text item=PotenciaDisponibleSHS icon="energy" label="Potència disponible: [%.0f W]"
             Text item=PotenciaGeneradaSHS icon="light" label="Potència generada: [%.0f W]"
             Text item=PotenciaRebutjadaSHS icon="smoke" label="Potència rebutjada: [%.0f W]"
             Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"    
             Text item=PotenciaEstatLecturesSHS icon="receiver" label="Estat lectures FV: [%s]"  
-        
+        }
+        Frame label="Consum" {
+            Text item=PotenciaConsumCasaSHS icon="power" label="Consum casa: [%.0f W]"
+            Text item=PotenciaXarxaSHS icon="electric_tower" label="Xarxa (+ consumida / - injectada): [%.0f W]"
+            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"
+        }
+        Frame label="Prioritat P. dinàmica" {
+            Setpoint item=CalentadorPrioritatConsumSHS icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=EstufaInfrarrojosPrioritatConsumSHS icon="radiator" label="Prioritat estufa infrarrojos [%d]" minValue=1 maxValue=3 step=1
+            Setpoint item=CarChargerPrioritatConsumSHS icon="electric_car" label="Prioritat carregador VE [%d]" minValue=1 maxValue=3 step=1
         }
         
         Frame{
@@ -230,20 +239,6 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmGridConnectionTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
             Setpoint item=AlarmGridConnection_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=5 maxValue=60 step=5
         }
-    }
-
-    Text item=PotenciaTitle label="Potència" icon="solar_panel"
-    {
-        Frame label="Potència" {
-            Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
-            Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"
-        }
-        Frame label="Dispositius" {
-            Setpoint item=CalentadorPrioritatConsumSHS icon="heater_display" label="Prioritat calentador [%d]" minValue=1 maxValue=3 step=1
-            Setpoint item=EstufaInfrarrojosPrioritatConsumSHS icon="radiator" label="Prioritat estufa infrarrojos [%d]" minValue=1 maxValue=3 step=1
-            Setpoint item=CarChargerPrioritatConsumSHS icon="electric_car" label="Prioritat carregador VE [%d]" minValue=1 maxValue=3 step=1
-        }
-
     }
     Text item=SystemTitle label="Sistema" icon="settings"
     {

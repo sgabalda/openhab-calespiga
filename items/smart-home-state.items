@@ -72,6 +72,8 @@ String PotenciaTitle "Potència" <solar_panel>
 Number PotenciaDisponibleSHS "Potència disponible"
 Number PotenciaGeneradaSHS "Potència generada"
 Number PotenciaRebutjadaSHS "Potència rebutjada"
+Number PotenciaConsumCasaSHS "Consum casa"
+Number PotenciaXarxaSHS "Potència xarxa"
 Number PotenciaDinamicaFVSHS "Potència dinàmica FV"
 String PotenciaEstatLecturesSHS "Estat lectures FV"
 
@@ -137,4 +139,3 @@ String EstufaInfrarrojosMicroControladorEstatSHS "Estat microcontrolador estufa"
 
 /* feature flags */
 String BassaAiguaGrisaEnabledSHS "Habilitar control d'aigua grisa per SHS"
-
