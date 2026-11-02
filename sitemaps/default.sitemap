@@ -184,7 +184,6 @@ sitemap default label="Ca l'espiga" {
             Text item=XarxaEnergiaInjectadaVallAvuiSHS icon="energy" label="Injecció vall avui: [%.3f kWh]"
             Text item=XarxaEnergiaInjectadaPlaAvuiSHS icon="energy" label="Injecció pla avui: [%.3f kWh]"
             Text item=XarxaEnergiaInjectadaPicAvuiSHS icon="energy" label="Injecció pic avui: [%.3f kWh]"
-            Text item=XarxaMicroControladorEstatSHS icon="receiver" label="Estat microcontrolador xarxa: [%s]"
         }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"
