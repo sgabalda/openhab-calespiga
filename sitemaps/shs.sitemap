@@ -83,6 +83,7 @@ sitemap shs label="Ca l'espiga SHS" {
         Frame label="Potència" {
             Text item=PotenciaConsumCasaSHS icon="power" label="Consum casa: [%.0f W]"
             Text item=PotenciaXarxaSHS icon="electric_tower" label="Xarxa (+ consumida / - injectada): [%.0f W]"
+            Text item=PotenciaConsumCasaEnergiaAvuiSHS icon="energy" label="Energia consumida casa avui: [%.3f kWh]"
             Text item=PotenciaRebutjadaSHS icon="power" label="Potència rebutjada: [%.0f W]"
             Text item=PotenciaDinamicaFVSHS icon="power" label="Potència dinàmica FV: [%.0f W]"
         }
@@ -97,13 +98,15 @@ sitemap shs label="Ca l'espiga SHS" {
     Text item=XarxaTitle label="Xarxa" icon="electric_tower"
     {
         Frame label="Xarxa" {
-            Selection item=XarxaManualConnexioSHS icon="switch" mappings=["true"="Connectar", "false"="Desconnectar"]
-            Text item=XarxaStatusSHS icon="electric_tower" label="Estat connexió: [%s]"
-            Text item=XarxaActorsConexioSHS icon="switch" label="Raó connexió: [%s]"
-            Text item=XarxaSincronitzacioSHS icon="time" label="Sincronització connexió: [%s]"
-            Text item=XarxaSincronitzacioReleSHS icon="time" label="Sincronització rele: [%s]"
             Text item=XarxaTarifaSHS icon="price" label="Tarifa: [%s]"
-            Text item=XarxaMicroControladorEstatSHS icon="receiver" label="Estat microcontrolador xarxa: [%s]"
+            Text item=XarxaEnergiaConsumidaAvuiSHS icon="energy" label="Energia consumida avui: [%.3f kWh]"
+            Text item=XarxaEnergiaInjectadaAvuiSHS icon="energy" label="Energia injectada avui: [%.3f kWh]"
+            Text item=XarxaEnergiaConsumidaVallAvuiSHS icon="energy" label="Consum vall avui: [%.3f kWh]"
+            Text item=XarxaEnergiaConsumidaPlaAvuiSHS icon="energy" label="Consum pla avui: [%.3f kWh]"
+            Text item=XarxaEnergiaConsumidaPicAvuiSHS icon="energy" label="Consum pic avui: [%.3f kWh]"
+            Text item=XarxaEnergiaInjectadaVallAvuiSHS icon="energy" label="Injecció vall avui: [%.3f kWh]"
+            Text item=XarxaEnergiaInjectadaPlaAvuiSHS icon="energy" label="Injecció pla avui: [%.3f kWh]"
+            Text item=XarxaEnergiaInjectadaPicAvuiSHS icon="energy" label="Injecció pic avui: [%.3f kWh]"
         }
     }
 
@@ -111,8 +114,6 @@ sitemap shs label="Ca l'espiga SHS" {
     {
         Frame label="Bateria" {
             Text item=XarxaBateriaEstatSHS icon="battery" label="Estat: [%s]"
-            Selection item=XarxaBateriaCarregarLowSHS icon="battery" label="Càrrega baixa: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
-            Selection item=XarxaBateriaCarregarMediumSHS icon="battery" label="Càrrega mitja: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
             Text item=XarxaBateriaMicroControladorEstatSHS icon="receiver" label="Estat micro: [%s]"
         }
     }

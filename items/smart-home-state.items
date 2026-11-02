@@ -74,6 +74,7 @@ Number PotenciaGeneradaSHS "Potència generada"
 Number PotenciaRebutjadaSHS "Potència rebutjada"
 Number PotenciaConsumCasaSHS "Consum casa"
 Number PotenciaXarxaSHS "Potència xarxa"
+Number PotenciaConsumCasaEnergiaAvuiSHS "Energia consumida casa avui"
 Number PotenciaDinamicaFVSHS "Potència dinàmica FV"
 String PotenciaEstatLecturesSHS "Estat lectures FV"
 
@@ -83,19 +84,21 @@ Number CarChargerPrioritatConsumSHS "Carregador VE"
 
 /*
 ----------------------
- GRID CONNECTION
+ GRID
 ----------------------
 */
 
 String XarxaTitle "Xarxa"
 
-String XarxaStatusSHS "Estat connexió xarxa"       // status-item
-String XarxaManualConnexioSHS "Connexió manual xarxa" // manual-switch-item
-String XarxaActorsConexioSHS "Raó connexió" // connection-reason-item
-String XarxaSincronitzacioSHS "Sincronització xarxa"  // sync-status-item
-String XarxaSincronitzacioReleSHS "Sincronització rele xarxa"  // sync-relay-status-item
 String XarxaTarifaSHS "Tarifa xarxa"                 // tariff-item
-String XarxaMicroControladorEstatSHS "Estat microcontrolador xarxa"
+Number XarxaEnergiaConsumidaAvuiSHS "Energia consumida avui"
+Number XarxaEnergiaInjectadaAvuiSHS "Energia injectada avui"
+Number XarxaEnergiaConsumidaVallAvuiSHS "Energia consumida vall avui"
+Number XarxaEnergiaConsumidaPlaAvuiSHS "Energia consumida pla avui"
+Number XarxaEnergiaConsumidaPicAvuiSHS "Energia consumida pic avui"
+Number XarxaEnergiaInjectadaVallAvuiSHS "Energia injectada vall avui"
+Number XarxaEnergiaInjectadaPlaAvuiSHS "Energia injectada pla avui"
+Number XarxaEnergiaInjectadaPicAvuiSHS "Energia injectada pic avui"
 
 /*
 ----------------------
@@ -104,8 +107,6 @@ BATTERY
 */
 String XarxaBateriaTitle "Bateria"
 String XarxaBateriaEstatSHS "Estat bateria"               // battery status item
-String XarxaBateriaCarregarLowSHS "Tarifa càrrega bateria low"
-String XarxaBateriaCarregarMediumSHS "Tarifa càrrega bateria medium"
 String XarxaBateriaMicroControladorEstatSHS "Estat microcontrolador bateria"
 
 /*
