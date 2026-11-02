@@ -172,7 +172,7 @@ sitemap default label="Ca l'espiga" {
             Text item=EstufaInfrarrojosMicroControladorEstatSHS icon="receiver" label="Estat micro est. [%s]"
         }
     }
-    Text item=XarxaStatusSHS label="Xarxa i bateria" icon="electric_tower"
+    Text label="Xarxa i bateria" icon="electric_tower"
     {
         Frame label="Xarxa" {
             Text item=XarxaTarifaSHS icon="price" label="Tarifa: [%s]"
@@ -185,12 +185,6 @@ sitemap default label="Ca l'espiga" {
             Text item=XarxaEnergiaInjectadaPlaAvuiSHS icon="energy" label="Injecció pla avui: [%.3f kWh]"
             Text item=XarxaEnergiaInjectadaPicAvuiSHS icon="energy" label="Injecció pic avui: [%.3f kWh]"
             Text item=XarxaMicroControladorEstatSHS icon="receiver" label="Estat microcontrolador xarxa: [%s]"
-        }
-        Frame label="Bateria" {
-            Text item=XarxaBateriaEstatSHS icon="battery" label="Estat: [%s]"
-            Selection item=XarxaBateriaCarregarLowSHS icon="battery" label="Càrrega baixa: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
-            Selection item=XarxaBateriaCarregarMediumSHS icon="battery" label="Càrrega mitja: [%s]" mappings=["all tariffs"="Tot", "pla + vall"="Pla + Vall", "vall"="Vall", "none"="Cap"]
-            Text item=XarxaBateriaMicroControladorEstatSHS icon="receiver" label="Estat micro: [%s]"
         }
     }
     Text item=AlarmsTitle label="Alertes" icon="alert"
