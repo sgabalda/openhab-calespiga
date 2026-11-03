@@ -110,14 +110,6 @@ sitemap shs label="Ca l'espiga SHS" {
         }
     }
 
-    Text item=XarxaBateriaTitle label="Bateria" icon="battery"
-    {
-        Frame label="Bateria" {
-            Text item=XarxaBateriaEstatSHS icon="battery" label="Estat: [%s]"
-            Text item=XarxaBateriaMicroControladorEstatSHS icon="receiver" label="Estat micro: [%s]"
-        }
-    }
-
     Text item=CarChargerTitle label="Vehicle Elèctric" icon="electric_car"
     {
         Frame label="Carregador vehicle" {

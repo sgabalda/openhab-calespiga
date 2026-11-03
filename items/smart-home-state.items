@@ -103,15 +103,6 @@ Number XarxaEnergiaInjectadaPicAvuiSHS "Energia injectada pic avui"
 
 /*
 ----------------------
-BATTERY
-----------------------
-*/
-String XarxaBateriaTitle "Bateria"
-String XarxaBateriaEstatSHS "Estat bateria"               // battery status item
-String XarxaBateriaMicroControladorEstatSHS "Estat microcontrolador bateria"
-
-/*
-----------------------
 CAR CHARGER
 ----------------------
 */

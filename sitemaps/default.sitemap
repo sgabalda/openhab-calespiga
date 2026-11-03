@@ -174,7 +174,7 @@ sitemap default label="Ca l'espiga" {
             Text item=EstufaInfrarrojosMicroControladorEstatSHS icon="receiver" label="Estat micro est. [%s]"
         }
     }
-    Text label="Xarxa i bateria" icon="electric_tower"
+    Text label="Xarxa" icon="electric_tower"
     {
         Frame label="Xarxa" {
             Text item=XarxaTarifaSHS icon="price" label="Tarifa: [%s]"
