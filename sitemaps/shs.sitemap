@@ -32,7 +32,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Selection item=CalentadorSetSHS icon="thermostat_heater" mappings=["off"="Off", "500"="500W", "1000"="1000W", "2000"="2000W", "automatic"="Automàtic"]
             Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%s W]" 
             Text item=CalentadorTemperaturaSHS icon="temperature" label="Temperatura: [%.1f °C]"
-            Setpoint item=CalentadorTemperaturaObjectiuSHS icon="temperature" label="Temperatura objectiu [%.1f °C]" minValue=0 maxValue=50 step=1
+            Setpoint item=CalentadorTemperaturaObjectiuSHS icon="temperature" label="Temperatura objectiu [%.1f °C]" minValue=0 maxValue=65 step=1
 
             Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
             Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
