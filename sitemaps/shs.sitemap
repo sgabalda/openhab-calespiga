@@ -32,7 +32,7 @@ sitemap shs label="Ca l'espiga SHS" {
             Selection item=CalentadorSetSHS icon="thermostat_heater" mappings=["off"="Off", "500"="500W", "1000"="1000W", "2000"="2000W", "automatic"="Automàtic"]
             Text item=CalentadorStatusSHS icon="water_heater" label="Estat Pot.: [%s W]" 
             Text item=CalentadorTemperaturaSHS icon="temperature" label="Temperatura: [%.1f °C]"
-            Setpoint item=CalentadorTemperaturaObjectiuSHS icon="temperature" label="Temperatura objectiu [%.1f °C]" minValue=0 maxValue=65 step=1
+            Setpoint item=CalentadorTemperaturaObjectiuSHS icon="temperature" label="Temperatura objectiu [%.1f °C]" minValue=0 maxValue=75 step=1
 
             Text item=CalentadorCalentSHS icon="calentador_termostat" label="Estat termostat: [%s]" 
             Text item=CalentadorUltimaVegadaCalentSHS icon="time" label="Ultim cop calent: [%s]" 
@@ -65,9 +65,9 @@ sitemap shs label="Ca l'espiga SHS" {
         //TODO migrate the grafana panel
     }
 
-    Text item=AiguaGrisaTitle label="Aigua grisa" icon="water"
+    Text item=AiguaGrisaTitle label="Aigua" icon="water"
     {
-        Frame label="Bomba aigua grisa" {
+        Frame label="Aigua grisa" {
             Selection item=BassaAiguaGrisaModeSHS mappings=["on"="On", "off"="Off", "horari"="Horari"]
             Setpoint item=BassaAiguaGrisaHoraIniciSHS label="Hora inici [%d h]" minValue=0 maxValue=23 step=1
             Setpoint item=BassaAiguaGrisaHoraFiSHS label="Hora fi [%d h]" minValue=0 maxValue=23 step=1
@@ -75,6 +75,22 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=BassaAiguaGrisaProgramacioSHS label="Programació: [%s]"
             Text item=BassaAiguaGrisaSincronitzacioSHS label="Sincronització: [%s]"
             Text item=BassaAiguaGrisaMicroControladorEstatSHS label="Microcontrolador: [%s]"
+        }
+
+        Frame label="Bomba de la bassa" {
+            Text item=BassaRegStatusSHS label="Estat bomba: [%s]"
+            Text item=BassaRegSincronitzacioSHS label="Sincronització: [%s]"
+            Text item=BassaRegMicroControladorEstatSHS label="Microcontrolador: [%s]"
+        }
+
+        Frame label="Reg del jardí" {
+            Selection item=RegarHortEnabledSHS icon="network" label="Control del reg [%s]" mappings=["true"="SHS", "false"="OH"]
+            Setpoint item=RegarHortDuradaManualSHS label="Durada reg manual [%d min]" minValue=1 maxValue=60 step=1
+            Switch item=RegarHortIniciarSHS label="Iniciar reg manual"
+            Setpoint item=RegarHortDuradaProgramadaSHS label="Durada reg programat [%d min]" minValue=1 maxValue=60 step=1
+            Setpoint item=RegarHortIntervalProgramatSHS label="Interval reg programat [%d h]" minValue=1 maxValue=72 step=1
+            Setpoint item=RegarHortHoraIniciSHS label="Hora inici [%d h]" minValue=0 maxValue=23 step=1
+            Text item=RegarHortUltimRegSHS label="Últim reg: [%s]"
         }
     }
 
