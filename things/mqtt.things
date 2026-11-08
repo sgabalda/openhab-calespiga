@@ -11,25 +11,12 @@ Bridge mqtt:broker:defaultBroker [ host="192.168.2.114", secure=false ]{
     
     Thing mqtt:topic:bassa "bassa" (mqtt:broker:defaultBroker) {
         Channels:
-            Type string : RegStatus "RegStatus" [ stateTopic="bassa/reg/status" ]
-            Type string : RegSet "RegSet" [ commandTopic="bassa/reg/set" ]
             Type string : CirculacioStatus "CirculacioStatus" [ stateTopic="bassa/circulacio/status" ]
             Type string : CirculacioSet "CirculacioSet" [ commandTopic="bassa/circulacio/set" ]
-            Type string : AiguagrisaStatus "AiguagrisaStatus" [ stateTopic="bassa/aiguagrisa/status" ]
-            Type string : AiguagrisaSet "AiguagrisaSet" [ commandTopic="bassa/aiguagrisa/set" ]
             Type number : Percentatge "Percentatge" [ stateTopic="bassa/percentage" ]
             Type number : Litres "Litres" [ stateTopic="bassa/liters" ]
             Type number : Altura "Altura" [ stateTopic="bassa/height" ]
             Type number : Memoria "Memoria" [ stateTopic="bassa/memory" ]
-    }
-
-    //topics and thing to transition to SHS before moving this to an arduino/esp32
-    Thing mqtt:topic:cotxe "cotxe" (mqtt:broker:defaultBroker) {
-        Channels:
-            Type string : CotxeStatus "CotxeStatus" [ commandTopic="cotxe/carrega/status" ]
-            Type string : CotxeSet "CotxeSet" [ stateTopic="cotxe/carrega/set" ]
-            Type string : CotxePower "CotxePower" [ commandTopic="cotxe/carrega/power" ]
-            Type string : CotxeEnergy "CotxeEnergy" [ commandTopic="cotxe/carrega/energy" ]
     }
 
 }

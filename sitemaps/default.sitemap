@@ -49,32 +49,27 @@ sitemap default label="Ca l'espiga" {
         }
     }
 
-    Text item=RegTitle label="Reg i aigua" icon="wassertank"
+    Text label="Reg i aigua" icon="wassertank"
     {
-        Frame label="Reg de l'hort" {
-            Text item=EstatReg label="Estat reg: [%s]" icon="hydrant"
-            Selection item=Bomba_Activa label="Bomba usada pel reg: [%s]" icon="pump" mappings=["diposit"="Diposit", "bassa"="Bassa"]
-            Switch item=Encesa_Bomba_Manual icon="sprinkler"
-            Setpoint item=Durada_Encesa_Manual icon="stopwatch" label="Durada encesa manual [%.1f min]" minValue=1 maxValue=30 step=1
-            Switch item=Encesa_Bomba_Auto icon="sprinkler"
-            Setpoint item=Durada_Encesa_Auto icon="stopwatch" label="Durada [%.1f min]" minValue=1 maxValue=30 step=1
-            Setpoint item=Hora_Encesa_Auto icon="time" label="Hora [%.1f h]" minValue=0 maxValue=24 step=1
-            Setpoint item=Periode_Encesa_Auto icon="stopwatch" label="Cada [%.1f h]" minValue=2 maxValue=72 step=1
-            Text icon="time" item=Darrera_Encesa_Reg label="Darrer reg auto [%1$td/%1$tm/%1$tY %1$tT]"            
+        Frame label="Reg de l'hort SHS" {
+            Selection item=RegarHortEnabledSHS icon="network" label="Control del reg [%s]" mappings=["true"="SHS", "false"="OH"]
+            Setpoint item=RegarHortDuradaManualSHS label="Durada reg manual [%d min]" minValue=1 maxValue=60 step=1
+            Switch item=RegarHortIniciarSHS label="Iniciar reg manual"
+            Switch item=RegarHortProgramacioSHS label="Programar reg automàtic"
+            Setpoint item=RegarHortDuradaProgramadaSHS label="Durada reg programat [%d min]" minValue=1 maxValue=60 step=1
+            Setpoint item=RegarHortIntervalProgramatSHS label="Interval reg programat [%d h]" minValue=1 maxValue=72 step=1
+            Setpoint item=RegarHortHoraIniciSHS label="Hora inici [%d h]" minValue=0 maxValue=23 step=1
+            Text item=RegarHortUltimRegSHS label="Últim reg: [%s]"
         }
-        Frame label="Diposit" {
-            Text icon="wassertank" item=DipositPercentNumber label="Nivell diposit: [%d %%]"
-            Text icon="water" item=DipositLitres label="Litres diposit: [%d L]"
-            Text item=DipositPumpStatus label="Estat bomba: [%s]" icon="hydrant"
-            Text icon="time" item=Darrer_Canvi_Bomba_Diposit label="Darrera encesa [%1$td/%1$tm/%1$tY %1$tT]"
-            Text item=Diposit_Ultima_Connexio icon="time" label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
+        Frame label="Bomba de la bassa SHS" {
+            Text item=BassaRegStatusSHS label="Estat bomba: [%s]"
+            Text item=BassaRegSincronitzacioSHS label="Sincronització: [%s]"
+            Text item=BassaRegMicroControladorEstatSHS label="Microcontrolador: [%s]"
         }
         Frame label="Bassa" {
             Text icon="humidity" item=BassaPercentNumber label="Nivell bassa: [%d %%]"
             Text icon="water" item=BassaLitres label="Litres bassa: [%d L]"
             Text icon="flow" item=BassaAltura label="Profunditat bassa: [%d cm]"
-            Text icon="hydrant" item=BassaRegStatus label="Bomba reg: [%s]"
-            Text icon="time" item=Darrer_Canvi_Bomba_Bassa label="Darrera encesa reg [%1$td/%1$tm/%1$tY %1$tT]"
             Text icon="faucet" item=BassaCirculacioStatus label="Estat circulacio: [%s]"
             Selection icon="switch_on_off" item=BassaModeCirculacio label="Mode circulacio: [%s]"  mappings=["hores"="Hores", "unusedPower"="Pot. sobrant"]
             Setpoint icon="time" item=BassaCirculacioHoraEncesa label="Hora inici [%.1f h]" minValue=0 maxValue=24 step=1
@@ -90,14 +85,6 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=Trasvassament_Diposit_Bassa_Durada icon="stopwatch" label="Durada transvassament [%.1f min]" minValue=1 maxValue=180 step=1
             Text icon="time" item=Trasvassament_Diposit_Bassa_Darrer label="Últim transvassament [%1$td/%1$tm/%1$tY %1$tT]"
         }
-        Frame label="Aigua grisa" {
-            Text icon="hydrant" item=BassaAiguagrisaStatus label="Estat: [%s]"
-            Setpoint icon="time" item=BassaAiguagrisaHoraEncesa label="Hora inici [%.1f h]" minValue=0 maxValue=24 step=1
-            Setpoint icon="time" item=BassaAiguagrisaHoraApagat label="Hora fi [%.1f h]" minValue=0 maxValue=24 step=1
-            Text icon="time" item=BassaAiguagrisaHoraDescripcio label="Programació: [%s]"
-            Text icon="network" item=BassaAiguaGrisaStatusConnexio label="Connexió: [%s]"
-            Text icon="time" item=BassaAiguaGrisaUltimaConnexio label="Ultima connexió [%1$td/%1$tm/%1$tY %1$tT]"
-        }
         Frame label="Aigua grisa SHS" {
             Selection item=BassaAiguaGrisaModeSHS mappings=["on"="On", "off"="Off", "horari"="Horari"]
             Setpoint item=BassaAiguaGrisaHoraIniciSHS label="Hora inici [%d h]" minValue=0 maxValue=23 step=1
@@ -106,26 +93,6 @@ sitemap default label="Ca l'espiga" {
             Text item=BassaAiguaGrisaProgramacioSHS label="Programació: [%s]"
             Text item=BassaAiguaGrisaSincronitzacioSHS label="Sincronització: [%s]"
             Text item=BassaAiguaGrisaMicroControladorEstatSHS label="Microcontrolador: [%s]"
-        }
-
-        Frame label="Bomba de la bassa SHS" {
-            Text item=BassaRegStatusSHS label="Estat bomba: [%s]"
-            Text item=BassaRegSincronitzacioSHS label="Sincronització: [%s]"
-            Text item=BassaRegMicroControladorEstatSHS label="Microcontrolador: [%s]"
-        }
-
-        Frame label="Reg de l'hort SHS" {
-            Selection item=RegarHortEnabledSHS icon="network" label="Control del reg [%s]" mappings=["true"="SHS", "false"="OH"]
-            Setpoint item=RegarHortDuradaManualSHS label="Durada reg manual [%d min]" minValue=1 maxValue=60 step=1
-            Switch item=RegarHortIniciarSHS label="Iniciar reg manual"
-            Switch item=RegarHortProgramacioSHS label="Programar reg automàtic"
-            Setpoint item=RegarHortDuradaProgramadaSHS label="Durada reg programat [%d min]" minValue=1 maxValue=60 step=1
-            Setpoint item=RegarHortIntervalProgramatSHS label="Interval reg programat [%d h]" minValue=1 maxValue=72 step=1
-            Setpoint item=RegarHortHoraIniciSHS label="Hora inici [%d h]" minValue=0 maxValue=23 step=1
-            Text item=RegarHortUltimRegSHS label="Últim reg: [%s]"
-        }
-        Frame label="Controls" {
-            Selection item=BassaAiguaGrisaEnabledSHS icon="network" label="Control aigua grisa [%s]" mappings=["true"="SHS", "false"="OH"]
         }
         Frame{
             Webview height=16 url="http://calespiga.ddns.net:3000/d/HSNUkZzRk/diposit?orgId=1"
@@ -223,14 +190,6 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=AlarmDipositComunicacioTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
             Setpoint item=AlarmDipositComunicacio_Seconds icon="stopwatch" label="Temps limit [%.1f s]" minValue=30 maxValue=120 step=10
         }
-        Frame label="Reg no executat" {
-            Text item=AlarmReg label="Estat [%s]" icon="alert"
-            Text icon="time" item=AlarmRegTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
-            Text icon="time" item=AlarmRegTimeOff label="Ultim cop OFF: [%1$td/%1$tm/%1$tY %1$tT]"
-            Switch item=AlarmRegNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
-            Setpoint item=AlarmRegTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
-            Setpoint item=AlarmReg_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=20 maxValue=120 step=10
-        }
         Frame label="Circulacio bloquejada" {
             Text item=AlarmBassaCirculacio label="Estat [%s]" icon="alert"
             Text icon="time" item=AlarmBassaCirculacioTimeOn label="Ultim cop ON: [%1$td/%1$tm/%1$tY %1$tT]"
@@ -254,13 +213,6 @@ sitemap default label="Ca l'espiga" {
             Switch item=AlarmGridConnectionNotification icon="notification" label="Notifica" mappings=["ON"="Si", "OFF"="No"]
             Setpoint item=AlarmGridConnectionTimeNotifications icon="stopwatch" label="Temps entre notif. [%.1f m]" minValue=1 maxValue=30 step=1
             Setpoint item=AlarmGridConnection_Seconds icon="stopwatch" label="Temps limit [%.1f m]" minValue=5 maxValue=60 step=5
-        }
-    }
-    Text item=SystemTitle label="Sistema" icon="settings"
-    {
-        Frame label="Sistema operatiu" {
-            Text item=DiskPercent icon="receiver" label="Ús disc [%s %%]"
-            Text item=DiskInodesPercent icon="receiver" label="Ús inodes [%s %%]"
         }
     }
 }

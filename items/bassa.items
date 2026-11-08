@@ -6,9 +6,6 @@ Number BassaControladorMemoria "Memòria controlador bassa" {channel="mqtt:topic
 DateTime BassaUltimaConnexio "Instant darrera connexio"
 String BassaStatusConnexio "Estat connexió"
 
-DateTime BassaAiguaGrisaUltimaConnexio "Instant darrera connexio"
-String BassaAiguaGrisaStatusConnexio "Estat connexió"
-
 Switch Ordre_Encesa_Bomba_Depuradora "Ordre encesa bomba depuradora"
 Switch Executor_Ordre_Encesa_Bomba_Depuradora "Executa ordre encesa bomba depuradora"
 Switch Comprovador_Alarma_Bomba_Depuradora "Comprova alarma bomba depuradora"
@@ -21,23 +18,14 @@ String Circulacio_Leader_Bomba_Depuradora "Recepció senyal obtenció de leader 
 
 String BassaCirculacioChangeRequest "Peticio control circulacio bassa"
 
-String BassaAiguagrisaStatus "Estat aigua grisa" {channel="mqtt:topic:bassa:AiguagrisaStatus"}
-String BassaRegStatus "Estat bomba reg" {channel="mqtt:topic:bassa:RegStatus"}
 String BassaCirculacioStatus "Estat circulacio" {channel="mqtt:topic:bassa:CirculacioStatus"}
 
-String BassaAiguagrisaCommand "Ordre aigua grisa" {channel="mqtt:topic:bassa:AiguagrisaSet"}
-String BassaRegCommand "Ordre reg" {channel="mqtt:topic:bassa:RegSet"}
 String BassaCirculacioCommand "Ordre circulacio" {channel="mqtt:topic:bassa:CirculacioSet"}
 
-String BassaAiguagrisaProxy "Proxy ordre aigua grisa"
 String BassaRegProxy "Proxy ordre reg"
 String BassaCirculacioProxy "Proxy ordre circulacio"
 
 Number BassaCirculacioCadencia "Cadencia de la circulacio de la bassa"
-
-Number BassaAiguagrisaHoraEncesa 
-Number BassaAiguagrisaHoraApagat 
-String BassaAiguagrisaHoraDescripcio "Hores encesa aigua grisa"
 
 String BassaModeCirculacio "Mode circulació bassa"
 Number BassaCirculacioHoraEncesa 
