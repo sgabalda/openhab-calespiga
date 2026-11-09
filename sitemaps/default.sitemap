@@ -52,7 +52,6 @@ sitemap default label="Ca l'espiga" {
     Text label="Reg i aigua" icon="wassertank"
     {
         Frame label="Reg de l'hort SHS" {
-            Selection item=RegarHortEnabledSHS icon="network" label="Control del reg [%s]" mappings=["true"="SHS", "false"="OH"]
             Setpoint item=RegarHortDuradaManualSHS label="Durada reg manual [%d min]" minValue=1 maxValue=60 step=1
             Switch item=RegarHortIniciarSHS label="Iniciar reg manual"
             Switch item=RegarHortProgramacioSHS label="Programar reg automàtic"
@@ -61,7 +60,10 @@ sitemap default label="Ca l'espiga" {
             Setpoint item=RegarHortHoraIniciSHS label="Hora inici [%d h]" minValue=0 maxValue=23 step=1
             Text item=RegarHortUltimRegSHS label="Últim reg: [%s]"
         }
-        Frame label="Bomba de la bassa SHS" {
+        Frame label="Bassa SHS" {
+            Text item=BassaPercentatgeSHS label="Percentatge: [%.1f %%]"
+            Text item=BassaLitresSHS label="Litres: [%.1f L]"
+            Text item=BassaAlcadaSHS label="Alçada: [%.1f]"
             Text item=BassaRegStatusSHS label="Estat bomba: [%s]"
             Text item=BassaRegSincronitzacioSHS label="Sincronització: [%s]"
             Text item=BassaRegMicroControladorEstatSHS label="Microcontrolador: [%s]"

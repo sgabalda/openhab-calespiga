@@ -77,14 +77,16 @@ sitemap shs label="Ca l'espiga SHS" {
             Text item=BassaAiguaGrisaMicroControladorEstatSHS label="Microcontrolador: [%s]"
         }
 
-        Frame label="Bomba de la bassa" {
+        Frame label="Bassa" {
             Text item=BassaRegStatusSHS label="Estat bomba: [%s]"
             Text item=BassaRegSincronitzacioSHS label="Sincronització: [%s]"
             Text item=BassaRegMicroControladorEstatSHS label="Microcontrolador: [%s]"
+            Text item=BassaPercentatgeSHS label="Percentatge: [%.1f %%]"
+            Text item=BassaLitresSHS label="Litres: [%.1f L]"
+            Text item=BassaAlcadaSHS label="Alçada: [%.1f]"
         }
 
         Frame label="Reg del jardí" {
-            Selection item=RegarHortEnabledSHS icon="network" label="Control del reg [%s]" mappings=["true"="SHS", "false"="OH"]
             Setpoint item=RegarHortDuradaManualSHS label="Durada reg manual [%d min]" minValue=1 maxValue=60 step=1
             Switch item=RegarHortIniciarSHS label="Iniciar reg manual"
             Switch item=RegarHortProgramacioSHS label="Programar reg automàtic"
@@ -146,9 +148,6 @@ sitemap shs label="Ca l'espiga SHS" {
         Frame label="Alarmes" {
             Text item=TemperaturesMicroControladorEstat icon="receiver" label="Estat micro vent. [%s]"
             Text item=CalentadorMicroControladorEstatSHS icon="receiver" label="Estat micro calent. [%s]"
-        }
-        Frame label="Controls" {
-            Selection item=BassaAiguaGrisaEnabledSHS icon="network" label="Control aigua grisa [%s]" mappings=["true"="SHS", "false"="OH"]
         }
     }
 }

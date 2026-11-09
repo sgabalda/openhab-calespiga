@@ -67,10 +67,13 @@ String BassaAiguaGrisaMicroControladorEstatSHS "Estat microcontrolador aigua gri
  POND PUMP
 ----------------------
 */
-String BassaRegTitle "Bomba de la bassa"
+String BassaRegTitle "Bassa"
 String BassaRegStatusSHS "Estat bomba bassa reg"
 String BassaRegSincronitzacioSHS "Estat sincronització bomba bassa reg"
 String BassaRegMicroControladorEstatSHS "Estat microcontrolador bomba bassa reg"
+Number BassaPercentatgeSHS "Percentatge bassa"
+Number BassaLitresSHS "Litres bassa"
+Number BassaAlcadaSHS "Alçada bassa"
 
 /*
 ----------------------
@@ -85,7 +88,6 @@ Switch RegarHortProgramacioSHS "Programar reg automàtic"
 Number RegarHortIntervalProgramatSHS "Interval reg programat (hores)"
 Number RegarHortHoraIniciSHS "Hora inici reg programat"
 String RegarHortUltimRegSHS "Últim reg jardí"
-String RegarHortEnabledSHS "Habilitar control de reg del jardí per SHS"
 
 /*
 ----------------------
@@ -154,6 +156,3 @@ String SystemTitle "Estat"
 String TemperaturesMicroControladorEstat "Estat microcontrolador temperatures"
 String CalentadorMicroControladorEstatSHS "Estat microcontrolador calentador"
 String EstufaInfrarrojosMicroControladorEstatSHS "Estat microcontrolador estufa"
-
-/* feature flags */
-String BassaAiguaGrisaEnabledSHS "Habilitar control d'aigua grisa per SHS"
