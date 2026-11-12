@@ -20,7 +20,7 @@ String BassaCirculacioChangeRequest "Peticio control circulacio bassa"
 
 String BassaCirculacioStatus "Estat circulacio" {channel="mqtt:topic:bassa:CirculacioStatus"}
 
-String BassaCirculacioCommand "Ordre circulacio" {channel="mqtt:topic:bassa:CirculacioSet"}
+String BassaCirculacioCommand "Ordre circulacio" // removed so SHS is in control {channel="mqtt:topic:bassa:CirculacioSet"}
 
 String BassaRegProxy "Proxy ordre reg"
 String BassaCirculacioProxy "Proxy ordre circulacio"

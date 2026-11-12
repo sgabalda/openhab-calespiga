@@ -78,9 +78,16 @@ sitemap shs label="Ca l'espiga SHS" {
         }
 
         Frame label="Bassa" {
+            Selection item=BassaCirculacioModeSHS label="Mode circulació" mappings=["depuradora"="Depuradora", "diposit"="Transvassament"]
+            Text item=BassaCirculacioStatusSHS label="Estat circulació: [%s]"
+            Setpoint item=BassaCirculacioHoraIniciSHS label="Hora inici depuradora [%d h]" minValue=0 maxValue=23 step=1
+            Setpoint item=BassaCirculacioHoraFiSHS label="Hora fi depuradora [%d h]" minValue=0 maxValue=23 step=1
+            Setpoint item=BassaCirculacioCadenciaSHS label="Cadència depuradora [%d %%]" minValue=10 maxValue=100 step=10
+            Text item=BassaCirculacioProgramacioSHS label="Programació depuradora: [%s]"
+            Text item=BassaCirculacioSincronitzacioSHS label="Sincronització circulació: [%s]"
             Text item=BassaRegStatusSHS label="Estat bomba: [%s]"
-            Text item=BassaRegSincronitzacioSHS label="Sincronització: [%s]"
-            Text item=BassaRegMicroControladorEstatSHS label="Microcontrolador: [%s]"
+            Text item=BassaRegBombaSincronitzacioSHS label="Sincronització bomba: [%s]"
+            Text item=BassaMicroControladorEstatSHS label="Microcontrolador: [%s]"
             Text item=BassaPercentatgeSHS label="Percentatge: [%.1f %%]"
             Text item=BassaLitresSHS label="Litres: [%.1f L]"
             Text item=BassaAlcadaSHS label="Alçada: [%.1f]"

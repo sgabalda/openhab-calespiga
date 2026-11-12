@@ -69,11 +69,18 @@ String BassaAiguaGrisaMicroControladorEstatSHS "Estat microcontrolador aigua gri
 */
 String BassaRegTitle "Bassa"
 String BassaRegStatusSHS "Estat bomba bassa reg"
-String BassaRegSincronitzacioSHS "Estat sincronització bomba bassa reg"
-String BassaRegMicroControladorEstatSHS "Estat microcontrolador bomba bassa reg"
+String BassaRegBombaSincronitzacioSHS "Estat sincronització bomba bassa reg"
+String BassaMicroControladorEstatSHS "Estat microcontrolador bassa"
 Number BassaPercentatgeSHS "Percentatge bassa"
 Number BassaLitresSHS "Litres bassa"
 Number BassaAlcadaSHS "Alçada bassa"
+String BassaCirculacioModeSHS "Mode circulació bassa"
+String BassaCirculacioStatusSHS "Estat circulació bassa"
+Number BassaCirculacioHoraIniciSHS "Hora inici depuradora bassa"
+Number BassaCirculacioHoraFiSHS "Hora fi depuradora bassa"
+Number BassaCirculacioCadenciaSHS "Cadència depuradora bassa"
+String BassaCirculacioProgramacioSHS "Programació depuradora bassa"
+String BassaCirculacioSincronitzacioSHS "Estat sincronització circulació bassa"
 
 /*
 ----------------------
